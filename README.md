@@ -1,30 +1,63 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# SKTrello
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+- 트렐로와 비슷한 칸반보드 기반의 협업툴 서비스 구현.
+- Nest.js, TypeORM을 이용하여 구현한다.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 👋 SKTrello 팀 소개
 
-## Description
+- **SKTrello**는 저희 팀명과 트렐로를 합성한 간단한 이름입니다.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## 👋 팀원 소개
+
+<table>
+  <tbody>
+    <tr>
+      <td align="center"><a href="https://github.com/choisooyoung-dev"><img src="https://avatars.githubusercontent.com/u/166963977?v=4" width="100px;" alt=""/><br /><sub><b> 팀장 : 석한솔 </b></sub></a><br /></td>
+      <td align="center"><a href=https://github.com/smy1308"><img src="https://avatars.githubusercontent.com/u/161733851?v=4" width="100px;" alt=""/><br /><sub><b> 팀원 : 방채은 </b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/visitor17564"><img src="https://avatars.githubusercontent.com/u/155073832?v=4" width="100px;" alt=""/><br /><sub><b> 팀원 : 이지훈 </b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/sangkwonlee1722"><img src="https://avatars.githubusercontent.com/u/125876896?v=4" width="100px;" alt=""/><br /><sub><b> 팀원 : 정재민 </b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/wlals7565"><img src="https://avatars.githubusercontent.com/u/26666131?v=44" width="100px;" alt=""/><br /><sub><b> 팀원 : 엄혜인 </b></sub></a><br /></td>
+      <td align="center"><a href="https://github.com/wlals7565"><img src="https://avatars.githubusercontent.com/u/167046779?v=4" width="100px;" alt=""/><br /><sub><b> 팀원 : 구남욱 </b></sub></a><br /></td>
+    </tr>
+  </tbody>
+</table>
+
+## 👥 팀 구성원 및 역할
+
+- **석한솔**
+
+  - 보드 담당
+
+- **방채은**
+
+  - 리스트 담당
+
+- **이지훈**
+
+  - 카드 담당
+
+- **정재민**
+
+  - 체크리스트 담당
+
+- **엄혜인**
+
+  - 댓글 CRUD
+
+- **구남욱**
+
+  - 회원, 인증 담당
+<!-- 프로젝트에 사용된 기술 스택을 나열 -->
+## 기술
+### BACKEND
+![Nest.js](https://img.shields.io/badge/nest.js-E0234E?style=for-the-badge&logo=Nest.js.js&logoColor=white)
+![TypeORM](https://img.shields.io/badge/typeorm-262627?style=for-the-badge&logo=typeorm&logoColor=white)
+
+### TOOLS
+![Slack](https://img.shields.io/badge/Slack-4A154B?style=for-the-badge&logo=Slack&logoColor=white) ![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=Notion&logoColor=white) ![GitHub](https://img.shields.io/badge/github-181717?style=for-the-badge&logo=github&logoColor=white) ![Git](https://img.shields.io/badge/git-F05032?style=for-the-badge&logo=git&logoColor=white) 
+## 🗃 ERD
+
+![Alt text](/docs/ERD.png)
 
 ## Installation
 
