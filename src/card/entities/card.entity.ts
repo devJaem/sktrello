@@ -11,6 +11,7 @@ import {
 import { CardUser } from './card-user.entity';
 import { CheckList } from 'src/check_list/entities/check_list.entity';
 import { List } from 'src/list/entities/list.entity';
+import { Comment } from 'src/comment/entities/comment.entity';
 import { DuedateStatus } from '../types/duedate-status.type';
 
 @Entity()
@@ -18,6 +19,7 @@ export class Card {
   @PrimaryGeneratedColumn()
   id: number;
 
+  // 리스트 테이블과 N:1 관계
   //   @ManyToOne(()=> List, list => list.card)
   //   list: List;
 
@@ -51,9 +53,15 @@ export class Card {
   @DeleteDateColumn()
   deletedAt: Date | null;
 
-  @OneToMany(() => CardUser, (cardUser) => cardUser.card)
+  // 카드유저 테이블과 1:N 관계
+  @OneToMany(() => CardUser, (cardUser) => cardUser.card, { cascade: true })
   cardUser: CardUser[];
 
-  //   @OneToMany(() => CheckList, checklist => checklist.card)
-  //   checklist: CheckList[];
+  // 체크리스트 테이블과 1:N 관계
+  @OneToMany(() => CheckList, (checkLists) => checkLists.card, { cascade: true })
+  checkLists: CheckList[];
+
+  // 코멘트 테이블과 1:N 관계
+  // @OneToMany(() => Comment, (comment) => comment.card, { cascade: true })
+  // comment: Comment[];
 }

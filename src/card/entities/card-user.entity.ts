@@ -9,7 +9,8 @@ export class CardUser {
   @Column()
   cardId: number;
 
-  @ManyToOne(() => Card, (card) => card.cardUser)
+  // 카드 테이블과 N:1관계
+  @ManyToOne(() => Card, (card) => card.cardUser, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'cardId' })
   card: Card;
 
