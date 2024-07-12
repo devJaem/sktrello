@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCheckItemDto } from './dto/create-checkitem.dto';
-import { UpdateCheckItemDto } from './dto/update-checkitem.dto';
+import { CreateCheckitemDto } from './dto/create-checkitem.dto';
+import { UpdateCheckitemDto } from './dto/update-checkitem.dto';
 
 @Injectable()
-export class CheckItemService {
-  create(createCheckItemDto: CreateCheckItemDto) {
+export class CheckitemService {
+  create(createCheckItemDto: CreateCheckitemDto) {
     return 'This action adds a new checkItem';
   }
 
@@ -16,7 +16,7 @@ export class CheckItemService {
     return `This action returns a #${id} checkItem`;
   }
 
-  update(id: number, updateCheckItemDto: UpdateCheckItemDto) {
+  update(id: number, updateCheckItemDto: UpdateCheckitemDto) {
     return `This action updates a #${id} checkItem`;
   }
 

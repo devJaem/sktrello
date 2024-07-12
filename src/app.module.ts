@@ -7,11 +7,11 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { BoardModule } from './board/board.module';
 import { CardModule } from './card/card.module';
-import { CheckItemModule } from './checkitem/checkitem.module';
-import { CheckListModule } from './checklist/checklist.module';
 import { CommentModule } from './comment/comment.module';
 import { ListModule } from './list/list.module';
 import { AppController } from './app.controller';
+import { ChecklistModule } from './checklist/checklist.module';
+import { CheckitemModule } from './checkitem/checkitem.module';
 
 @Module({
   imports: [
@@ -24,8 +24,8 @@ import { AppController } from './app.controller';
     AuthModule,
     BoardModule,
     CardModule,
-    CheckItemModule,
-    CheckListModule,
+    CheckitemModule,
+    ChecklistModule,
     CommentModule,
     ListModule,
   ],
