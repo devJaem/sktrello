@@ -41,6 +41,4 @@ export class CheckList {
   // @ManyToOne(() => Card, (card) => card.checkLists)
   // @JoinColumn({ name: 'card_id' })
   // card: Card;
-  
-
 }
