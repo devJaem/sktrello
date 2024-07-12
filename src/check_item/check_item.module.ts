@@ -6,9 +6,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CheckListModule } from 'src/check_list/check_list.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CheckItem]),CheckListModule ],
+  imports: [TypeOrmModule.forFeature([CheckItem]), CheckListModule],
   controllers: [CheckItemController],
   providers: [CheckItemService],
-  exports:[CheckItemService]
+  exports: [CheckItemService],
 })
 export class CheckItemModule {}

@@ -5,7 +5,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -36,11 +35,12 @@ export class CheckList {
   deletedAt?: Date | null;
 
   /* 체크 아이템 join */
-  @OneToMany(() => CheckItem, (check_Item) => check_Item.checklist, { cascade: true})
+  @OneToMany(() => CheckItem, (check_Item) => check_Item.checklist, {
+    cascade: true,
+  })
   checkItems: CheckItem[];
 
   /* 카드 join */
-  @ManyToOne(() => Card, (card) => card.checkLists, {onDelete: 'CASCADE'})
-  @JoinColumn({ name: 'card_id' })
+  @ManyToOne(() => Card, (card) => card.checkLists, { onDelete: 'CASCADE' })
   card: Card;
 }

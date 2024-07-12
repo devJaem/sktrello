@@ -6,7 +6,6 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   ManyToOne,
-  JoinColumn,
 } from 'typeorm';
 import { Board } from './board.entity';
 import { User } from 'src/user/entities/user.entity';
@@ -23,10 +22,10 @@ export class BoardUser {
   @Column({ unsigned: true })
   userId: number;
 
-  @Column({ default: 'GUEST'})
+  @Column({ default: 'GUEST' })
   boardUserRole: BoardUserRole;
 
-  @Column({ default: false})
+  @Column({ default: false })
   isAccepted: boolean;
 
   @CreateDateColumn()

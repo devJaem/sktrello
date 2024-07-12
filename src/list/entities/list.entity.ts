@@ -37,7 +37,7 @@ export class List {
   //cards 테이블과 1:N 관계
   @OneToMany(() => Card, (card) => card.list, { cascade: true })
   cards: Card[];
-  
+
   //boards 테이블과 N:1 관계
   @ManyToOne(() => Board, (board) => board.lists, { onDelete: 'CASCADE' })
   board: Board;

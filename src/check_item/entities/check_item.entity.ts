@@ -4,7 +4,6 @@ import {
   CreateDateColumn,
   DeleteDateColumn,
   Entity,
-  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -40,6 +39,5 @@ export class CheckItem {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  @JoinColumn([{ name: 'check_list_id', referencedColumnName: 'id' }])
   checklist: CheckList;
 }

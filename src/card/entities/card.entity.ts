@@ -31,7 +31,11 @@ export class Card {
   @Column()
   duedate: Date;
 
-  @Column({ type: 'enum', enum: DuedateStatus, default: DuedateStatus.uncomplete })
+  @Column({
+    type: 'enum',
+    enum: DuedateStatus,
+    default: DuedateStatus.uncomplete,
+  })
   duedate_status: DuedateStatus;
 
   @Column()
@@ -54,7 +58,9 @@ export class Card {
   cardUsers: CardUser[];
 
   //체크리스트 테이블과 1:N 관계
-  @OneToMany(() => CheckList, (checkLists) => checkLists.card, { cascade: true })
+  @OneToMany(() => CheckList, (checkLists) => checkLists.card, {
+    cascade: true,
+  })
   checkLists: CheckList[];
 
   //코멘트 테이블과 1:N 관계

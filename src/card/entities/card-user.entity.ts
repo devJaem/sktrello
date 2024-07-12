@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { Card } from './card.entity';
 import { User } from 'src/user/entities/user.entity';
 
