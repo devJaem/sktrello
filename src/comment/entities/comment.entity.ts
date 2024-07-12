@@ -34,11 +34,11 @@ export class Comment {
   @DeleteDateColumn()
   deletedAt: Date | null;
 
-  // // 댓글, 유저 다:1관계
-  // @ManyToOne(() => User, (user) => user.comments)
-  // user: User;
+  // 댓글, 유저 다:1관계
+  @ManyToOne(() => User, (user) => user.comments)
+  user: User;
 
-  // // 댓글, 카드 다:1관계
-  // @ManyToOne(() => Card, (card) => card.comments)
-  // card: Card;
+  // 댓글, 카드 다:1관계
+  @ManyToOne(() => Card, (card) => card.comments, { onDelete: 'CASCADE' })
+  card: Card;
 }

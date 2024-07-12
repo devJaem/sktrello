@@ -1,3 +1,6 @@
+import { BoardUser } from 'src/board/entities/board-user.entity';
+import { CardUser } from 'src/card/entities/card-user.entity';
+import { Comment } from 'src/comment/entities/comment.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -29,17 +32,17 @@ export class User {
   updatedAt: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date | null;
+  deletedAt?: Date | null;
 
   // boardUser와의 관계
-  // @OneToMany(() => BoardUser, (boardUser) => boardUser.user_id, { onDelete : 'CASCADE'})
-  // boardUsers : boardUser[]
+  @OneToMany(() => BoardUser, (boardUser) => boardUser.user)
+  boardUsers: BoardUser[];
 
   // cardUser와의 관계
-  // @OneToMany(() => CardUser, (cardUser) => cardUser.user_id, {onDelete : 'CASCADE'})
-  // cardUsers : cardUser[]
+  @OneToMany(() => CardUser, (cardUser) => cardUser.user)
+  cardUsers: CardUser[];
 
   // comment와의 관계
-  // @OneToMany(() => Comment, (comment) => comment.user_id, {onDelete : 'CASCADE'})
-  // comment : comment[]
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 }

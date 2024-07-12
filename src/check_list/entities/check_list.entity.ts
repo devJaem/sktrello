@@ -1,3 +1,4 @@
+import { Card } from 'src/card/entities/card.entity';
 import { CheckItem } from 'src/check_item/entities/check_item.entity';
 import {
   Column,
@@ -34,11 +35,12 @@ export class CheckList {
   @DeleteDateColumn()
   deletedAt: Date | null;
 
-  @OneToMany(() => CheckItem, (check_Item) => check_Item.checklist)
+  /* 체크 아이템 join */
+  @OneToMany(() => CheckItem, (check_Item) => check_Item.checklist, { cascade: true})
   checkItems: CheckItem[];
 
   /* 카드 join */
-  // @ManyToOne(() => Card, (card) => card.checkLists)
-  // @JoinColumn({ name: 'card_id' })
-  // card: Card;
+  @ManyToOne(() => Card, (card) => card.checkLists, {onDelete: 'CASCADE'})
+  @JoinColumn({ name: 'card_id' })
+  card: Card;
 }
