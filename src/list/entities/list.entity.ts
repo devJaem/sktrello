@@ -34,11 +34,11 @@ export class List {
   @DeleteDateColumn()
   deletedAt?: Date | null;
 
-  //cards 테이블과 1:N 관계
+  // Relation - [lists] 1 : N [cards]
   @OneToMany(() => Card, (card) => card.list, { cascade: true })
   cards: Card[];
 
-  //boards 테이블과 N:1 관계
+  // Relation - [lists] N : 1 [boards]
   @ManyToOne(() => Board, (board) => board.lists, { onDelete: 'CASCADE' })
   board: Board;
 }
