@@ -18,7 +18,7 @@ export class CheckItem {
   @Column()
   checkListId: number;
 
-  @Column()
+  @Column('text')
   content: string;
 
   @Column()
