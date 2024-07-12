@@ -6,25 +6,28 @@ import {
   UpdateDateColumn,
   DeleteDateColumn,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Board } from './board.entity';
+import { User } from 'src/user/entities/user.entity';
+import { BoardUserRole } from '../types/board-user.type';
 
 @Entity('board_users')
 export class BoardUser {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
-  @Column()
+  @Column({ unsigned: true })
   boardId: number;
 
-  @Column()
+  @Column({ unsigned: true })
   userId: number;
 
-  @Column()
-  host: boolean;
+  @Column({ default: 'GUEST'})
+  boardUserRole: BoardUserRole;
 
-  @Column()
-  isAccept: boolean;
+  @Column({ default: false})
+  isAccepted: boolean;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -33,12 +36,13 @@ export class BoardUser {
   updatedAt: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date | null;
+  deletedAt?: Date | null;
 
   // [boards] 테이블과의 관계 N:1
   @ManyToOne(() => Board, (board) => board.boardUsers, { onDelete: 'CASCADE' })
   board: Board;
 
   // [users] 테이블과의 관계 N:1
-  // 파일 합쳐지면 추가할 것
+  @ManyToOne(() => User, (user) => user.boardUsers)
+  user: User;
 }

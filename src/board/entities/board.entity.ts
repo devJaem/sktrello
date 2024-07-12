@@ -8,6 +8,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { BoardUser } from './board-user.entity';
+import { List } from 'src/list/entities/list.entity';
 
 @Entity('boards')
 export class Board {
@@ -27,12 +28,13 @@ export class Board {
   updatedAt: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date | null;
+  deletedAt?: Date | null;
 
   // [board_users] 테이블과의 관계 1:N
   @OneToMany(() => BoardUser, (boardUser) => boardUser.board, { cascade: true })
   boardUsers: BoardUser[];
 
   // [lists] 테이블과의 관계 1:N
-  // 파일 합치면 추가할 것 ***
+  @OneToMany(() => List, (list) => list.board, { cascade: true })
+  lists: List[];
 }

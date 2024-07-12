@@ -12,10 +12,10 @@ import {
 
 @Entity('check_item')
 export class CheckItem {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
-  @Column()
+  @Column({ unsigned: true })
   checkListId: number;
 
   @Column('text')
@@ -34,7 +34,7 @@ export class CheckItem {
   updatedAt: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date | null;
+  deletedAt?: Date | null;
 
   @ManyToOne(() => CheckList, (checklist) => checklist.checkItems, {
     onDelete: 'CASCADE',

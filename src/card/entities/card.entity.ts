@@ -16,14 +16,10 @@ import { DuedateStatus } from '../types/duedate-status.type';
 
 @Entity()
 export class Card {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
-  // 리스트 테이블과 N:1 관계
-  //   @ManyToOne(()=> List, list => list.card)
-  //   list: List;
-
-  @Column()
+  @Column({ unsigned: true })
   listId: number;
 
   @Column()
@@ -51,17 +47,21 @@ export class Card {
   updatedAt: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date | null;
+  deletedAt?: Date | null;
 
   // 카드유저 테이블과 1:N 관계
-  @OneToMany(() => CardUser, (cardUser) => cardUser.card, { cascade: true })
-  cardUser: CardUser[];
+  @OneToMany(() => CardUser, (cardUsers) => cardUsers.card, { cascade: true })
+  cardUsers: CardUser[];
 
-  // 체크리스트 테이블과 1:N 관계
-  // @OneToMany(() => CheckList, (checkLists) => checkLists.card, { cascade: true })
-  // checkLists: CheckList[];
+  //체크리스트 테이블과 1:N 관계
+  @OneToMany(() => CheckList, (checkLists) => checkLists.card, { cascade: true })
+  checkLists: CheckList[];
 
-  // 코멘트 테이블과 1:N 관계
-  // @OneToMany(() => Comment, (comment) => comment.card, { cascade: true })
-  // comment: Comment[];
+  //코멘트 테이블과 1:N 관계
+  @OneToMany(() => Comment, (comments) => comments.card, { cascade: true })
+  comments: Comment[];
+
+  // 리스트 테이블과 N:1 관계
+  @ManyToOne(() => List, (list) => list.cards, { onDelete: 'CASCADE' })
+  list: List;
 }
