@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { CreateCheckItemDto } from './dto/create-check_item.dto';
-import { UpdateCheckItemDto } from './dto/update-check_item.dto';
+import { CreateCheckItemDto } from './dto/create-checkitem.dto';
+import { UpdateCheckItemDto } from './dto/update-checkitem.dto';
 
 @Injectable()
 export class CheckItemService {

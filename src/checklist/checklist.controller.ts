@@ -7,9 +7,9 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { CheckListService } from './check_list.service';
-import { CreateCheckListDto } from './dto/create-check_list.dto';
-import { UpdateCheckListDto } from './dto/update-check_list.dto';
+import { CheckListService } from './checklist.service';
+import { CreateCheckListDto } from './dto/create-checklist.dto';
+import { UpdateCheckListDto } from './dto/update-checklist.dto';
 
 @Controller('check-list')
 export class CheckListController {

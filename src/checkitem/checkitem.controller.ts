@@ -7,9 +7,9 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { CheckItemService } from './check_item.service';
-import { CreateCheckItemDto } from './dto/create-check_item.dto';
-import { UpdateCheckItemDto } from './dto/update-check_item.dto';
+import { CheckItemService } from './checkitem.service';
+import { CreateCheckItemDto } from './dto/create-checkitem.dto';
+import { UpdateCheckItemDto } from './dto/update-checkitem.dto';
 
 @Controller('check-item')
 export class CheckItemController {
