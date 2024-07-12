@@ -17,15 +17,15 @@ async function bootstrap() {
       transform: true,
       whitelist: true,
       forbidNonWhitelisted: true,
-    }),
+    })
   );
 
   const config = new DocumentBuilder()
-  .setTitle('Sparta Node.js TS')
-  .setDescription('Document for Sparta Node.js TS')
-  .setVersion('1.0')
-  .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' })
-  .build();
+    .setTitle('SKTRELLO TS')
+    .setDescription('Document for SKTRELLO TS')
+    .setVersion('1.0')
+    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' })
+    .build();
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document, {
