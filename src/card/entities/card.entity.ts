@@ -16,10 +16,10 @@ import { DuedateStatus } from '../types/duedate-status.type';
 
 @Entity()
 export class Card {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
-  @Column()
+  @Column({ unsigned: true })
   listId: number;
 
   @Column()

@@ -13,13 +13,13 @@ import {
 
 @Entity({ name: 'comments' })
 export class Comment {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
-  @Column({ type: 'int' })
+  @Column({ unsigned: true })
   userId: number;
 
-  @Column({ type: 'int' })
+  @Column({ unsigned: true })
   cardId: number;
 
   @Column({ type: 'text', nullable: false })
@@ -32,7 +32,7 @@ export class Comment {
   updatedAt: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date | null;
+  deletedAt?: Date | null;
 
   // 댓글, 유저 다:1관계
   @ManyToOne(() => User, (user) => user.comments)

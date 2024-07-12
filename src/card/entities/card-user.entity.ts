@@ -4,22 +4,20 @@ import { User } from 'src/user/entities/user.entity';
 
 @Entity()
 export class CardUser {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
-  @Column()
+  @Column({ unsigned: true })
   cardId: number;
 
-  @Column()
+  @Column({ unsigned: true })
   userId: number;
 
   // 카드 테이블과 N:1관계
   @ManyToOne(() => Card, (card) => card.cardUsers, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'card_id' })
   card: Card;
 
   // 유저 테이블과 N:1관계
   @ManyToOne(() => User, (user) => user.cardUsers)
-  @JoinColumn({ name: 'user_id' })
   user: User;
 }

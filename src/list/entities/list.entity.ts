@@ -16,7 +16,7 @@ export class List {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
-  @Column()
+  @Column({ unsigned: true })
   boardId: number;
 
   @Column()

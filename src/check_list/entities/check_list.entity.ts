@@ -14,10 +14,10 @@ import {
 
 @Entity('check_list')
 export class CheckList {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
-  @Column()
+  @Column({ unsigned: true })
   cardId: number;
 
   @Column()
@@ -33,7 +33,7 @@ export class CheckList {
   updatedAt: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date | null;
+  deletedAt?: Date | null;
 
   /* 체크 아이템 join */
   @OneToMany(() => CheckItem, (check_Item) => check_Item.checklist, { cascade: true})

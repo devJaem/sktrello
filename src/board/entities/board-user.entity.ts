@@ -17,10 +17,10 @@ export class BoardUser {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
-  @Column()
+  @Column({ unsigned: true })
   boardId: number;
 
-  @Column()
+  @Column({ unsigned: true })
   userId: number;
 
   @Column({ default: 'GUEST'})
