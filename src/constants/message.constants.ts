@@ -26,13 +26,17 @@ export const MESSAGES = {
     // Board 상세 조회(R-D)
     READ_DETAIL: {
       SUCCESS: '보드 상세 조회에 성공했습니다.',
-      FAILURE: '보드 상세 조회에 실패했습니다.',
+      FAILURE: {
+        UNAUTHORIZED: '초대 받지 않은 보드입니다.',
+        NOTFOUND: '해당 보드가 존재하지 않습니다.',
+      },
     },
     // Board 수정(U)
     UPDATE: {
       SUCCESS: '보드 수정에 성공했습니다.',
       FAILURE: {
         UNAUTHORIZED: '호스트만 수정할 수 있습니다.',
+        NOTFOUND: '해당 보드가 존재하지 않습니다.',
       },
     },
     // Board 삭제(D)

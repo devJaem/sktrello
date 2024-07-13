@@ -14,6 +14,7 @@ import { MESSAGES } from 'src/constants/message.constants';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { InviteBoardMemberDto } from './dto/invite-board-member.dto';
+import { TestLogIn } from 'src/utils/test-user.decorator';
 
 @Controller('boards')
 export class BoardController {
@@ -21,7 +22,7 @@ export class BoardController {
 
   /** Board 생성(C) API **/
   @Post('')
-  async createBoard(@Body() createBoardDto: CreateBoardDto) {
+  async createBoard(@TestLogIn() user, @Body() createBoardDto: CreateBoardDto) {
     const createdBoard = await this.boardService.createBoard(
       user,
       createBoardDto
@@ -36,7 +37,7 @@ export class BoardController {
 
   /** Board 목록 조회(R-L) **/
   @Get('')
-  async findAllBoard() {
+  async findAllBoard(@TestLogIn() user) {
     const foundAllBoard = await this.boardService.findAllBoard(user);
     const result = {
       status: HttpStatus.OK,
@@ -50,7 +51,7 @@ export class BoardController {
 
   /** Board 상세 조회(R-D) **/
   @Get(':boardId')
-  async findOneBoard(@Param('boardId') boardId: number) {
+  async findOneBoard(@TestLogIn() user, @Param('boardId') boardId: number) {
     const foundOneBoard = await this.boardService.findOneBoard(user, boardId);
     const result = {
       status: HttpStatus.OK,
@@ -63,6 +64,7 @@ export class BoardController {
   /** Board 수정(U) API **/
   @Patch(':boardId')
   async updateBoard(
+    @TestLogIn() user,
     @Param('boardId') boardId: number,
     @Body() updateBoardDto: UpdateBoardDto
   ) {
@@ -81,7 +83,7 @@ export class BoardController {
 
   /** Board 삭제(D) API **/
   @Delete(':boardId')
-  async softDeleteBoard(@Param('boardId') boardId: number) {
+  async softDeleteBoard(@TestLogIn() user, @Param('boardId') boardId: number) {
     const deletedBoard = await this.boardService.softDeleteBoard(user, boardId);
     const result = {
       status: HttpStatus.OK,
@@ -94,6 +96,7 @@ export class BoardController {
   /** Board 멤버 초대(Invite) API **/
   @Post(':boardId/invite')
   async inviteBoardMember(
+    @TestLogIn() user,
     @Param('boardId') boardId: number,
     @Body() inviteBoardMemberDto: InviteBoardMemberDto
   ) {

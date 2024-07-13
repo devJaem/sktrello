@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { ListService } from 'src/list/list.service';
 
 import { MESSAGES } from 'src/constants/message.constants';
 import { CreateBoardDto } from './dto/create-board.dto';
@@ -24,6 +25,8 @@ export class BoardService {
   constructor(
     // 트랜잭션을 위한 준비!
     private dataSource: DataSource,
+
+    private readonly listService: ListService,
 
     @InjectRepository(Board)
     private readonly boardRepository: Repository<Board>,
@@ -118,14 +121,45 @@ export class BoardService {
     };
   }
 
-  /** Board 상세 조회(R-D) **/ // 핵심기능!! - 보드 하위의 List 당겨오기!! *****
+  /** Board 상세 조회(R-D) **/ // 핵심기능!! - 보드 하위의 List 당겨오기!! **********
+  // 다른 사람들 파일 합친 내용이 필요함 *************** 수정 필요 ******************
   async findOneBoard(user, boardId: number) {
     // 0. 로그인한 사용자 id 가져오기
     const userId: number = user.id;
 
-    // 1.
+    // 1. 대상 확인 : 해당 board가 존재하는지?
+    // 1-1. 해당 board 정보 가져오기
+    const board = await this.boardRepository.findOne({
+      where: {
+        id: boardId,
+      },
+    });
+    // 1-2. 만약 board가 존재하지 않는 경우 에러처리
+    if (!board) {
+      throw new NotFoundException(MESSAGES.BOARD.READ_DETAIL.FAILURE.NOTFOUND);
+    }
 
-    return;
+    // 2. 권한 확인 : 로그인한 사용자가 초대를 수락한 사용자인지?
+    // 2-1. boardUser 정보 조회하기
+    const boardUser = await this.boardUserRepository.findOne({
+      where: {
+        boardId,
+        userId,
+      },
+    });
+    // 2-2. 초대를 수락을 하지 않은 상태라면 에러처리
+    if (boardUser.isAccepted == false) {
+      throw new UnauthorizedException(
+        MESSAGES.BOARD.READ_DETAIL.FAILURE.UNAUTHORIZED
+      );
+    }
+
+    // 3. 해당 board에 소속된 list 목록 가져오기 ***** 채은님이 만든 함수명으로 교체해야함! *****
+    // const lists = await this.listService.findAll(user, boardId);
+    const lists = '테스트 성공'; // 임시
+
+    // 4. 조회된 내용을 controller에 전달
+    return lists;
   }
 
   /** Board 수정(U) API **/
