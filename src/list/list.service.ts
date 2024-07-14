@@ -3,6 +3,8 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import { MESSAGES } from 'src/constants/message.constants';
+
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
 import { MoveListDto } from './dto/move-list.dto';
@@ -29,7 +31,7 @@ export class ListService {
   async createList(userId: number, createListDto: CreateListDto) {
     // 인증된 사용자 여부 확인
     if (!userId) {
-      throw new UnauthorizedException('인증된 사용자가 아닙니다.');
+      throw new UnauthorizedException(MESSAGES.LIST.COMMON.USER.UNAUTHORIZED);
     }
 
     const { boardId, title } = createListDto;
@@ -40,7 +42,9 @@ export class ListService {
     });
 
     if (!inviteMember) {
-      throw new UnauthorizedException('해당 보드에 권한이 없습니다.');
+      throw new UnauthorizedException(
+        MESSAGES.BOARD.READ_DETAIL.FAILURE.UNAUTHORIZED
+      );
     }
 
     // 해당 id의 Board 있는지 확인
@@ -49,7 +53,7 @@ export class ListService {
     });
 
     if (!board) {
-      throw new NotFoundException('해당하는 보드가 존재하지 않습니다.');
+      throw new NotFoundException(MESSAGES.BOARD.READ_DETAIL.FAILURE.NOTFOUND);
     }
 
     const createList = await this.listRepository.save({
@@ -65,7 +69,7 @@ export class ListService {
   async findAllLists(userId: number) {
     // 인증된 사용자 여부 확인
     if (!userId) {
-      throw new UnauthorizedException('인증된 사용자가 아닙니다.');
+      throw new UnauthorizedException(MESSAGES.LIST.COMMON.USER.UNAUTHORIZED);
     }
 
     const lists = await this.listRepository.find({
@@ -80,7 +84,7 @@ export class ListService {
   async findListById(userId: number, listId: number) {
     // 인증된 사용자 여부 확인
     if (!userId) {
-      throw new UnauthorizedException('인증된 사용자가 아닙니다.');
+      throw new UnauthorizedException(MESSAGES.LIST.COMMON.USER.UNAUTHORIZED);
     }
 
     const list = await this.listRepository.findOne({
@@ -88,7 +92,7 @@ export class ListService {
     });
 
     if (!list) {
-      throw new NotFoundException('리스트가 존재하지 않습니다.');
+      throw new NotFoundException(MESSAGES.LIST.READ_LIST.FAILURE);
     }
 
     return list;
@@ -102,14 +106,14 @@ export class ListService {
   ) {
     // 인증된 사용자 여부 확인
     if (!userId) {
-      throw new UnauthorizedException('인증된 사용자가 아닙니다.');
+      throw new UnauthorizedException(MESSAGES.LIST.COMMON.USER.UNAUTHORIZED);
     }
 
     // 해당하는 listId 가져오기
     const list = await this.findListById(userId, listId);
 
     if (!list) {
-      throw new NotFoundException('해당 아이디의 리스트가 존재하지 않습니다.');
+      throw new NotFoundException();
     }
 
     const { title } = updateListDto;
@@ -126,14 +130,14 @@ export class ListService {
   async moveList(userId: number, listId: number, moveListDto: MoveListDto) {
     // 인증된 사용자 여부 확인
     if (!userId) {
-      throw new UnauthorizedException('인증된 사용자가 아닙니다.');
+      throw new UnauthorizedException(MESSAGES.LIST.COMMON.USER.UNAUTHORIZED);
     }
 
     // 해당하는 listId 가져오기
     const list = await this.findListById(userId, listId);
 
     if (!list) {
-      throw new NotFoundException('해당 아이디의 리스트가 존재하지 않습니다.');
+      throw new NotFoundException(MESSAGES.LIST.READ_DETAIL.FAILURE);
     }
 
     const { toPrevId, toNextId } = moveListDto;
@@ -164,14 +168,14 @@ export class ListService {
   async removeList(userId: number, listId: number) {
     // 인증된 사용자 여부 확인
     if (!userId) {
-      throw new UnauthorizedException('인증된 사용자가 아닙니다.');
+      throw new UnauthorizedException(MESSAGES.LIST.COMMON.USER.UNAUTHORIZED);
     }
 
     // 해당하는 listId 가져오기
     const list = await this.findListById(userId, listId);
 
     if (!list) {
-      throw new NotFoundException('해당 아이디의 리스트가 존재하지 않습니다.');
+      throw new NotFoundException(MESSAGES.LIST.READ_DETAIL.FAILURE);
     }
 
     const removeList = await this.listRepository.softDelete({

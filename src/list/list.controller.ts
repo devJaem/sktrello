@@ -10,6 +10,8 @@ import {
   // UseGuards,
 } from '@nestjs/common';
 import { ListService } from './list.service';
+
+import { MESSAGES } from 'src/constants/message.constants';
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
 import { MoveListDto } from './dto/move-list.dto';
@@ -31,7 +33,7 @@ export class ListController {
 
     return {
       statusCode: HttpStatus.CREATED,
-      message: '리스트 생성에 성공했습니다.',
+      message: MESSAGES.LIST.CREATE.SUCCESS,
       createList,
     };
   }
@@ -44,7 +46,7 @@ export class ListController {
 
     return {
       statusCode: HttpStatus.OK,
-      message: '리스트 조회에 성공했습니다.',
+      message: MESSAGES.LIST.READ_LIST.SUCCESS,
       findAllLists,
     };
   }
@@ -57,7 +59,7 @@ export class ListController {
 
     return {
       statusCode: HttpStatus.OK,
-      message: '리스트 상세 조회에 성공했습니다.',
+      message: MESSAGES.LIST.READ_DETAIL.SUCCESS,
       findListById,
     };
   }
@@ -78,7 +80,7 @@ export class ListController {
 
     return {
       statusCode: HttpStatus.OK,
-      message: '리스트 이름 수정에 성공했습니다.',
+      message: MESSAGES.LIST.UPDATE.SUCCESS_NAME,
       updateList,
     };
   }
@@ -102,7 +104,7 @@ export class ListController {
 
     return {
       statusCode: HttpStatus.OK,
-      message: '리스트 삭제에 성공했습니다.',
+      message: MESSAGES.LIST.DELETE.SUCCESS,
       removeList,
     };
   }

@@ -1,6 +1,7 @@
 import { PickType } from '@nestjs/swagger';
 import { List } from '../entities/list.entity';
 import { IsInt, IsNotEmpty, IsString } from 'class-validator';
+import { MESSAGES } from 'src/constants/message.constants';
 
 export class CreateListDto extends PickType(List, [
   'boardId',
@@ -11,7 +12,7 @@ export class CreateListDto extends PickType(List, [
   boardId: number;
 
   @IsString()
-  @IsNotEmpty({ message: '제목을 입력해 주세요.' })
+  @IsNotEmpty({ message: MESSAGES.LIST.COMMON.TITLE.NO_TITLE })
   title: string;
 
   // listOrder 가져오는게 맞는건지 ???!
