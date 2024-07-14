@@ -10,8 +10,8 @@ import { CardModule } from './card/card.module';
 import { CommentModule } from './comment/comment.module';
 import { ListModule } from './list/list.module';
 import { AppController } from './app.controller';
-import { ChecklistModule } from './checklist/checklist.module';
-import { CheckitemModule } from './checkitem/checkitem.module';
+import { CheckListModule } from './checkList/checkList.module';
+import { CheckItemModule } from './checkItem/checkItem.module';
 
 @Module({
   imports: [
@@ -24,8 +24,8 @@ import { CheckitemModule } from './checkitem/checkitem.module';
     AuthModule,
     BoardModule,
     CardModule,
-    CheckitemModule,
-    ChecklistModule,
+    CheckItemModule,
+    CheckListModule,
     CommentModule,
     ListModule,
   ],

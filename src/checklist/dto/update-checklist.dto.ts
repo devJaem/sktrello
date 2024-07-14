@@ -1,6 +1,6 @@
 import { PickType } from '@nestjs/swagger';
-import { CreateChecklistDto } from './create-checklist.dto';
+import { CreateCheckListDto } from './create-checkList.dto';
 
-export class UpdateChecklistDto extends PickType(CreateChecklistDto, [
+export class UpdateCheckListDto extends PickType(CreateCheckListDto, [
   'title',
 ]) {}

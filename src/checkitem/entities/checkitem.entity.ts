@@ -1,4 +1,4 @@
-import { Checklist } from 'src/checklist/entities/checklist.entity';
+import { CheckList } from 'src/checkList/entities/checkList.entity';
 import {
   Column,
   CreateDateColumn,
@@ -9,8 +9,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('checkitem')
-export class Checkitem {
+@Entity('checkItem')
+export class CheckItem {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
@@ -24,7 +24,7 @@ export class Checkitem {
   isDone: boolean;
 
   @Column()
-  checkItemOrder: number;
+  checkItemOrder: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -35,9 +35,9 @@ export class Checkitem {
   @DeleteDateColumn()
   deletedAt?: Date | null;
 
-  @ManyToOne(() => Checklist, (checklist) => checklist.checkItems, {
+  @ManyToOne(() => CheckList, (checkList) => checkList.checkItems, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',
   })
-  checklist: Checklist;
+  checkList: CheckList;
 }

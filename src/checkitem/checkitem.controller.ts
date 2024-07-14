@@ -7,16 +7,16 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { CheckitemService } from './checkitem.service';
-import { CreateCheckitemDto } from './dto/create-checkitem.dto';
-import { UpdateCheckitemDto } from './dto/update-checkitem.dto';
+import { CheckItemService } from './checkItem.service';
+import { CreateCheckItemDto } from './dto/create-checkItem.dto';
+import { UpdateCheckItemDto } from './dto/update-checkItem.dto';
 
-@Controller('checkitems')
-export class CheckitemController {
-  constructor(private readonly checkItemService: CheckitemService) {}
+@Controller('checkItems')
+export class CheckItemController {
+  constructor(private readonly checkItemService: CheckItemService) {}
 
   @Post()
-  create(@Body() createCheckItemDto: CreateCheckitemDto) {
+  create(@Body() createCheckItemDto: CreateCheckItemDto) {
     return this.checkItemService.create(createCheckItemDto);
   }
 
@@ -33,7 +33,7 @@ export class CheckitemController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateCheckItemDto: UpdateCheckitemDto
+    @Body() updateCheckItemDto: UpdateCheckItemDto
   ) {
     return this.checkItemService.update(+id, updateCheckItemDto);
   }

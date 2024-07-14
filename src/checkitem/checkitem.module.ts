@@ -1,19 +1,19 @@
 import { Module } from '@nestjs/common';
-import { CheckitemService } from './checkitem.service';
-import { CheckitemController } from './checkitem.controller';
-import { Checkitem } from './entities/checkitem.entity';
+import { CheckItemService } from './checkItem.service';
+import { CheckItemController } from './checkItem.controller';
+import { CheckItem } from './entities/checkItem.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ChecklistModule } from 'src/checklist/checklist.module';
+import { CheckListModule } from 'src/checkList/checkList.module';
 import { BoardModule } from 'src/board/board.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Checkitem]),
-    ChecklistModule,
+    TypeOrmModule.forFeature([CheckItem]),
+    CheckListModule,
     BoardModule,
   ],
-  controllers: [CheckitemController],
-  providers: [CheckitemService],
-  exports: [CheckitemService],
+  controllers: [CheckItemController],
+  providers: [CheckItemService],
+  exports: [CheckItemService],
 })
-export class CheckitemModule {}
+export class CheckItemModule {}

@@ -7,17 +7,17 @@ import {
   Param,
   Delete,
 } from '@nestjs/common';
-import { ChecklistService } from './checklist.service';
-import { CreateChecklistDto } from './dto/create-checklist.dto';
-import { UpdateChecklistDto } from './dto/update-checklist.dto';
+import { CheckListService } from './checkList.service';
+import { CreateCheckListDto } from './dto/create-checkList.dto';
+import { UpdateCheckListDto } from './dto/update-checkList.dto';
 
-@Controller('checklists')
-export class ChecklistController {
-  constructor(private readonly checkListService: ChecklistService) {}
+@Controller('checkLists')
+export class CheckListController {
+  constructor(private readonly checkListService: CheckListService) {}
 
   @Post()
-  create(@Body() createChecklistDto: CreateChecklistDto) {
-    return this.checkListService.create(createChecklistDto);
+  create(@Body() createCheckListDto: CreateCheckListDto) {
+    return this.checkListService.create(createCheckListDto);
   }
 
   @Get()
@@ -33,8 +33,9 @@ export class ChecklistController {
   @Patch(':id')
   update(
     @Param('id') id: string,
-    @Body() updateChecklistDto: UpdateChecklistDto  ) {
-    return this.checkListService.update(+id, updateChecklistDto);
+    @Body() updateCheckListDto: UpdateCheckListDto
+  ) {
+    return this.checkListService.update(+id, updateCheckListDto);
   }
 
   @Delete(':id')

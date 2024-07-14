@@ -9,7 +9,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { CardUser } from './card-user.entity';
-import { Checklist } from 'src/checklist/entities/checklist.entity';
+import { CheckList } from 'src/checkList/entities/checkList.entity';
 import { List } from 'src/list/entities/list.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
 import { DuedateStatus } from '../types/duedate-status.type';
@@ -58,10 +58,10 @@ export class Card {
   cardUsers: CardUser[];
 
   //체크리스트 테이블과 1:N 관계
-  @OneToMany(() => Checklist, (checkLists) => checkLists.card, {
+  @OneToMany(() => CheckList, (checkLists) => checkLists.card, {
     cascade: true,
   })
-  checklists: Checklist[];
+  checkLists: CheckList[];
 
   //코멘트 테이블과 1:N 관계
   @OneToMany(() => Comment, (comments) => comments.card, { cascade: true })
