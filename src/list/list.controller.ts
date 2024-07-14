@@ -93,7 +93,7 @@ export class ListController {
   // @UseGuards(AuthGuard('jwt'))
   @Delete(':listId')
   async removeList(@User() user, @Param('listId') listId: number) {
-    const removeList = await this.removeList(user.id, listId);
+    const removeList = await this.listService.removeList(user.id, listId);
 
     return {
       statusCode: HttpStatus.OK,
