@@ -34,15 +34,15 @@ export class User {
   @DeleteDateColumn()
   deletedAt?: Date | null;
 
-  // boardUser와의 관계
+  // Relation - [users] 1 : N [board_users]
   @OneToMany(() => BoardUser, (boardUser) => boardUser.user)
   boardUsers: BoardUser[];
 
-  // cardUser와의 관계
+  // Relation - [users] 1 : N [card_users]
   @OneToMany(() => CardUser, (cardUser) => cardUser.user)
   cardUsers: CardUser[];
 
-  // comment와의 관계
+  // Relation - [users] 1 : N [comments]
   @OneToMany(() => Comment, (comment) => comment.user)
   comments: Comment[];
 }

@@ -30,11 +30,11 @@ export class Board {
   @DeleteDateColumn()
   deletedAt?: Date | null;
 
-  // [board_users] 테이블과의 관계 1:N
+  // Relation - [boards] 1 : N [board_users]
   @OneToMany(() => BoardUser, (boardUser) => boardUser.board, { cascade: true })
   boardUsers: BoardUser[];
 
-  // [lists] 테이블과의 관계 1:N
+  // Relation - [boards] 1 : N [lists]
   @OneToMany(() => List, (list) => list.board, { cascade: true })
   lists: List[];
 }
