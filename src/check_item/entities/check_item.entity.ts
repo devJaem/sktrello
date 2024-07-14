@@ -35,6 +35,7 @@ export class CheckItem {
   @DeleteDateColumn()
   deletedAt?: Date | null;
 
+  // Relation - [check_items] N : 1 [check_lists]
   @ManyToOne(() => CheckList, (checklist) => checklist.checkItems, {
     onDelete: 'CASCADE',
     onUpdate: 'CASCADE',

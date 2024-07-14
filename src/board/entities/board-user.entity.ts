@@ -37,11 +37,11 @@ export class BoardUser {
   @DeleteDateColumn()
   deletedAt?: Date | null;
 
-  // [boards] 테이블과의 관계 N:1
+  // Relation - [board_users] N : 1 [boards]
   @ManyToOne(() => Board, (board) => board.boardUsers, { onDelete: 'CASCADE' })
   board: Board;
 
-  // [users] 테이블과의 관계 N:1
+  // Relation - [board_users] N : 1 [users]
   @ManyToOne(() => User, (user) => user.boardUsers)
   user: User;
 }
