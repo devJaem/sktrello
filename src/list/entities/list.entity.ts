@@ -23,7 +23,7 @@ export class List {
   title: string;
 
   @Column()
-  listOrder: string;
+  listOrder: string; // Lexorank 값 저장
 
   @CreateDateColumn()
   createdAt: Date;

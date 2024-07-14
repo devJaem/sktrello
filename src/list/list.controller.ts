@@ -12,6 +12,7 @@ import {
 import { ListService } from './list.service';
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
+import { MoveListDto } from './dto/move-list.dto';
 // import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/utils/user.decorator'; // 임시 user 데코레이터 생성
 
@@ -85,8 +86,12 @@ export class ListController {
   /** 리스트 순서 이동 API **/
   // @UseGuards(AuthGuard('jwt'))
   @Patch(':listId/move')
-  moveList(@User() user, @Param('listId') listId: number) {
-    return this.listService.moveList(user.id, listId);
+  moveList(
+    @User() user,
+    @Param('listId') listId: number,
+    @Body() moveListDto: MoveListDto
+  ) {
+    return this.listService.moveList(user.id, listId, moveListDto);
   }
 
   /** 리스트 삭제 API **/
