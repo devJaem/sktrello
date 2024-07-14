@@ -20,6 +20,8 @@ export class CheckItemController {
   constructor(private readonly checkItemService: CheckItemService) {}
 
   @Post()
+  @ApiOperation({ summary: '체크리스트 아이템 생성' })
+  @ApiResponse({ status: HttpStatus.CREATED, description: MESSAGES.CHECKITEM.CREATE })
   async create(
     @Param('checklistId') checklistId: number,
     @Body() createCheckItemDto: CreateCheckItemDto
@@ -36,6 +38,7 @@ export class CheckItemController {
   }
 
   @Get()
+  @ApiOperation({ summary: '체크리스트 아이템 전체 조회' })
   async findAll(@Param('checklistId') checklistId: number) {
     const checkItems = await this.checkItemService.findAll(checklistId);
     return {
@@ -45,6 +48,7 @@ export class CheckItemController {
   }
 
   @Get(':itemId')
+  @ApiOperation({ summary: '체크리스트 아이템 단일 조회' })
   async findOne(@Param('itemId') itemId: number) {
     const checkItem = await this.checkItemService.findOne(itemId);
     return {
@@ -54,6 +58,7 @@ export class CheckItemController {
   }
 
   @Patch(':itemId')
+  @ApiOperation({ summary: '체크리스트 아이템 수정' })
   async update(
     @Param('itemId') itemId: number,
     @Body() updateCheckItemDto: UpdateCheckItemDto
@@ -70,6 +75,7 @@ export class CheckItemController {
   }
 
   @Delete(':itemId')
+  @ApiOperation({ summary: '체크리스트 아이템 삭제' })
   async remove(@Param('itemId') itemId: number) {
     const deletedCheckItem = await this.checkItemService.remove(itemId);
     return {
@@ -80,6 +86,7 @@ export class CheckItemController {
   }
 
   @Patch(':itemId/move')
+  @ApiOperation({ summary: '체크리스트 내의 아이템 이동' })
   async moveItemWithinCheckList(
     @Param('itemId') itemId: number,
     @Body() moveCheckItemDto: MoveCheckItemDto
@@ -96,6 +103,7 @@ export class CheckItemController {
   }
 
   @Patch(':itemId/move-to-another')
+  @ApiOperation({ summary: '다른 체크리스트로 아이템 이동' })
   async moveItemToAnotherChecklist(
     @Param('itemId') itemId: number,
     @Body() moveCheckItemDto: MoveCheckItemDto
