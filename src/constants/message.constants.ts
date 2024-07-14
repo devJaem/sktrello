@@ -85,6 +85,7 @@ export const MESSAGES = {
     // List 수정
     UPDATE: {
       SUCCESS_NAME: '리스트 이름 수정에 성공했습니다.',
+      SUCCESS_ORDER: '리스트 순서 이동에 성공했습니다.',
     },
     // List 삭제
     DELETE: {

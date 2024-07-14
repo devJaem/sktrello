@@ -88,12 +88,22 @@ export class ListController {
   /** 리스트 순서 이동 API **/
   // @UseGuards(AuthGuard('jwt'))
   @Patch(':listId/move')
-  moveList(
+  async moveList(
     @User() user,
     @Param('listId') listId: number,
     @Body() moveListDto: MoveListDto
   ) {
-    return this.listService.moveList(user.id, listId, moveListDto);
+    const moveList = await this.listService.moveList(
+      user.id,
+      listId,
+      moveListDto
+    );
+
+    return {
+      statusCode: HttpStatus.OK,
+      message: MESSAGES.LIST.UPDATE.SUCCESS_ORDER,
+      moveList,
+    };
   }
 
   /** 리스트 삭제 API **/
