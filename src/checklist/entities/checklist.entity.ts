@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('checkList')
+@Entity('check_lists')
 export class CheckList {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;

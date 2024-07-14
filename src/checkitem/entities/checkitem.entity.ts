@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('checkItem')
+@Entity('check_items')
 export class CheckItem {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
