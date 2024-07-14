@@ -60,7 +60,12 @@ export class ListService {
 
   /** 리스트 조회 API **/
   // List title, Card name, Card id, Card color(?), Card 순서(lexorank)
-  async findAllLists() {
+  async findAllLists(userId: number) {
+    // 인증된 사용자 여부 확인
+    if (!userId) {
+      throw new UnauthorizedException('인증된 사용자가 아닙니다.');
+    }
+
     const lists = await this.listRepository.find({
       order: { listOrder: 'ASC' },
     });
@@ -69,7 +74,12 @@ export class ListService {
   }
 
   /** 리스트 상세 조회 API **/
-  async findListById(listId: number) {
+  async findListById(userId: number, listId: number) {
+    // 인증된 사용자 여부 확인
+    if (!userId) {
+      throw new UnauthorizedException('인증된 사용자가 아닙니다.');
+    }
+
     const list = await this.listRepository.findOne({
       where: { id: listId },
     });
@@ -82,9 +92,18 @@ export class ListService {
   }
 
   /** 리스트 이름 수정 API **/
-  async updateList(listId: number, updateListDto: UpdateListDto) {
+  async updateList(
+    userId: number,
+    listId: number,
+    updateListDto: UpdateListDto
+  ) {
+    // 인증된 사용자 여부 확인
+    if (!userId) {
+      throw new UnauthorizedException('인증된 사용자가 아닙니다.');
+    }
+
     // 해당하는 listId 가져오기
-    const list = await this.findListById(listId);
+    const list = await this.findListById(userId, listId);
 
     if (!list) {
       throw new NotFoundException('해당 아이디의 리스트가 존재하지 않습니다.');
@@ -101,14 +120,24 @@ export class ListService {
   }
 
   /** 리스트 순서 이동 API **/
-  moveList(listId: number) {
+  moveList(userId: number, listId: number) {
+    // 인증된 사용자 여부 확인
+    if (!userId) {
+      throw new UnauthorizedException('인증된 사용자가 아닙니다.');
+    }
+
     return `This action returns a #${listId} list`;
   }
 
   /** 리스트 삭제 API **/
-  async removeList(listId: number) {
+  async removeList(userId: number, listId: number) {
+    // 인증된 사용자 여부 확인
+    if (!userId) {
+      throw new UnauthorizedException('인증된 사용자가 아닙니다.');
+    }
+
     // 해당하는 listId 가져오기
-    const list = await this.findListById(listId);
+    const list = await this.findListById(userId, listId);
 
     if (!list) {
       throw new NotFoundException('해당 아이디의 리스트가 존재하지 않습니다.');

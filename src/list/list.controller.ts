@@ -38,8 +38,8 @@ export class ListController {
   /** 리스트 조회 API **/
   // @UseGuards(AuthGuard('jwt'))
   @Get()
-  async findAllLists() {
-    const findAllLists = await this.listService.findAllLists();
+  async findAllLists(@User() user) {
+    const findAllLists = await this.listService.findAllLists(user.id);
 
     return {
       statusCode: HttpStatus.OK,
@@ -51,8 +51,8 @@ export class ListController {
   /** 리스트 상세 조회 API **/
   // @UseGuards(AuthGuard('jwt'))
   @Get()
-  async findListById(@Param('listId') listId: number) {
-    const findListById = await this.listService.findListById(listId);
+  async findListById(@User() user, @Param('listId') listId: number) {
+    const findListById = await this.listService.findListById(user.id, listId);
 
     return {
       statusCode: HttpStatus.OK,
@@ -65,10 +65,15 @@ export class ListController {
   // @UseGuards(AuthGuard('jwt'))
   @Patch(':listId')
   async updateList(
+    @User() user,
     @Param('listId') listId: number,
     @Body() updateListDto: UpdateListDto
   ) {
-    const updateList = await this.listService.updateList(listId, updateListDto);
+    const updateList = await this.listService.updateList(
+      user.id,
+      listId,
+      updateListDto
+    );
 
     return {
       statusCode: HttpStatus.OK,
@@ -78,16 +83,17 @@ export class ListController {
   }
 
   /** 리스트 순서 이동 API **/
+  // @UseGuards(AuthGuard('jwt'))
   @Patch(':listId/move')
-  moveList(@Param('listId') listId: number) {
-    return this.listService.moveList(listId);
+  moveList(@User() user, @Param('listId') listId: number) {
+    return this.listService.moveList(user.id, listId);
   }
 
   /** 리스트 삭제 API **/
   // @UseGuards(AuthGuard('jwt'))
   @Delete(':listId')
-  async removeList(@Param('listId') listId: number) {
-    const removeList = await this.removeList(listId);
+  async removeList(@User() user, @Param('listId') listId: number) {
+    const removeList = await this.removeList(user.id, listId);
 
     return {
       statusCode: HttpStatus.OK,
