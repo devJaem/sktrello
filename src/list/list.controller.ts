@@ -22,7 +22,12 @@ import { User } from 'src/utils/user.decorator'; // 임시 user 데코레이터 
 export class ListController {
   constructor(private readonly listService: ListService) {}
 
-  /** 리스트 생성 API **/
+  /**
+   * List 생성
+   * @param user
+   * @param createListDto
+   * @returns
+   */
   // @UseGuards(AuthGuard('jwt')) // JWT 인증을 통해 인증된 사용자만 접근 가능하도록 함
   @Post()
   async createList(@User() user, @Body() createListDto: CreateListDto) {
@@ -38,7 +43,11 @@ export class ListController {
     };
   }
 
-  /** 리스트 조회 API **/
+  /**
+   * List 조회
+   * @param user
+   * @returns
+   */
   // @UseGuards(AuthGuard('jwt'))
   @Get()
   async findAllLists(@User() user) {
@@ -51,7 +60,12 @@ export class ListController {
     };
   }
 
-  /** 리스트 상세 조회 API **/
+  /**
+   * List 상세 조회
+   * @param user
+   * @param listId
+   * @returns
+   */
   // @UseGuards(AuthGuard('jwt'))
   @Get()
   async findListById(@User() user, @Param('listId') listId: number) {
@@ -64,7 +78,13 @@ export class ListController {
     };
   }
 
-  /** 리스트 이름 수정 API **/
+  /**
+   * List 이름 수정
+   * @param user
+   * @param listId
+   * @param updateListDto
+   * @returns
+   */
   // @UseGuards(AuthGuard('jwt'))
   @Patch(':listId')
   async updateList(
@@ -85,7 +105,13 @@ export class ListController {
     };
   }
 
-  /** 리스트 순서 이동 API **/
+  /**
+   * List 순서 이동
+   * @param user
+   * @param listId
+   * @param moveListDto
+   * @returns
+   */
   // @UseGuards(AuthGuard('jwt'))
   @Patch(':listId/move')
   async moveList(
@@ -106,7 +132,12 @@ export class ListController {
     };
   }
 
-  /** 리스트 삭제 API **/
+  /**
+   * List 삭제
+   * @param user
+   * @param listId
+   * @returns
+   */
   // @UseGuards(AuthGuard('jwt'))
   @Delete(':listId')
   async removeList(@User() user, @Param('listId') listId: number) {

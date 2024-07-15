@@ -113,7 +113,7 @@ export class ListService {
     const list = await this.findListById(userId, listId);
 
     if (!list) {
-      throw new NotFoundException();
+      throw new NotFoundException(MESSAGES.LIST.READ_DETAIL.FAILURE);
     }
 
     const { title } = updateListDto;
