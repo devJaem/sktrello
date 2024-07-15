@@ -9,7 +9,7 @@ import { DataSource, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ListService } from 'src/list/list.service';
 
-import { MESSAGES } from 'src/constants/message.constants';
+import { BOARD_MESSAGES } from 'src/constants/board-message.constant';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { InviteBoardMemberDto } from './dto/invite-board-member.dto';
@@ -78,7 +78,9 @@ export class BoardService {
       // 1-3-실패시-2. 롤백 된 트랜잭션 release
       await queryRunner.release();
       // 1-3-실패시-3. 에러 처리
-      throw new InternalServerErrorException(MESSAGES.BOARD.CREATE.FAILURE);
+      throw new InternalServerErrorException(
+        BOARD_MESSAGES.BOARD.CREATE.FAILURE
+      );
     }
   }
 
@@ -136,7 +138,9 @@ export class BoardService {
     });
     // 1-2. 만약 board가 존재하지 않는 경우 에러처리
     if (!board) {
-      throw new NotFoundException(MESSAGES.BOARD.READ_DETAIL.FAILURE.NOTFOUND);
+      throw new NotFoundException(
+        BOARD_MESSAGES.BOARD.READ_DETAIL.FAILURE.NOTFOUND
+      );
     }
 
     // 2. 권한 확인 : 로그인한 사용자가 초대를 수락한 사용자인지?
@@ -150,7 +154,7 @@ export class BoardService {
     // 2-2. 초대를 수락을 하지 않은 상태라면 에러처리
     if (boardUser.isAccepted == false) {
       throw new UnauthorizedException(
-        MESSAGES.BOARD.READ_DETAIL.FAILURE.UNAUTHORIZED
+        BOARD_MESSAGES.BOARD.READ_DETAIL.FAILURE.UNAUTHORIZED
       );
     }
 
@@ -176,7 +180,7 @@ export class BoardService {
     });
     // 1-2. 해당 board가 없다면 에러처리
     if (!isExistingBoard) {
-      throw new NotFoundException(MESSAGES.BOARD.DELETE.FAILURE.NOTFOUND);
+      throw new NotFoundException(BOARD_MESSAGES.BOARD.DELETE.FAILURE.NOTFOUND);
     }
 
     // 2. 권한 확인 : 사용자가 수정 대상 board의 host인가?
@@ -190,7 +194,7 @@ export class BoardService {
     // 2-2. isHost에서 boardUserRole이 host가 아니라면 에러처리
     if (isHost.boardUserRole !== 'HOST') {
       throw new UnauthorizedException(
-        MESSAGES.BOARD.DELETE.FAILURE.UNAUTHORIZED
+        BOARD_MESSAGES.BOARD.DELETE.FAILURE.UNAUTHORIZED
       );
     }
 
@@ -228,7 +232,7 @@ export class BoardService {
     });
     // 1-2. 해당 board가 없다면 에러처리
     if (!isExistingBoard) {
-      throw new NotFoundException(MESSAGES.BOARD.DELETE.FAILURE.NOTFOUND);
+      throw new NotFoundException(BOARD_MESSAGES.BOARD.DELETE.FAILURE.NOTFOUND);
     }
 
     // 2. 권한 확인 : 사용자가 삭제 대상 board의 host인가?
@@ -242,7 +246,7 @@ export class BoardService {
     // 2-2. isHost에서 boardUserRole이 host가 아니라면 에러처리
     if (isHost.boardUserRole !== 'HOST') {
       throw new UnauthorizedException(
-        MESSAGES.BOARD.DELETE.FAILURE.UNAUTHORIZED
+        BOARD_MESSAGES.BOARD.DELETE.FAILURE.UNAUTHORIZED
       );
     }
 
@@ -278,7 +282,7 @@ export class BoardService {
     // 1-2. isHost에서 boardUserRole이 host가 아니라면 에러처리
     if (isHost.boardUserRole !== 'HOST') {
       throw new UnauthorizedException(
-        MESSAGES.BOARD.INVITE.FAILURE.UNAUTHORIZED
+        BOARD_MESSAGES.BOARD.INVITE.FAILURE.UNAUTHORIZED
       );
     }
 
@@ -291,7 +295,7 @@ export class BoardService {
     });
     // 2-2. 초대 대상 사용자가 존재하지 않는다면 에러처리
     if (!isExistingEmail) {
-      throw new NotFoundException(MESSAGES.BOARD.INVITE.FAILURE.NOTFOUND);
+      throw new NotFoundException(BOARD_MESSAGES.BOARD.INVITE.FAILURE.NOTFOUND);
     }
 
     // 3. 멤버 확인 : 이미 해당 보드에 초대된 사용자인가?
@@ -303,7 +307,7 @@ export class BoardService {
     });
     // 3-2. 이미 초대한 사용자라면 에러처리
     if (isInvited) {
-      throw new ConflictException(MESSAGES.BOARD.INVITE.FAILURE.CONFLICT);
+      throw new ConflictException(BOARD_MESSAGES.BOARD.INVITE.FAILURE.CONFLICT);
     }
 
     // 4. 초대하기

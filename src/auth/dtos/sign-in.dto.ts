@@ -1,12 +1,12 @@
 import { IsNotEmpty, IsString } from 'class-validator';
-import { MESSAGES } from 'src/constants/user-message.constants';
+import { USER_MESSAGES } from 'src/constants/user-message.constant';
 
 export class SignInDto {
   @IsString()
-  @IsNotEmpty({ message: MESSAGES.USER.SIGNIN.EMAIL.EMPTY })
+  @IsNotEmpty({ message: USER_MESSAGES.USER.SIGNIN.EMAIL.EMPTY })
   email: string;
 
   @IsString()
-  @IsNotEmpty({ message: MESSAGES.USER.SIGNIN.PASSWORD.EMPTY })
+  @IsNotEmpty({ message: USER_MESSAGES.USER.SIGNIN.PASSWORD.EMPTY })
   password: string;
 }

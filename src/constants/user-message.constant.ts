@@ -1,7 +1,4 @@
-import { Sign } from 'crypto';
-import { NOTFOUND } from 'dns';
-
-export const MESSAGES = {
+export const USER_MESSAGES = {
   USER: {
     SIGNUP: {
       SUCCESS: '회원가입에 성공했습니다.',
