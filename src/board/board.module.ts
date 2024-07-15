@@ -9,8 +9,6 @@ import { Board } from './entities/board.entity';
 import { BoardUser } from './entities/board-user.entity';
 import { ListModule } from 'src/list/list.module';
 
-import { ListModule } from 'src/list/list.module';
-
 @Module({
   imports: [TypeOrmModule.forFeature([User, Board, BoardUser]), ListModule],
   controllers: [BoardController],
