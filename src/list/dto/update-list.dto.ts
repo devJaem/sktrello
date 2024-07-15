@@ -1,7 +1,7 @@
 import { PartialType } from '@nestjs/swagger';
 import { CreateListDto } from './create-list.dto';
 import { IsNotEmpty, IsString } from 'class-validator';
-import { MESSAGES } from 'src/constants/message.constants';
+import { LIST_MESSAGES } from 'src/constants/list-message.constant';
 
 export class UpdateListDto extends PartialType(CreateListDto) {
   /**
@@ -9,6 +9,6 @@ export class UpdateListDto extends PartialType(CreateListDto) {
    * @example "To do"
    */
   @IsString()
-  @IsNotEmpty({ message: MESSAGES.LIST.COMMON.TITLE.CHANGE_TITLE })
+  @IsNotEmpty({ message: LIST_MESSAGES.LIST.COMMON.TITLE.CHANGE_TITLE })
   title: string;
 }

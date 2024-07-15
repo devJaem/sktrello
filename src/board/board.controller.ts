@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { BoardService } from './board.service';
 
-import { MESSAGES } from 'src/constants/message.constants';
+import { BOARD_MESSAGES } from 'src/constants/board-message.constant';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { InviteBoardMemberDto } from './dto/invite-board-member.dto';
@@ -29,7 +29,7 @@ export class BoardController {
     );
     const result = {
       status: HttpStatus.CREATED,
-      message: MESSAGES.BOARD.CREATE.SUCCESS,
+      message: BOARD_MESSAGES.BOARD.CREATE.SUCCESS,
       data: createdBoard,
     };
     return result;
@@ -41,7 +41,7 @@ export class BoardController {
     const foundAllBoard = await this.boardService.findAllBoard(user);
     const result = {
       status: HttpStatus.OK,
-      message: MESSAGES.BOARD.READ_LIST.SUCCESS,
+      message: BOARD_MESSAGES.BOARD.READ_LIST.SUCCESS,
       data: {
         participatedIn: foundAllBoard,
       },
@@ -55,7 +55,7 @@ export class BoardController {
     const foundOneBoard = await this.boardService.findOneBoard(user, boardId);
     const result = {
       status: HttpStatus.OK,
-      message: MESSAGES.BOARD.READ_DETAIL.SUCCESS,
+      message: BOARD_MESSAGES.BOARD.READ_DETAIL.SUCCESS,
       data: foundOneBoard,
     };
     return result;
@@ -75,7 +75,7 @@ export class BoardController {
     );
     const result = {
       status: HttpStatus.OK,
-      message: MESSAGES.BOARD.UPDATE.SUCCESS,
+      message: BOARD_MESSAGES.BOARD.UPDATE.SUCCESS,
       data: updatedBoard,
     };
     return result;
@@ -87,7 +87,7 @@ export class BoardController {
     const deletedBoard = await this.boardService.softDeleteBoard(user, boardId);
     const result = {
       status: HttpStatus.OK,
-      message: MESSAGES.BOARD.DELETE.SUCCESS,
+      message: BOARD_MESSAGES.BOARD.DELETE.SUCCESS,
       data: deletedBoard,
     };
     return result;
@@ -107,7 +107,7 @@ export class BoardController {
     );
     const result = {
       status: HttpStatus.CREATED,
-      message: MESSAGES.BOARD.INVITE.SUCCESS,
+      message: BOARD_MESSAGES.BOARD.INVITE.SUCCESS,
       data: {
         nickname: invitedMember.nickname,
         email: invitedMember.email,

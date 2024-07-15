@@ -1,7 +1,7 @@
 import { PickType } from '@nestjs/swagger';
 import { List } from '../entities/list.entity';
 import { IsInt, IsNotEmpty, IsString } from 'class-validator';
-import { MESSAGES } from 'src/constants/message.constants';
+import { LIST_MESSAGES } from 'src/constants/list-message.constant';
 
 export class CreateListDto extends PickType(List, ['boardId', 'title']) {
   /**
@@ -16,6 +16,6 @@ export class CreateListDto extends PickType(List, ['boardId', 'title']) {
    * @example "To do"
    */
   @IsString()
-  @IsNotEmpty({ message: MESSAGES.LIST.COMMON.TITLE.NO_TITLE })
+  @IsNotEmpty({ message: LIST_MESSAGES.LIST.COMMON.TITLE.NO_TITLE })
   title: string;
 }
