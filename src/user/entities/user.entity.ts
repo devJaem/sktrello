@@ -1,4 +1,5 @@
 import { BoardUser } from 'src/board/entities/board-user.entity';
+import { IsNotEmpty, IsStrongPassword } from 'class-validator';
 import { CardUser } from 'src/card/entities/card-user.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
 import {
@@ -10,18 +11,23 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
+import { MESSAGES } from 'src/constants/user-message.constants';
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
+  @IsNotEmpty({ message: MESSAGES.USER.SIGNUP.EMAIL.EMPTY })
   @Column()
   email: string;
 
+  @IsNotEmpty({ message: MESSAGES.USER.SIGNUP.NICKNAME.EMPTY })
   @Column()
   nickname: string;
 
+  @IsNotEmpty({ message: MESSAGES.USER.SIGNUP.PASSWORD.EMPTY })
+  @IsStrongPassword({ minLength: 8, minSymbols: 1 }, {})
   @Column()
   password: string;
 
