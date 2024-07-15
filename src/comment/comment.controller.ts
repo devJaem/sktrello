@@ -12,7 +12,7 @@ import {
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
-import { COMMENT_MESSAGE } from 'src/constants/comment.message.constants';
+import { COMMENT_MESSAGE } from 'src/constants/comment.message.constant';
 
 @Controller('cards/:cardId/comments')
 export class CommentController {

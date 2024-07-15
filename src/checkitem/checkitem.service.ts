@@ -7,13 +7,16 @@ import { CheckItem } from './entities/checkItem.entity';
 import { Repository } from 'typeorm';
 import { LexoRank } from 'lexorank';
 import { MoveCheckItemDto } from './dto/move-checkItem.dto';
-import { MESSAGES } from '../constants/check-message.constats';
+import { CHECK_MESSAGES } from '../constants/check-message.constant';
+import { CheckList } from 'src/checkList/entities/checkList.entity';
 
 @Injectable()
 export class CheckItemService {
   constructor(
     @InjectRepository(CheckItem)
-    private readonly checkItemRepository: Repository<CheckItem>
+    private readonly checkItemRepository: Repository<CheckItem>,
+    @InjectRepository(CheckList)
+    private readonly checkListRepository: Repository<CheckList>
   ) {}
 
   /**
@@ -21,8 +24,16 @@ export class CheckItemService {
    * @param createCheckItemDto 체크아이탬 생성 DTO
    * @returns 생성된 결과값
    */
-  async create(createCheckItemDto: CreateCheckItemDto) {
-    const { checkListId, content } = createCheckItemDto;
+  async create(createCheckItemDto: CreateCheckItemDto, checkListId: number) {
+    const { content } = createCheckItemDto;
+
+    // 체크리스트가 존재하는지 확인
+    const checkList = await this.checkListRepository.findOne({
+      where: { id: checkListId },
+    });
+    if (!checkList) {
+      throw new NotFoundException(CHECK_MESSAGES.CHECKLIST.NOT_FOUND);
+    }
 
     const lastCheckItem = await this.checkItemRepository.findOne({
       where: { checkListId },
@@ -98,7 +109,7 @@ export class CheckItemService {
     });
 
     if (_.isNil(targetItem)) {
-      throw new NotFoundException(MESSAGES.CHECKITEM.TARGET_NOT_FOUND);
+      throw new NotFoundException(CHECK_MESSAGES.CHECKITEM.TARGET_NOT_FOUND);
     }
 
     const targetRank = LexoRank.parse(targetItem.checkItemOrder);
@@ -127,7 +138,7 @@ export class CheckItemService {
     const checkItem = await this.verifyItemById(id);
     checkItem.checkListId = targetChecklistId;
 
-    let newOrder = checkItem.checkItemOrder; 
+    let newOrder = checkItem.checkItemOrder;
 
     if (targetOrder) {
       const targetItem = await this.checkItemRepository.findOne({
@@ -138,7 +149,7 @@ export class CheckItemService {
       });
 
       if (_.isNil(targetItem)) {
-        throw new NotFoundException(MESSAGES.CHECKITEM.NOT_FOUND);
+        throw new NotFoundException(CHECK_MESSAGES.CHECKITEM.NOT_FOUND);
       }
 
       const targetRank = LexoRank.parse(targetItem.checkItemOrder);
@@ -192,7 +203,7 @@ export class CheckItemService {
       where: { id },
     });
     if (_.isNil(checkItem)) {
-      throw new NotFoundException(MESSAGES.CHECKITEM.NOT_FOUND);
+      throw new NotFoundException(CHECK_MESSAGES.CHECKITEM.NOT_FOUND);
     }
 
     return checkItem;
