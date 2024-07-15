@@ -45,7 +45,6 @@ export class CheckItemController {
   ) {
     const newCheckItem = await this.checkItemService.create({
       ...createCheckItemDto,
-      checkListId: checklistId,
     });
     return {
       statusCode: HttpStatus.CREATED,
