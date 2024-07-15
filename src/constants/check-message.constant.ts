@@ -1,5 +1,5 @@
 // messages.ts
-export const MESSAGES = {
+export const CHECK_MESSAGES = {
   CHECKLIST: {
     CREATE: '체크리스트가 생성되었습니다.',
     UPDATE: '체크리스트가 수정되었습니다.',

@@ -3,7 +3,8 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { MESSAGES } from 'src/constants/message.constants';
+import { BOARD_MESSAGES } from 'src/constants/board-message.constant';
+import { LIST_MESSAGES } from 'src/constants/list-message.constant';
 
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
@@ -31,7 +32,9 @@ export class ListService {
   async createList(userId: number, createListDto: CreateListDto) {
     // 인증된 사용자 여부 확인
     if (!userId) {
-      throw new UnauthorizedException(MESSAGES.LIST.COMMON.USER.UNAUTHORIZED);
+      throw new UnauthorizedException(
+        LIST_MESSAGES.LIST.COMMON.USER.UNAUTHORIZED
+      );
     }
 
     const { boardId, title } = createListDto;
@@ -43,7 +46,7 @@ export class ListService {
 
     if (!inviteMember) {
       throw new UnauthorizedException(
-        MESSAGES.BOARD.READ_DETAIL.FAILURE.UNAUTHORIZED
+        BOARD_MESSAGES.BOARD.READ_DETAIL.FAILURE.UNAUTHORIZED
       );
     }
 
@@ -53,7 +56,9 @@ export class ListService {
     });
 
     if (!board) {
-      throw new NotFoundException(MESSAGES.BOARD.READ_DETAIL.FAILURE.NOTFOUND);
+      throw new NotFoundException(
+        BOARD_MESSAGES.BOARD.READ_DETAIL.FAILURE.NOTFOUND
+      );
     }
 
     const createList = await this.listRepository.save({
@@ -69,7 +74,9 @@ export class ListService {
   async findAllLists(userId: number) {
     // 인증된 사용자 여부 확인
     if (!userId) {
-      throw new UnauthorizedException(MESSAGES.LIST.COMMON.USER.UNAUTHORIZED);
+      throw new UnauthorizedException(
+        LIST_MESSAGES.LIST.COMMON.USER.UNAUTHORIZED
+      );
     }
 
     const lists = await this.listRepository.find({
@@ -84,7 +91,9 @@ export class ListService {
   async findListById(userId: number, listId: number) {
     // 인증된 사용자 여부 확인
     if (!userId) {
-      throw new UnauthorizedException(MESSAGES.LIST.COMMON.USER.UNAUTHORIZED);
+      throw new UnauthorizedException(
+        LIST_MESSAGES.LIST.COMMON.USER.UNAUTHORIZED
+      );
     }
 
     const list = await this.listRepository.findOne({
@@ -92,7 +101,7 @@ export class ListService {
     });
 
     if (!list) {
-      throw new NotFoundException(MESSAGES.LIST.READ_LIST.FAILURE);
+      throw new NotFoundException(LIST_MESSAGES.LIST.READ_LIST.FAILURE);
     }
 
     return list;
@@ -106,14 +115,16 @@ export class ListService {
   ) {
     // 인증된 사용자 여부 확인
     if (!userId) {
-      throw new UnauthorizedException(MESSAGES.LIST.COMMON.USER.UNAUTHORIZED);
+      throw new UnauthorizedException(
+        LIST_MESSAGES.LIST.COMMON.USER.UNAUTHORIZED
+      );
     }
 
     // 해당하는 listId 가져오기
     const list = await this.findListById(userId, listId);
 
     if (!list) {
-      throw new NotFoundException(MESSAGES.LIST.READ_DETAIL.FAILURE);
+      throw new NotFoundException(LIST_MESSAGES.LIST.READ_DETAIL.FAILURE);
     }
 
     const { title } = updateListDto;
@@ -130,14 +141,16 @@ export class ListService {
   async moveList(userId: number, listId: number, moveListDto: MoveListDto) {
     // 인증된 사용자 여부 확인
     if (!userId) {
-      throw new UnauthorizedException(MESSAGES.LIST.COMMON.USER.UNAUTHORIZED);
+      throw new UnauthorizedException(
+        LIST_MESSAGES.LIST.COMMON.USER.UNAUTHORIZED
+      );
     }
 
     // 해당하는 listId 가져오기
     const list = await this.findListById(userId, listId);
 
     if (!list) {
-      throw new NotFoundException(MESSAGES.LIST.READ_DETAIL.FAILURE);
+      throw new NotFoundException(LIST_MESSAGES.LIST.READ_DETAIL.FAILURE);
     }
 
     const { toPrevId, toNextId } = moveListDto;
@@ -168,14 +181,16 @@ export class ListService {
   async removeList(userId: number, listId: number) {
     // 인증된 사용자 여부 확인
     if (!userId) {
-      throw new UnauthorizedException(MESSAGES.LIST.COMMON.USER.UNAUTHORIZED);
+      throw new UnauthorizedException(
+        LIST_MESSAGES.LIST.COMMON.USER.UNAUTHORIZED
+      );
     }
 
     // 해당하는 listId 가져오기
     const list = await this.findListById(userId, listId);
 
     if (!list) {
-      throw new NotFoundException(MESSAGES.LIST.READ_DETAIL.FAILURE);
+      throw new NotFoundException(LIST_MESSAGES.LIST.READ_DETAIL.FAILURE);
     }
 
     const removeList = await this.listRepository.softDelete({

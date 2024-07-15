@@ -11,22 +11,22 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { MESSAGES } from 'src/constants/user-message.constants';
+import { USER_MESSAGES } from 'src/constants/user-message.constant';
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
-  @IsNotEmpty({ message: MESSAGES.USER.SIGNUP.EMAIL.EMPTY })
+  @IsNotEmpty({ message: USER_MESSAGES.USER.SIGNUP.EMAIL.EMPTY })
   @Column()
   email: string;
 
-  @IsNotEmpty({ message: MESSAGES.USER.SIGNUP.NICKNAME.EMPTY })
+  @IsNotEmpty({ message: USER_MESSAGES.USER.SIGNUP.NICKNAME.EMPTY })
   @Column()
   nickname: string;
 
-  @IsNotEmpty({ message: MESSAGES.USER.SIGNUP.PASSWORD.EMPTY })
+  @IsNotEmpty({ message: USER_MESSAGES.USER.SIGNUP.PASSWORD.EMPTY })
   @IsStrongPassword({ minLength: 8, minSymbols: 1 }, {})
   @Column()
   password: string;
