@@ -7,11 +7,11 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { BoardModule } from './board/board.module';
 import { CardModule } from './card/card.module';
-import { CheckItemModule } from './check_item/check_item.module';
-import { CheckListModule } from './check_list/check_list.module';
 import { CommentModule } from './comment/comment.module';
 import { ListModule } from './list/list.module';
 import { AppController } from './app.controller';
+import { CheckListModule } from './checkList/checkList.module';
+import { CheckItemModule } from './checkItem/checkItem.module';
 
 @Module({
   imports: [

@@ -1,5 +1,5 @@
 import { Card } from 'src/card/entities/card.entity';
-import { CheckItem } from 'src/check_item/entities/check_item.entity';
+import { CheckItem } from 'src/checkItem/entities/checkItem.entity';
 import {
   Column,
   CreateDateColumn,
@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
-@Entity('check_list')
+@Entity('check_lists')
 export class CheckList {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
@@ -23,7 +23,7 @@ export class CheckList {
   title: string;
 
   @Column()
-  checkListOrder: number;
+  checkListOrder: string;
 
   @CreateDateColumn()
   createdAt: Date;
@@ -34,8 +34,8 @@ export class CheckList {
   @DeleteDateColumn()
   deletedAt?: Date | null;
 
-  // Relation - [check_lists] 1 : N [check_items]
-  @OneToMany(() => CheckItem, (checkItem) => checkItem.checklist, {
+  /* 체크 아이템 join */
+  @OneToMany(() => CheckItem, (checkItem) => checkItem.checkList, {
     cascade: true,
   })
   checkItems: CheckItem[];
