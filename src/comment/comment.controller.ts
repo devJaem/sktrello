@@ -13,12 +13,18 @@ import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { COMMENT_MESSAGE } from 'src/constants/comment.message.constant';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('댓글 API')
 @Controller('cards/:cardId/comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  // 댓글 생성
+  /** 댓글 생성 API**/
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: COMMENT_MESSAGE.COMMENT.CREATE.SUCCESS,
+  })
   @Post()
   async create(
     @Param('cardId', ParseIntPipe) cardId: number,
@@ -37,7 +43,11 @@ export class CommentController {
     };
   }
 
-  // 댓글 조회
+  /** 댓글 조회 API**/
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: COMMENT_MESSAGE.COMMENT.READ_ALL.SUCCESS,
+  })
   @Get()
   async findAll(@Param('cardId', ParseIntPipe) cardId: number) {
     const readAllComment = await this.commentService.findAll(cardId);
@@ -48,7 +58,11 @@ export class CommentController {
     };
   }
 
-  // 댓글 수정
+  /** 댓글 수정 API**/
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: COMMENT_MESSAGE.COMMENT.UPDATE.SUCCESS,
+  })
   @Patch(':id')
   async update(
     @Param('cardId', ParseIntPipe) cardId: number,
@@ -68,7 +82,11 @@ export class CommentController {
     };
   }
 
-  // 댓글 삭제
+  /** 댓글 삭제 API**/
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: COMMENT_MESSAGE.COMMENT.DELETE.SUCCESS,
+  })
   @Delete(':id')
   async remove(
     @Param('cardId', ParseIntPipe) cardId: number,
