@@ -9,7 +9,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { CardUser } from './card-user.entity';
-import { CheckList } from 'src/check_list/entities/check_list.entity';
+import { CheckList } from 'src/checkList/entities/checkList.entity';
 import { List } from 'src/list/entities/list.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
 import { DuedateStatus } from '../types/duedate-status.type';

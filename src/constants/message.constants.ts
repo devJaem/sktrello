@@ -57,7 +57,8 @@ export const MESSAGES = {
       },
     },
   },
-  CARD: {
+  LIST: {
+    // List 공통
     COMMON: {
       TITLE: {
         NO_TITLE: '제목을 입력해 주세요.',
@@ -67,31 +68,28 @@ export const MESSAGES = {
         UNAUTHORIZED: '인증된 사용자가 아닙니다.',
       },
     },
-
+    // List 생성
     CREATE: {
-      SUCCESS: '카드 생성에 성공했습니다.',
-      FAILURE: {
-        NOTFOUND: '존재하지 않는 리스트입니다.',
-      },
+      SUCCESS: '리스트 생성에 성공했습니다.',
     },
-
-    READ_CARDS: {
-      SUCCESS: '카드 전체 조회에 성공했습니다.',
+    // List 조회
+    READ_LIST: {
+      SUCCESS: '리스트 조회에 성공했습니다.',
       FAILURE: '리스트가 존재하지 않습니다.',
     },
-
-    READ_CARD: {
-      SUCCESS: '카드 상세 조회에 성공했습니다.',
-      FAILURE: '해당카드가 존재하지않습니다.',
+    // List 상세 조회
+    READ_DETAIL: {
+      SUCCESS: '리스트 상세 조회에 성공했습니다.',
+      FAILURE: '해당 아이디의 리스트가 존재하지 않습니다.',
     },
-
+    // List 수정
     UPDATE: {
-      SUCCESS: '카드 수정에 성공했습니다.',
-      FAILURE: '카드를 찾지 못했습니다.',
+      SUCCESS_NAME: '리스트 이름 수정에 성공했습니다.',
+      SUCCESS_ORDER: '리스트 순서 이동에 성공했습니다.',
     },
-
+    // List 삭제
     DELETE: {
-      SUCCESS: '카드 삭제에 성공했습니다.',
+      SUCCESS: '리스트 삭제에 성공했습니다.',
     },
   },
 };
