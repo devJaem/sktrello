@@ -84,11 +84,12 @@ export class CardController {
 
   // 카드이동 api
   @Patch(':cardId/move')
-  updateOrderAndList(
-    @Param('id') id: string,
+  moveCard(
+    @UserInfo() user: User,
+    @Param('cardId') cardId: number,
     @Body() moveCardDto: MoveCardDto
   ) {
-    return this.cardService.updateOrderAndList(+id, moveCardDto);
+    return this.cardService.moveCard(user.id, cardId, moveCardDto);
   }
 
   @Delete(':cardId')
