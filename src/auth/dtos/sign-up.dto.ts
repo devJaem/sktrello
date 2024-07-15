@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, IsStrongPassword } from 'class-validator';
-import { MESSAGES } from 'src/constants/message.constants';
+import { MESSAGES } from 'src/constants/user-message.constants';
 
 export class SignUpDto {
   @IsString()

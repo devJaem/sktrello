@@ -1,5 +1,5 @@
 import { BoardUser } from 'src/board/entities/board-user.entity';
-import { isNotEmpty, IsNotEmpty, IsStrongPassword } from 'class-validator';
+import { IsNotEmpty, IsStrongPassword } from 'class-validator';
 import { CardUser } from 'src/card/entities/card-user.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
 import {
@@ -11,7 +11,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { MESSAGES } from 'src/constants/message.constants';
+import { MESSAGES } from 'src/constants/user-message.constants';
 
 @Entity('users')
 export class User {
