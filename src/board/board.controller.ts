@@ -15,12 +15,18 @@ import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { InviteBoardMemberDto } from './dto/invite-board-member.dto';
 import { TestLogIn } from 'src/utils/test-user.decorator';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('보드 API')
 @Controller('boards')
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}
 
   /** Board 생성(C) API **/
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: BOARD_MESSAGES.BOARD.CREATE.SUCCESS,
+  })
   @Post('')
   async createBoard(@TestLogIn() user, @Body() createBoardDto: CreateBoardDto) {
     const createdBoard = await this.boardService.createBoard(
