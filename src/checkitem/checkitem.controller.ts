@@ -13,7 +13,7 @@ import { CreateCheckItemDto } from './dto/create-checkItem.dto';
 import { UpdateCheckItemDto } from './dto/update-checkItem.dto';
 import { MoveCheckItemDto } from './dto/move-checkItem.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { MESSAGES } from '../constants/check-message.constats'; // 메시지 상수 파일 가져오기
+import { CHECK_MESSAGES } from '../constants/check-message.constant'; // 메시지 상수 파일 가져오기
 
 @Controller('checklists/:checklistId/items')
 export class CheckItemController {
@@ -21,7 +21,10 @@ export class CheckItemController {
 
   @Post()
   @ApiOperation({ summary: '체크리스트 아이템 생성' })
-  @ApiResponse({ status: HttpStatus.CREATED, description: MESSAGES.CHECKITEM.CREATE })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: CHECK_MESSAGES.CHECKITEM.CREATE,
+  })
   async create(
     @Param('checklistId') checklistId: number,
     @Body() createCheckItemDto: CreateCheckItemDto
@@ -32,7 +35,7 @@ export class CheckItemController {
     });
     return {
       statusCode: HttpStatus.CREATED,
-      message: MESSAGES.CHECKITEM.CREATE,
+      message: CHECK_MESSAGES.CHECKITEM.CREATE,
       data: newCheckItem,
     };
   }
@@ -69,7 +72,7 @@ export class CheckItemController {
     );
     return {
       statusCode: HttpStatus.OK,
-      message: MESSAGES.CHECKITEM.UPDATE,
+      message: CHECK_MESSAGES.CHECKITEM.UPDATE,
       data: updatedCheckItem,
     };
   }
@@ -80,7 +83,7 @@ export class CheckItemController {
     const deletedCheckItem = await this.checkItemService.remove(itemId);
     return {
       statusCode: HttpStatus.OK,
-      message: MESSAGES.CHECKITEM.DELETE,
+      message: CHECK_MESSAGES.CHECKITEM.DELETE,
       data: deletedCheckItem,
     };
   }
@@ -97,7 +100,7 @@ export class CheckItemController {
     );
     return {
       statusCode: HttpStatus.OK,
-      message: MESSAGES.CHECKITEM.MOVE_WITHIN,
+      message: CHECK_MESSAGES.CHECKITEM.MOVE_WITHIN,
       data: movedCheckItem,
     };
   }
@@ -115,7 +118,7 @@ export class CheckItemController {
       );
     return {
       statusCode: HttpStatus.OK,
-      message: MESSAGES.CHECKITEM.MOVE_TO_ANOTHER,
+      message: CHECK_MESSAGES.CHECKITEM.MOVE_TO_ANOTHER,
       data: movedCheckItem,
     };
   }

@@ -1,4 +1,4 @@
-export const CARDMESSAGES = {
+export const CARD_MESSAGES = {
   CARD: {
     COMMON: {
       TITLE: {

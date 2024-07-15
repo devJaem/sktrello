@@ -11,7 +11,7 @@ import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { MoveCardDto } from './dto/move-card.dto';
 import { LexoRank } from 'lexorank';
-import { CARDMESSAGES } from 'src/constants/card-message.constant';
+import { CARD_MESSAGES } from 'src/constants/card-message.constant';
 import { BoardUser } from 'src/board/entities/board-user.entity';
 import { List } from 'src/list/entities/list.entity';
 import { CardUser } from './entities/card-user.entity';
@@ -43,7 +43,7 @@ export class CardService {
   ) {
     if (!userId) {
       throw new UnauthorizedException(
-        CARDMESSAGES.CARD.COMMON.USER.UNAUTHORIZED
+        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
     }
 
@@ -59,7 +59,7 @@ export class CardService {
 
     if (!isInvite) {
       throw new UnauthorizedException(
-        CARDMESSAGES.CARD.COMMON.USER.UNAUTHORIZED
+        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
     }
 
@@ -68,11 +68,11 @@ export class CardService {
     });
 
     if (!list) {
-      throw new NotFoundException(CARDMESSAGES.CARD.CREATE.FAILURE.NOTFOUND);
+      throw new NotFoundException(CARD_MESSAGES.CARD.CREATE.FAILURE.NOTFOUND);
     }
 
     if (!title) {
-      throw new BadRequestException(CARDMESSAGES.CARD.COMMON.TITLE.NO_TITLE);
+      throw new BadRequestException(CARD_MESSAGES.CARD.COMMON.TITLE.NO_TITLE);
     }
 
     // 해당 listId에 속한 마지막 카드를 조회하고, 그 카드의 cardOrder를 기준으로 새로운 순서 값을 생성합니다.
@@ -100,11 +100,11 @@ export class CardService {
   async findAllCards(userId: number, listId: number) {
     if (!userId) {
       throw new UnauthorizedException(
-        CARDMESSAGES.CARD.COMMON.USER.UNAUTHORIZED
+        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
     }
     if (!listId) {
-      throw new NotFoundException(CARDMESSAGES.CARD.READ_CARDS.FAILURE);
+      throw new NotFoundException(CARD_MESSAGES.CARD.READ_CARDS.FAILURE);
     }
     return await this.cardRepository.find({
       order: { cardOrder: 'ASC' },
@@ -114,14 +114,14 @@ export class CardService {
   async findCard(userId: number, cardId: number) {
     if (!userId) {
       throw new UnauthorizedException(
-        CARDMESSAGES.CARD.COMMON.USER.UNAUTHORIZED
+        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
     }
     const card = await this.cardRepository.findOne({
       where: { id: cardId },
     });
     if (!card) {
-      throw new NotFoundException(CARDMESSAGES.CARD.READ_CARD.FAILURE);
+      throw new NotFoundException(CARD_MESSAGES.CARD.READ_CARD.FAILURE);
     }
     const cardComment = await this.commentRepository.find({
       where: { cardId },
@@ -139,18 +139,18 @@ export class CardService {
   ) {
     if (!userId) {
       throw new UnauthorizedException(
-        CARDMESSAGES.CARD.COMMON.USER.UNAUTHORIZED
+        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
     }
     const card = await this.cardRepository.findOne({ where: { id: cardId } });
     if (!card) {
-      throw new NotFoundException(CARDMESSAGES.CARD.UPDATE.FAILURE);
+      throw new NotFoundException(CARD_MESSAGES.CARD.UPDATE.FAILURE);
     }
 
     const { title, description, color, duedate, duedate_status } =
       updateCardDto;
     if (!title) {
-      throw new BadRequestException(CARDMESSAGES.CARD.COMMON.TITLE.NO_TITLE);
+      throw new BadRequestException(CARD_MESSAGES.CARD.COMMON.TITLE.NO_TITLE);
     }
     return await this.cardRepository.update(
       { id: cardId },
@@ -168,7 +168,7 @@ export class CardService {
     // userId 확인
     if (!userId) {
       throw new UnauthorizedException(
-        CARDMESSAGES.CARD.COMMON.USER.UNAUTHORIZED
+        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
     }
 
@@ -176,7 +176,7 @@ export class CardService {
 
     const card = await this.cardRepository.findOne({ where: { id: cardId } });
     if (!card) {
-      throw new NotFoundException(CARDMESSAGES.CARD.UPDATE.FAILURE);
+      throw new NotFoundException(CARD_MESSAGES.CARD.UPDATE.FAILURE);
     }
 
     // 해당하는 listId 찾기
@@ -184,7 +184,7 @@ export class CardService {
       where: { id: listId },
     });
     if (!targetList) {
-      throw new NotFoundException(CARDMESSAGES.CARD.READ_CARDS.FAILURE);
+      throw new NotFoundException(CARD_MESSAGES.CARD.READ_CARDS.FAILURE);
     }
 
     // 이동하려는 카드의 순서보다 작은 (즉, 앞에 있는) 카드를 찾아 그중 가장 큰 순서를 가진 카드를 넣는다.
@@ -214,12 +214,12 @@ export class CardService {
   async deleteCard(userId: number, cardId: number) {
     if (!userId) {
       throw new UnauthorizedException(
-        CARDMESSAGES.CARD.COMMON.USER.UNAUTHORIZED
+        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
     }
     const card = await this.cardRepository.findOne({ where: { id: cardId } });
     if (!card) {
-      throw new NotFoundException(CARDMESSAGES.CARD.READ_CARD.FAILURE);
+      throw new NotFoundException(CARD_MESSAGES.CARD.READ_CARD.FAILURE);
     }
     return await this.cardRepository.softDelete({ id: cardId });
   }

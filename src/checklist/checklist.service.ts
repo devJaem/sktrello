@@ -6,14 +6,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CheckList } from './entities/checkList.entity';
 import { Repository } from 'typeorm';
 import { LexoRank } from 'lexorank';
-import { MESSAGES } from 'src/constants/check-message.constats';
+import { CHECK_MESSAGES } from 'src/constants/check-message.constant';
 import { MoveCheckListDto } from './dto/move-checkList.dto';
 
 @Injectable()
 export class CheckListService {
   constructor(
     @InjectRepository(CheckList)
-    private readonly checkListRepository: Repository<CheckList>,
+    private readonly checkListRepository: Repository<CheckList>
   ) {}
 
   /**
@@ -94,7 +94,7 @@ export class CheckListService {
     });
 
     if (_.isNil(targetList)) {
-      throw new NotFoundException(MESSAGES.CHECKLIST.TARGET_NOT_FOUND);
+      throw new NotFoundException(CHECK_MESSAGES.CHECKLIST.TARGET_NOT_FOUND);
     }
 
     const targetRank = LexoRank.parse(targetList.checkListOrder);
@@ -121,7 +121,7 @@ export class CheckListService {
     checkList.cardId = targetCardId;
 
     let newOrder = checkList.checkListOrder;
-    if(targetOrder) {
+    if (targetOrder) {
       const targetList = await this.checkListRepository.findOne({
         where: {
           cardId: targetCardId,
@@ -130,25 +130,29 @@ export class CheckListService {
       });
 
       if (_.isNil(targetList)) {
-        throw new NotFoundException(MESSAGES.CHECKLIST.NOT_FOUND);
+        throw new NotFoundException(CHECK_MESSAGES.CHECKLIST.NOT_FOUND);
       }
 
       const targetRank = LexoRank.parse(targetList.checkListOrder);
       const currentRank = LexoRank.parse(checkList.checkListOrder);
 
       // 기존 순서와 목표순서가 동일하지 않을 경우만 새로운 순서 생성
-      if(!currentRank.equals(targetRank)){
+      if (!currentRank.equals(targetRank)) {
         newOrder = targetRank.genNext().toString();
       }
     } else {
       // 타겟 체크리스트에서 마지막 아이템 순서 가져오기
       const lastCheckListInTargetList = await this.checkListRepository.findOne({
         where: { cardId: targetCardId },
-        order: { checkListOrder: 'DESC'},
+        order: { checkListOrder: 'DESC' },
       });
 
       // LexoRank를 사용하여 새로운 순서 생성
-      newOrder = lastCheckListInTargetList ? LexoRank.parse(lastCheckListInTargetList.checkListOrder).genNext().toString() : LexoRank.middle().toString();
+      newOrder = lastCheckListInTargetList
+        ? LexoRank.parse(lastCheckListInTargetList.checkListOrder)
+            .genNext()
+            .toString()
+        : LexoRank.middle().toString();
     }
 
     // 새로운 순서와 카드ID 저장
@@ -156,7 +160,6 @@ export class CheckListService {
     await this.checkListRepository.save(checkList);
 
     return { originalList: checkList, targetCard: targetCardId };
-
   }
 
   /**
@@ -182,7 +185,7 @@ export class CheckListService {
       relations: { checkItems: true },
     });
     if (_.isNil(checkList)) {
-      throw new NotFoundException(MESSAGES.CHECKLIST.NOT_FOUND);
+      throw new NotFoundException(CHECK_MESSAGES.CHECKLIST.NOT_FOUND);
     }
 
     return checkList;
