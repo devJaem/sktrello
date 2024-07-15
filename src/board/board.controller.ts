@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { BoardService } from './board.service';
 
-import { MESSAGES } from 'src/constants/message.constants';
+import { MESSAGES } from 'src/constants/message.constant';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { InviteBoardMemberDto } from './dto/invite-board-member.dto';

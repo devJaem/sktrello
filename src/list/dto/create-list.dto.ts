@@ -1,7 +1,7 @@
 import { PickType } from '@nestjs/swagger';
 import { List } from '../entities/list.entity';
 import { IsInt, IsNotEmpty, IsString } from 'class-validator';
-import { MESSAGES } from 'src/constants/message.constants';
+import { MESSAGES } from 'src/constants/message.constant';
 
 export class CreateListDto extends PickType(List, ['boardId', 'title']) {
   /**

@@ -3,7 +3,7 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { MESSAGES } from 'src/constants/message.constants';
+import { MESSAGES } from 'src/constants/message.constant';
 
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';

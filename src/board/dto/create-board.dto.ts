@@ -1,4 +1,4 @@
-import { MESSAGES } from 'src/constants/message.constants';
+import { MESSAGES } from 'src/constants/message.constant';
 import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreateBoardDto {

@@ -6,9 +6,12 @@ import { List } from './entities/list.entity';
 import { Board } from 'src/board/entities/board.entity';
 import { BoardUser } from 'src/board/entities/board-user.entity';
 
+import { CardModule } from 'src/card/card.module';
+
 @Module({
-  imports: [TypeOrmModule.forFeature([List, Board, BoardUser])],
+  imports: [TypeOrmModule.forFeature([List, Board, BoardUser]), CardModule],
   controllers: [ListController],
   providers: [ListService],
+  exports: [ListService],
 })
 export class ListModule {}

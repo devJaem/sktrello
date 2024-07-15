@@ -7,7 +7,7 @@ import { CheckItem } from './entities/checkItem.entity';
 import { Repository } from 'typeorm';
 import { LexoRank } from 'lexorank';
 import { MoveCheckItemDto } from './dto/move-checkItem.dto';
-import { MESSAGES } from '../constants/check-message.constats';
+import { CHECK_MESSAGES } from '../constants/check-message.constant';
 
 @Injectable()
 export class CheckItemService {
@@ -98,7 +98,7 @@ export class CheckItemService {
     });
 
     if (_.isNil(targetItem)) {
-      throw new NotFoundException(MESSAGES.CHECKITEM.TARGET_NOT_FOUND);
+      throw new NotFoundException(CHECK_MESSAGES.CHECKITEM.TARGET_NOT_FOUND);
     }
 
     const targetRank = LexoRank.parse(targetItem.checkItemOrder);
@@ -127,7 +127,7 @@ export class CheckItemService {
     const checkItem = await this.verifyItemById(id);
     checkItem.checkListId = targetChecklistId;
 
-    let newOrder = checkItem.checkItemOrder; 
+    let newOrder = checkItem.checkItemOrder;
 
     if (targetOrder) {
       const targetItem = await this.checkItemRepository.findOne({
@@ -138,7 +138,7 @@ export class CheckItemService {
       });
 
       if (_.isNil(targetItem)) {
-        throw new NotFoundException(MESSAGES.CHECKITEM.NOT_FOUND);
+        throw new NotFoundException(CHECK_MESSAGES.CHECKITEM.NOT_FOUND);
       }
 
       const targetRank = LexoRank.parse(targetItem.checkItemOrder);
@@ -192,7 +192,7 @@ export class CheckItemService {
       where: { id },
     });
     if (_.isNil(checkItem)) {
-      throw new NotFoundException(MESSAGES.CHECKITEM.NOT_FOUND);
+      throw new NotFoundException(CHECK_MESSAGES.CHECKITEM.NOT_FOUND);
     }
 
     return checkItem;

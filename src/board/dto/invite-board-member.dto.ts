@@ -1,4 +1,4 @@
-import { MESSAGES } from 'src/constants/message.constants';
+import { MESSAGES } from 'src/constants/message.constant';
 import { IsEmail, IsNotEmpty } from 'class-validator';
 
 export class InviteBoardMemberDto {

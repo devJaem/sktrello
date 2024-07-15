@@ -11,7 +11,7 @@ import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { MoveCardDto } from './dto/move-card.dto';
 import { LexoRank } from 'lexorank';
-import { CARDMESSAGES } from 'src/constants/card-message.constant';
+import { CARD_MESSAGES } from 'src/constants/card-message.constant';
 import { BoardUser } from 'src/board/entities/board-user.entity';
 import { List } from 'src/list/entities/list.entity';
 import { CardUser } from './entities/card-user.entity';
@@ -42,7 +42,7 @@ export class CardService {
   ) {
     if (!userId) {
       throw new UnauthorizedException(
-        CARDMESSAGES.CARD.COMMON.USER.UNAUTHORIZED
+        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
     }
 
@@ -58,7 +58,7 @@ export class CardService {
 
     if (!isInvite) {
       throw new UnauthorizedException(
-        CARDMESSAGES.CARD.COMMON.USER.UNAUTHORIZED
+        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
     }
 
@@ -67,11 +67,11 @@ export class CardService {
     });
 
     if (!list) {
-      throw new NotFoundException(CARDMESSAGES.CARD.CREATE.FAILURE.NOTFOUND);
+      throw new NotFoundException(CARD_MESSAGES.CARD.CREATE.FAILURE.NOTFOUND);
     }
 
     if (!title) {
-      throw new BadRequestException(CARDMESSAGES.CARD.COMMON.TITLE.NO_TITLE);
+      throw new BadRequestException(CARD_MESSAGES.CARD.COMMON.TITLE.NO_TITLE);
     }
 
     const cards = await this.cardRepository.find({
@@ -82,7 +82,7 @@ export class CardService {
       ? LexoRank.parse(lastCard.cardOrder)
       : LexoRank.min();
 
-    const newCard = this.cardRepository.create({
+    await this.cardRepository.create({
       ...createCardDto,
       cardOrder: lastRank.genNext().toString(),
     });
@@ -100,11 +100,11 @@ export class CardService {
   async findAllCards(userId: number, listId: number) {
     if (!userId) {
       throw new UnauthorizedException(
-        CARDMESSAGES.CARD.COMMON.USER.UNAUTHORIZED
+        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
     }
     if (!listId) {
-      throw new NotFoundException(CARDMESSAGES.CARD.READ_CARDS.FAILURE);
+      throw new NotFoundException(CARD_MESSAGES.CARD.READ_CARDS.FAILURE);
     }
     return await this.cardRepository.find({
       order: { cardOrder: 'ASC' },
@@ -114,14 +114,14 @@ export class CardService {
   async findCard(userId: number, cardId: number) {
     if (!userId) {
       throw new UnauthorizedException(
-        CARDMESSAGES.CARD.COMMON.USER.UNAUTHORIZED
+        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
     }
     const card = await this.cardRepository.findOne({
       where: { id: cardId },
     });
     if (!card) {
-      throw new NotFoundException(CARDMESSAGES.CARD.READ_CARD.FAILURE);
+      throw new NotFoundException(CARD_MESSAGES.CARD.READ_CARD.FAILURE);
     }
     const cardComment = await this.commentRepository.find({
       where: { cardId },
@@ -139,18 +139,18 @@ export class CardService {
   ) {
     if (!userId) {
       throw new UnauthorizedException(
-        CARDMESSAGES.CARD.COMMON.USER.UNAUTHORIZED
+        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
     }
     const card = await this.cardRepository.findOne({ where: { id: cardId } });
     if (!card) {
-      throw new NotFoundException(CARDMESSAGES.CARD.UPDATE.FAILURE);
+      throw new NotFoundException(CARD_MESSAGES.CARD.UPDATE.FAILURE);
     }
 
     const { title, description, color, duedate, duedate_status } =
       updateCardDto;
     if (!title) {
-      throw new BadRequestException(CARDMESSAGES.CARD.COMMON.TITLE.NO_TITLE);
+      throw new BadRequestException(CARD_MESSAGES.CARD.COMMON.TITLE.NO_TITLE);
     }
     return await this.cardRepository.update(
       { id: cardId },
@@ -205,12 +205,12 @@ export class CardService {
   async deleteCard(userId: number, cardId: number) {
     if (!userId) {
       throw new UnauthorizedException(
-        CARDMESSAGES.CARD.COMMON.USER.UNAUTHORIZED
+        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
     }
     const card = await this.cardRepository.findOne({ where: { id: cardId } });
     if (!card) {
-      throw new NotFoundException(CARDMESSAGES.CARD.READ_CARD.FAILURE);
+      throw new NotFoundException(CARD_MESSAGES.CARD.READ_CARD.FAILURE);
     }
     return await this.cardRepository.softDelete({ id: cardId });
   }
