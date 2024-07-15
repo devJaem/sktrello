@@ -8,12 +8,15 @@ import { Repository } from 'typeorm';
 import { LexoRank } from 'lexorank';
 import { CHECK_MESSAGES } from 'src/constants/check-message.constant';
 import { MoveCheckListDto } from './dto/move-checkList.dto';
+import { Card } from 'src/card/entities/card.entity';
 
 @Injectable()
 export class CheckListService {
   constructor(
     @InjectRepository(CheckList)
-    private readonly checkListRepository: Repository<CheckList>
+    private readonly checkListRepository: Repository<CheckList>,
+    @InjectRepository(Card)
+    private readonly cardRepository: Repository<Card>
   ) {}
 
   /**
@@ -23,6 +26,12 @@ export class CheckListService {
    */
   async create(createCheckListDto: CreateCheckListDto) {
     const { cardId, title } = createCheckListDto;
+
+    // 카드가 존재하는지 확인
+    const card = await this.cardRepository.findOne({ where: { id: cardId } });
+    if (!card) {
+      throw new NotFoundException(CHECK_MESSAGES.CHECKLIST.CARD_NOT_FOUND);
+    }
 
     const lastCheckList = await this.checkListRepository.findOne({
       where: { cardId },

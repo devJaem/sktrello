@@ -8,6 +8,7 @@ export const CHECK_MESSAGES = {
     TARGET_NOT_FOUND: '목표 순서에 체크리스트가 존재하지 않습니다.',
     MOVE_WITHIN: '체크리스트가 이동되었습니다.',
     MOVE_TO_ANOTHER: '체크리스트가 다른 카드로 이동되었습니다.',
+    CARD_NOT_FOUND: '카드 조회에 실패 하였습니다.'
   },
   CHECKITEM: {
     CREATE: '체크리스트 아이템이 생성되었습니다.',
