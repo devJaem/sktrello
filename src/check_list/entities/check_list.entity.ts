@@ -34,13 +34,13 @@ export class CheckList {
   @DeleteDateColumn()
   deletedAt?: Date | null;
 
-  /* 체크 아이템 join */
-  @OneToMany(() => CheckItem, (check_Item) => check_Item.checklist, {
+  // Relation - [check_lists] 1 : N [check_items]
+  @OneToMany(() => CheckItem, (checkItem) => checkItem.checklist, {
     cascade: true,
   })
   checkItems: CheckItem[];
 
-  /* 카드 join */
+  // Relation - [check_lists] N : 1 [cards]
   @ManyToOne(() => Card, (card) => card.checkLists, { onDelete: 'CASCADE' })
   card: Card;
 }
