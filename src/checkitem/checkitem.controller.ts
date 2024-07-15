@@ -23,7 +23,7 @@ import { CHECK_MESSAGES } from '../constants/check-message.constant';
 import { CheckItem } from './entities/checkItem.entity';
 
 @ApiTags('체크리스트-아이템 API')
-@Controller('/checkitems')
+@Controller('/checklists')
 export class CheckItemController {
   constructor(private readonly checkItemService: CheckItemService) {}
 
@@ -32,8 +32,13 @@ export class CheckItemController {
     description: '체크아이템을 생성합니다.',
   })
   @ApiBody({ type: CreateCheckItemDto })
+  @ApiParam({
+    name: 'checklistId',
+    description: 'ID of the checklist',
+    type: 'number',
+  })
   @ApiResponse({ type: CheckItem, status: HttpStatus.CREATED })
-  @Post()
+  @Post(':checklistId/items')
   async create(
     @Param('checklistId') checklistId: number,
     @Body() createCheckItemDto: CreateCheckItemDto
@@ -59,7 +64,7 @@ export class CheckItemController {
     type: 'number',
   })
   @ApiResponse({ type: [CheckItem], status: HttpStatus.OK })
-  @Get(':checklistId')
+  @Get(':checklistId/items')
   async findAll(@Param('checklistId') checklistId: number) {
     const checkItems = await this.checkItemService.findAll(checklistId);
     return {
@@ -83,7 +88,7 @@ export class CheckItemController {
     type: 'number',
   })
   @ApiResponse({ type: CheckItem, status: HttpStatus.OK })
-  @Get(':checklistId/:itemId')
+  @Get(':checklistId/items/:itemId')
   async findOne(@Param('itemId') itemId: number) {
     const checkItem = await this.checkItemService.findOne(itemId);
     return {
@@ -108,7 +113,7 @@ export class CheckItemController {
   })
   @ApiBody({ type: UpdateCheckItemDto })
   @ApiResponse({ type: CheckItem, status: HttpStatus.OK })
-  @Patch(':checklistId/:itemId')
+  @Patch(':checklistId/items/:itemId')
   async update(
     @Param('itemId') itemId: number,
     @Body() updateCheckItemDto: UpdateCheckItemDto
@@ -139,7 +144,7 @@ export class CheckItemController {
     type: 'number',
   })
   @ApiResponse({ status: HttpStatus.OK })
-  @Delete(':checklistId/:itemId')
+  @Delete(':checklistId/items/:itemId')
   async remove(@Param('itemId') itemId: number) {
     const deletedCheckItem = await this.checkItemService.remove(itemId);
     return {
@@ -165,7 +170,7 @@ export class CheckItemController {
   })
   @ApiBody({ type: MoveCheckItemDto })
   @ApiResponse({ type: CheckItem, status: HttpStatus.OK })
-  @Patch(':checklistId/:itemId/move-within')
+  @Patch(':checklistId/items/:itemId/move-within')
   async moveItemWithinCheckList(
     @Param('itemId') itemId: number,
     @Body() moveCheckItemDto: MoveCheckItemDto
@@ -197,7 +202,7 @@ export class CheckItemController {
   })
   @ApiBody({ type: MoveCheckItemDto })
   @ApiResponse({ type: CheckItem, status: HttpStatus.OK })
-  @Patch(':checklistId/:itemId/move-to-another')
+  @Patch(':checklistId/items/:itemId/move-to-another')
   async moveItemToAnotherChecklist(
     @Param('itemId') itemId: number,
     @Body() moveCheckItemDto: MoveCheckItemDto
