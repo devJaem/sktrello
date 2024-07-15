@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Card } from './entities/card.entity';
@@ -6,15 +11,67 @@ import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { MoveCardDto } from './dto/move-card.dto';
 import { LexoRank } from 'lexorank';
+import { MESSAGES } from 'src/constants/message.constants';
+import { BoardUser } from 'src/board/entities/board-user.entity';
+import { List } from 'src/list/entities/list.entity';
+import { CardUser } from './entities/card-user.entity';
+import { Comment } from 'src/comment/entities/comment.entity';
+import { CheckList } from 'src/check_list/entities/check_list.entity';
 
 @Injectable()
 export class CardService {
   constructor(
     @InjectRepository(Card)
-    private readonly cardRepository: Repository<Card>
+    private readonly cardRepository: Repository<Card>,
+    @InjectRepository(BoardUser)
+    private readonly boardUserRepository: Repository<BoardUser>,
+    @InjectRepository(List)
+    private readonly listRepository: Repository<List>,
+    @InjectRepository(CardUser)
+    private readonly cardUserRepository: Repository<CardUser>,
+    @InjectRepository(Comment)
+    private readonly commentRepository: Repository<Comment>,
+    @InjectRepository(CheckList)
+    private readonly checkListRepository: Repository<CheckList>
   ) {}
 
-  async create(createCardDto: CreateCardDto): Promise<Card> {
+  async createCard(
+    userId: number,
+    listId: number,
+    createCardDto: CreateCardDto
+  ) {
+    if (!userId) {
+      throw new UnauthorizedException(MESSAGES.CARD.COMMON.USER.UNAUTHORIZED);
+    }
+
+    const { title, description, color, duedate, duedate_status } =
+      createCardDto;
+    const board = await this.listRepository.findOne({
+      where: { id: listId },
+    });
+    const boardId = board.boardId;
+    const isInvite = await this.boardUserRepository.findOne({
+      where: { userId, boardId },
+    });
+
+    if (!isInvite) {
+      throw new UnauthorizedException(
+        MESSAGES.BOARD.READ_DETAIL.FAILURE.UNAUTHORIZED
+      );
+    }
+
+    const list = await this.listRepository.findOne({
+      where: { id: listId },
+    });
+
+    if (!list) {
+      throw new NotFoundException(MESSAGES.CARD.CREATE.FAILURE.NOTFOUND);
+    }
+
+    if (!title) {
+      throw new BadRequestException(MESSAGES.CARD.COMMON.TITLE.NO_TITLE);
+    }
+
     const cards = await this.cardRepository.find({
       order: { cardOrder: 'ASC' },
     });
@@ -28,25 +85,75 @@ export class CardService {
       cardOrder: lastRank.genNext().toString(),
     });
 
-    return await this.cardRepository.save(newCard);
+    return await this.cardRepository.save({
+      listId,
+      title,
+      description,
+      color,
+      duedate,
+      duedate_status,
+    });
   }
 
-  async findAll(): Promise<Card[]> {
-    return await this.cardRepository.find();
+  async findAllCards(userId: number, listId: number) {
+    if (!userId) {
+      throw new UnauthorizedException(MESSAGES.CARD.COMMON.USER.UNAUTHORIZED);
+    }
+    if (!listId) {
+      throw new NotFoundException(MESSAGES.CARD.READ_CARDS.FAILURE);
+    }
+    return await this.cardRepository.find({
+      order: { cardOrder: 'ASC' },
+    });
   }
 
-  async findOne(id: number): Promise<Card> {
-    return await this.cardRepository.findOneBy({ id });
-  }
-
-  async updateContent(id: number, updateCardDto: UpdateCardDto): Promise<Card> {
-    const card = await this.cardRepository.findOneBy({ id });
+  async findCard(userId: number, cardId: number) {
+    if (!userId) {
+      throw new UnauthorizedException(MESSAGES.CARD.COMMON.USER.UNAUTHORIZED);
+    }
+    const card = await this.cardRepository.findOne({
+      where: { id: cardId },
+    });
     if (!card) {
-      throw new NotFoundException('Card not found');
+      throw new NotFoundException(MESSAGES.CARD.READ_CARD.FAILURE);
+    }
+    const cardComment = await this.commentRepository.find({
+      where: { cardId },
+    });
+    const cardChecklist = await this.checkListRepository.find({
+      where: { cardId },
+    });
+    return { card, cardComment, cardChecklist };
+  }
+
+  async updateContent(
+    userId: number,
+    cardId: number,
+    updateCardDto: UpdateCardDto
+  ) {
+    if (!userId) {
+      throw new UnauthorizedException(MESSAGES.CARD.COMMON.USER.UNAUTHORIZED);
+    }
+    const card = await this.cardRepository.findOne({ where: { id: cardId } });
+    if (!card) {
+      throw new NotFoundException(MESSAGES.CARD.UPDATE.FAILURE_FIND);
     }
 
-    Object.assign(card, updateCardDto);
-    return await this.cardRepository.save(card);
+    const { title, description, color, duedate, duedate_status } =
+      updateCardDto;
+    if (!title) {
+      throw new BadRequestException(MESSAGES.CARD.COMMON.TITLE.NO_TITLE);
+    }
+    return await this.cardRepository.update(
+      { id: cardId },
+      {
+        title,
+        description,
+        color,
+        duedate,
+        duedate_status,
+      }
+    );
   }
 
   async updateOrderAndList(
@@ -87,7 +194,14 @@ export class CardService {
     return await this.cardRepository.save(card);
   }
 
-  async remove(id: number): Promise<void> {
-    await this.cardRepository.softDelete(id);
+  async deleteCard(userId: number, cardId: number) {
+    if (!userId) {
+      throw new UnauthorizedException(MESSAGES.CARD.COMMON.USER.UNAUTHORIZED);
+    }
+    const card = await this.cardRepository.findOne({ where: { id: cardId } });
+    if (!card) {
+      throw new NotFoundException(MESSAGES.CARD.READ_CARD.FAILURE);
+    }
+    return await this.cardRepository.softDelete({ id: cardId });
   }
 }
