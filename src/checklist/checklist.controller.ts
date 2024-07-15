@@ -125,7 +125,7 @@ export class CheckListController {
   }
 
   @ApiOperation({
-    summary: '체크리스트 이동 API',
+    summary: '체크리스트 위치 이동 API',
     description: '체크리스트를 이동합니다.',
   })
   @ApiParam({

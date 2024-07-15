@@ -155,8 +155,8 @@ export class CheckItemController {
   }
 
   @ApiOperation({
-    summary: '체크리스트 내의 체크아이템 이동 API',
-    description: '체크리스트 내에서 체크아이템을 이동합니다.',
+    summary: '체크리스트 내의 아이템 이동 API',
+    description: '체크리스트 내에서 아이템을 이동합니다.',
   })
   @ApiParam({
     name: 'checklistId',
@@ -170,7 +170,7 @@ export class CheckItemController {
   })
   @ApiBody({ type: MoveCheckItemDto })
   @ApiResponse({ type: CheckItem, status: HttpStatus.OK })
-  @Patch(':checklistId/items/:itemId/move-within')
+  @Patch(':checklistId/items/:itemId/move')
   async moveItemWithinCheckList(
     @Param('itemId') itemId: number,
     @Body() moveCheckItemDto: MoveCheckItemDto
@@ -187,8 +187,8 @@ export class CheckItemController {
   }
 
   @ApiOperation({
-    summary: '다른 체크리스트로 체크아이템 이동 API',
-    description: '다른 체크리스트로 체크아이템을 이동합니다.',
+    summary: '다른 체크리스트로 아이템 이동 API',
+    description: '다른 체크리스트로 아이템을 이동합니다.',
   })
   @ApiParam({
     name: 'checklistId',
@@ -202,7 +202,7 @@ export class CheckItemController {
   })
   @ApiBody({ type: MoveCheckItemDto })
   @ApiResponse({ type: CheckItem, status: HttpStatus.OK })
-  @Patch(':checklistId/items/:itemId/move-to-another')
+  @Patch(':checklistId/items/:itemId/move-to-checklist')
   async moveItemToAnotherChecklist(
     @Param('itemId') itemId: number,
     @Body() moveCheckItemDto: MoveCheckItemDto
