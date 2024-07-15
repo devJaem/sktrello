@@ -48,21 +48,6 @@ export class CommentController {
     };
   }
 
-  // 댓글 상세 조회
-  @Get(':id')
-  async findOne(
-    @Param('cardId', ParseIntPipe) cardId: number,
-    @Param('id', ParseIntPipe) id: number
-  ) {
-    const userId = 1; // 사용자 ID 하드 코딩
-    const readDetailComment = await this.commentService.findOne(id, userId);
-    return {
-      status: HttpStatus.OK,
-      message: COMMENT_MESSAGE.COMMENT.READ_DETAIL.SUCCESS,
-      data: readDetailComment,
-    };
-  }
-
   // 댓글 수정
   @Patch(':id')
   async update(
