@@ -1,3 +1,6 @@
+import { empty, EMPTY } from 'rxjs';
+import { EmbeddedMetadata } from 'typeorm/metadata/EmbeddedMetadata';
+
 export const MESSAGES = {
   BOARD: {
     // Board 공통
@@ -54,6 +57,23 @@ export const MESSAGES = {
         UNAUTHORIZED: '호스트만 초대할 수 있습니다.',
         NOTFOUND: '존재하지 않는 사용자입니다.',
         CONFLICT: '이미 초대한 사용자입니다.',
+      },
+    },
+  },
+  USER: {
+    SIGNUP: {
+      SUCCESS: '회원가입에 성공했습니다.',
+      EMAIL: {
+        EMPTY: '값을 입력해주세요.',
+        CONFLICT: '이미 회원가입이 완료된 회원입니다.',
+      },
+      PASSWORD: {
+        EMPTY: '값을 입력해주세요.',
+        WEAKPASSWORD: '비밀번호 규칙이 맞지 않습니다.',
+        NOTMATCHED: '비밀번호와 비밀번호 확인이 일치하지 않습니다.',
+      },
+      NICKNAME: {
+        EMPTY: '값을 입력해주세요.',
       },
     },
   },
