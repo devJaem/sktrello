@@ -40,7 +40,7 @@ export class CheckList {
   })
   checkItems: CheckItem[];
 
-  /* 카드 join */
+  // Relation - [check_lists] N : 1 [cards]
   @ManyToOne(() => Card, (card) => card.checkLists, { onDelete: 'CASCADE' })
   card: Card;
 }

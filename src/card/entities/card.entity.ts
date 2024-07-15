@@ -53,21 +53,21 @@ export class Card {
   @DeleteDateColumn()
   deletedAt?: Date | null;
 
-  // 카드유저 테이블과 1:N 관계
-  @OneToMany(() => CardUser, (cardUsers) => cardUsers.card, { cascade: true })
+  // Relation - [cards] 1 : N [card_users]
+  @OneToMany(() => CardUser, (cardUser) => cardUser.card, { cascade: true })
   cardUsers: CardUser[];
 
-  //체크리스트 테이블과 1:N 관계
-  @OneToMany(() => CheckList, (checkLists) => checkLists.card, {
+  // Relation - [cards] 1 : N [check_lists]
+  @OneToMany(() => CheckList, (checkList) => checkList.card, {
     cascade: true,
   })
   checkLists: CheckList[];
 
-  //코멘트 테이블과 1:N 관계
-  @OneToMany(() => Comment, (comments) => comments.card, { cascade: true })
+  // Relation - [cards] 1 : N [comments]
+  @OneToMany(() => Comment, (comment) => comment.card, { cascade: true })
   comments: Comment[];
 
-  // 리스트 테이블과 N:1 관계
+  // Relation - [cards] N : 1 [lists]
   @ManyToOne(() => List, (list) => list.cards, { onDelete: 'CASCADE' })
   list: List;
 }

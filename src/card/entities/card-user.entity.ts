@@ -13,11 +13,11 @@ export class CardUser {
   @Column({ unsigned: true })
   userId: number;
 
-  // 카드 테이블과 N:1관계
+  // Relation - [card_users] N : 1 [cards]
   @ManyToOne(() => Card, (card) => card.cardUsers, { onDelete: 'CASCADE' })
   card: Card;
 
-  // 유저 테이블과 N:1관계
+  // Relation - [card_users] N : 1 [users]
   @ManyToOne(() => User, (user) => user.cardUsers)
   user: User;
 }
