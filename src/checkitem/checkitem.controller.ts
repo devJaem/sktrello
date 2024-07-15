@@ -43,9 +43,10 @@ export class CheckItemController {
     @Param('checklistId') checklistId: number,
     @Body() createCheckItemDto: CreateCheckItemDto
   ) {
-    const newCheckItem = await this.checkItemService.create({
-      ...createCheckItemDto,
-    });
+    const newCheckItem = await this.checkItemService.create(
+      createCheckItemDto,
+      checklistId
+    );
     return {
       statusCode: HttpStatus.CREATED,
       message: CHECK_MESSAGES.CHECKITEM.CREATE,
@@ -68,6 +69,7 @@ export class CheckItemController {
     const checkItems = await this.checkItemService.findAll(checklistId);
     return {
       statusCode: HttpStatus.OK,
+      message: CHECK_MESSAGES.CHECKITEM.FOUND,
       data: checkItems,
     };
   }
@@ -92,6 +94,7 @@ export class CheckItemController {
     const checkItem = await this.checkItemService.findOne(itemId);
     return {
       statusCode: HttpStatus.OK,
+      message: CHECK_MESSAGES.CHECKITEM.FOUND,
       data: checkItem,
     };
   }

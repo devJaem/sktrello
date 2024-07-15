@@ -66,6 +66,7 @@ export class CheckListController {
     const checklists = await this.checkListService.findAll(+cardId);
     return {
       statusCode: HttpStatus.OK,
+      message: CHECK_MESSAGES.CHECKLIST.FOUND,
       data: checklists,
     };
   }
@@ -89,6 +90,7 @@ export class CheckListController {
     const checkList = await this.checkListService.findOne(+id);
     return {
       statusCode: HttpStatus.OK,
+      message: CHECK_MESSAGES.CHECKLIST.FOUND,
       data: checkList,
     };
   }
