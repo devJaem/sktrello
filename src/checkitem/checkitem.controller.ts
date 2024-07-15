@@ -12,7 +12,7 @@ import { CheckItemService } from './checkItem.service';
 import { CreateCheckItemDto } from './dto/create-checkItem.dto';
 import { UpdateCheckItemDto } from './dto/update-checkItem.dto';
 import { MoveCheckItemDto } from './dto/move-checkItem.dto';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CHECK_MESSAGES } from '../constants/check-message.constant'; // 메시지 상수 파일 가져오기
 
 @Controller('checklists/:checklistId/items')

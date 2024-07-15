@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { ListService } from './list.service';
 
-import { MESSAGES } from 'src/constants/message.constant';
+import { LIST_MESSAGES } from 'src/constants/list-message.constant';
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
 import { MoveListDto } from './dto/move-list.dto';
@@ -38,7 +38,7 @@ export class ListController {
 
     return {
       statusCode: HttpStatus.CREATED,
-      message: MESSAGES.LIST.CREATE.SUCCESS,
+      message: LIST_MESSAGES.LIST.CREATE.SUCCESS,
       createList,
     };
   }
@@ -55,7 +55,7 @@ export class ListController {
 
     return {
       statusCode: HttpStatus.OK,
-      message: MESSAGES.LIST.READ_LIST.SUCCESS,
+      message: LIST_MESSAGES.LIST.READ_LIST.SUCCESS,
       findAllLists,
     };
   }
@@ -73,7 +73,7 @@ export class ListController {
 
     return {
       statusCode: HttpStatus.OK,
-      message: MESSAGES.LIST.READ_DETAIL.SUCCESS,
+      message: LIST_MESSAGES.LIST.READ_DETAIL.SUCCESS,
       findListById,
     };
   }
@@ -100,7 +100,7 @@ export class ListController {
 
     return {
       statusCode: HttpStatus.OK,
-      message: MESSAGES.LIST.UPDATE.SUCCESS_NAME,
+      message: LIST_MESSAGES.LIST.UPDATE.SUCCESS_NAME,
       updateList,
     };
   }
@@ -127,7 +127,7 @@ export class ListController {
 
     return {
       statusCode: HttpStatus.OK,
-      message: MESSAGES.LIST.UPDATE.SUCCESS_ORDER,
+      message: LIST_MESSAGES.LIST.UPDATE.SUCCESS_ORDER,
       moveList,
     };
   }
@@ -145,7 +145,7 @@ export class ListController {
 
     return {
       statusCode: HttpStatus.OK,
-      message: MESSAGES.LIST.DELETE.SUCCESS,
+      message: LIST_MESSAGES.LIST.DELETE.SUCCESS,
       removeList,
     };
   }

@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { List } from './entities/list.entity';
 import { Board } from 'src/board/entities/board.entity';
 import { BoardUser } from 'src/board/entities/board-user.entity';
+import { CardModule } from 'src/card/card.module';
 
 import { CardModule } from 'src/card/card.module';
 

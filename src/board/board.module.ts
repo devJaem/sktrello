@@ -7,6 +7,7 @@ import { BoardService } from './board.service';
 import { User } from 'src/user/entities/user.entity';
 import { Board } from './entities/board.entity';
 import { BoardUser } from './entities/board-user.entity';
+import { ListModule } from 'src/list/list.module';
 
 import { ListModule } from 'src/list/list.module';
 
