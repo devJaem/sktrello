@@ -16,7 +16,7 @@ import { MoveCardDto } from './dto/move-card.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { UserInfo } from 'src/utils/test-user.decorator';
 import { User } from 'src/user/entities/user.entity';
-import { CARDMESSAGES } from 'src/constants/card-message.constant';
+import { CARD_MESSAGES } from 'src/constants/card-message.constant';
 
 // @UseGuards(AuthGuard('jwt'))
 @Controller('cards')
@@ -47,7 +47,7 @@ export class CardController {
     const findAllCards = await this.cardService.findAllCards(user.id, listId);
     return {
       statusCode: HttpStatus.OK,
-      message: CARDMESSAGES.CARD.READ_CARDS.SUCCESS,
+      message: CARD_MESSAGES.CARD.READ_CARDS.SUCCESS,
       findAllCards,
     };
   }
@@ -58,7 +58,7 @@ export class CardController {
 
     return {
       statusCode: HttpStatus.OK,
-      message: CARDMESSAGES.CARD.READ_CARD.SUCCESS,
+      message: CARD_MESSAGES.CARD.READ_CARD.SUCCESS,
       findCard,
     };
   }
@@ -78,7 +78,7 @@ export class CardController {
     );
     return {
       statusCode: HttpStatus.OK,
-      message: CARDMESSAGES.CARD.UPDATE.SUCCESS,
+      message: CARD_MESSAGES.CARD.UPDATE.SUCCESS,
       updateContent,
     };
   }
@@ -98,7 +98,7 @@ export class CardController {
 
     return {
       STATUS_CODES: HttpStatus.OK,
-      messeage: CARDMESSAGES.CARD.DELETE.SUCCESS,
+      messeage: CARD_MESSAGES.CARD.DELETE.SUCCESS,
       deleteCard,
     };
   }

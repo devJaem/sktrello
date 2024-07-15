@@ -13,7 +13,7 @@ import { CreateCheckListDto } from './dto/create-checkList.dto';
 import { UpdateCheckListDto } from './dto/update-checkList.dto';
 import { MoveCheckListDto } from './dto/move-checkList.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { MESSAGES } from '../constants/check-message.constats';
+import { CHECK_MESSAGES } from '../constants/check-message.constant';
 
 @Controller('checkLists')
 @ApiTags('체크리스트 API')
@@ -22,12 +22,15 @@ export class CheckListController {
 
   @Post()
   @ApiOperation({ summary: '체크리스트 생성' })
-  @ApiResponse({ status: HttpStatus.CREATED, description: MESSAGES.CHECKLIST.CREATE })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: CHECK_MESSAGES.CHECKLIST.CREATE,
+  })
   async create(@Body() createCheckListDto: CreateCheckListDto) {
     const newCheckList = await this.checkListService.create(createCheckListDto);
     return {
       statusCode: HttpStatus.CREATED,
-      message: MESSAGES.CHECKLIST.CREATE,
+      message: CHECK_MESSAGES.CHECKLIST.CREATE,
       data: newCheckList,
     };
   }
@@ -58,10 +61,13 @@ export class CheckListController {
     @Param('id') id: string,
     @Body() updateCheckListDto: UpdateCheckListDto
   ) {
-    const updatedCheckList = await this.checkListService.update(+id, updateCheckListDto);
+    const updatedCheckList = await this.checkListService.update(
+      +id,
+      updateCheckListDto
+    );
     return {
       statusCode: HttpStatus.OK,
-      message: MESSAGES.CHECKLIST.UPDATE,
+      message: CHECK_MESSAGES.CHECKLIST.UPDATE,
       data: updatedCheckList,
     };
   }
@@ -72,10 +78,13 @@ export class CheckListController {
     @Param('id') id: string,
     @Body() moveCheckListDto: MoveCheckListDto
   ) {
-    const movedCheckList = await this.checkListService.moveItemWithInCard(+id, moveCheckListDto);
+    const movedCheckList = await this.checkListService.moveItemWithInCard(
+      +id,
+      moveCheckListDto
+    );
     return {
       statusCode: HttpStatus.OK,
-      message: MESSAGES.CHECKLIST.MOVE_WITHIN,
+      message: CHECK_MESSAGES.CHECKLIST.MOVE_WITHIN,
       data: movedCheckList,
     };
   }
@@ -86,10 +95,13 @@ export class CheckListController {
     @Param('id') id: string,
     @Body() moveCheckListDto: MoveCheckListDto
   ) {
-    const movedCheckList = await this.checkListService.moveListToAnotherCard(+id, moveCheckListDto);
+    const movedCheckList = await this.checkListService.moveListToAnotherCard(
+      +id,
+      moveCheckListDto
+    );
     return {
       statusCode: HttpStatus.OK,
-      message: MESSAGES.CHECKLIST.MOVE_TO_ANOTHER,
+      message: CHECK_MESSAGES.CHECKLIST.MOVE_TO_ANOTHER,
       data: movedCheckList,
     };
   }
@@ -100,7 +112,7 @@ export class CheckListController {
     const deletedCheckList = await this.checkListService.remove(+id);
     return {
       statusCode: HttpStatus.OK,
-      message: MESSAGES.CHECKLIST.DELETE,
+      message: CHECK_MESSAGES.CHECKLIST.DELETE,
       data: deletedCheckList,
     };
   }
