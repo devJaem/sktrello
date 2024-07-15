@@ -7,7 +7,7 @@ import { CheckItem } from './entities/checkItem.entity';
 import { Repository } from 'typeorm';
 import { LexoRank } from 'lexorank';
 import { MoveCheckItemDto } from './dto/move-checkItem.dto';
-import { MESSAGES } from '../constants/check-message.constats'
+import { MESSAGES } from '../constants/check-message.constats';
 
 @Injectable()
 export class CheckItemService {
@@ -51,8 +51,8 @@ export class CheckItemService {
   async findAll(checkListId: number) {
     const checkItems = await this.checkItemRepository
       .createQueryBuilder('check_item')
-      .where('check_item.checklist_id = :checklistId', { checkListId })
-      .getRawMany();
+      .where('check_item.check_list_id = :checklistId', { checkListId })
+      .getMany();
 
     return checkItems;
   }
@@ -63,7 +63,7 @@ export class CheckItemService {
    * @returns 조회된 결과값
    */
   async findOne(id: number) {
-    const checkItem = await this.verifyListById(id);
+    const checkItem = await this.verifyItemById(id);
     return checkItem;
   }
 
@@ -73,7 +73,7 @@ export class CheckItemService {
    * @param updateCheckItemDto  content or isDone
    */
   async update(id: number, updateCheckItemDto: UpdateCheckItemDto) {
-    await this.verifyListById(id);
+    await this.verifyItemById(id);
     await this.checkItemRepository.update({ id }, updateCheckItemDto);
   }
 
@@ -89,7 +89,7 @@ export class CheckItemService {
   ) {
     const { targetOrder } = moveCheckItemDto;
 
-    const checkItem = await this.verifyListById(id);
+    const checkItem = await this.verifyItemById(id);
     const targetItem = await this.checkItemRepository.findOne({
       where: {
         checkListId: checkItem.checkListId,
@@ -114,7 +114,7 @@ export class CheckItemService {
   /**
    * 다른 체크리스트로 이동 and 위치까지 지정
    * @param id 체크아이템 ID
-   * @param moveCheckItemDto targetChecklistId, targetOrder
+   * @param moveCheckItemDto  targetOrder, targetChecklistId
    * @returns 이동한 결과값
    */
   async moveItemToAnotherChecklist(
@@ -124,10 +124,10 @@ export class CheckItemService {
     const { targetChecklistId, targetOrder } = moveCheckItemDto;
 
     // 이동할 체크아이템 가져오기
-    const checkItem = await this.verifyListById(id);
+    const checkItem = await this.verifyItemById(id);
     checkItem.checkListId = targetChecklistId;
 
-    let newOrder = checkItem.checkItemOrder; // 기본적으로 현재 순서를 유지
+    let newOrder = checkItem.checkItemOrder; 
 
     if (targetOrder) {
       const targetItem = await this.checkItemRepository.findOne({
@@ -176,18 +176,18 @@ export class CheckItemService {
    * @returns 소프트 딜리트 된 아이탬 리턴
    */
   async remove(id: number) {
-    const checkItem = await this.verifyListById(id);
+    const checkItem = await this.verifyItemById(id);
     checkItem.deletedAt = new Date();
     await this.checkItemRepository.save(checkItem);
     return { deletedItem: checkItem };
   }
 
   /**
-   * 한개의 id값을 열람하는 메서드
+   * 한개의 id값을 가져오는 메서드
    * @param id 체크아이템 ID
    * @returns id에 해당하는 컬럼
    */
-  private async verifyListById(id: number) {
+  private async verifyItemById(id: number) {
     const checkItem = await this.checkItemRepository.findOne({
       where: { id },
     });
@@ -198,17 +198,17 @@ export class CheckItemService {
     return checkItem;
   }
   /**
-   * 전체 list 갯수 확인 메서드
+   * 전체 item 갯수 확인 메서드
    * @param checkListId 체크리스트 id
    * @returns list 갯수
    */
   async count(checkListId: number) {
-    const listCount = await this.checkItemRepository
+    const itemCount = await this.checkItemRepository
       .createQueryBuilder('check_item')
       .select('COUNT(check_item.checkItemOrder)', 'total_list_count')
       .where('check_item.checkListId = :checkListId', { checkListId })
       .getRawOne();
 
-    return listCount;
+    return itemCount;
   }
 }

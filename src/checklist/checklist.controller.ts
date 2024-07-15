@@ -6,40 +6,102 @@ import {
   Patch,
   Param,
   Delete,
+  HttpStatus,
 } from '@nestjs/common';
 import { CheckListService } from './checkList.service';
 import { CreateCheckListDto } from './dto/create-checkList.dto';
 import { UpdateCheckListDto } from './dto/update-checkList.dto';
+import { MoveCheckListDto } from './dto/move-checkList.dto';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { MESSAGES } from '../constants/check-message.constats';
 
 @Controller('checkLists')
+@ApiTags('체크리스트 API')
 export class CheckListController {
   constructor(private readonly checkListService: CheckListService) {}
 
   @Post()
-  create(@Body() createCheckListDto: CreateCheckListDto) {
-    return this.checkListService.create(createCheckListDto);
+  @ApiOperation({ summary: '체크리스트 생성' })
+  @ApiResponse({ status: HttpStatus.CREATED, description: MESSAGES.CHECKLIST.CREATE })
+  async create(@Body() createCheckListDto: CreateCheckListDto) {
+    const newCheckList = await this.checkListService.create(createCheckListDto);
+    return {
+      statusCode: HttpStatus.CREATED,
+      message: MESSAGES.CHECKLIST.CREATE,
+      data: newCheckList,
+    };
   }
 
-  @Get()
-  findAll() {
-    return this.checkListService.findAll();
+  @Get(':cardId')
+  @ApiOperation({ summary: '체크리스트 전체 조회' })
+  async findAll(@Param('cardId') cardId: string) {
+    const checklists = await this.checkListService.findAll(+cardId);
+    return {
+      statusCode: HttpStatus.OK,
+      data: checklists,
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.checkListService.findOne(+id);
+  @ApiOperation({ summary: '체크리스트 단일 조회' })
+  async findOne(@Param('id') id: string) {
+    const checkList = await this.checkListService.findOne(+id);
+    return {
+      statusCode: HttpStatus.OK,
+      data: checkList,
+    };
   }
 
   @Patch(':id')
-  update(
+  @ApiOperation({ summary: '체크리스트 수정' })
+  async update(
     @Param('id') id: string,
     @Body() updateCheckListDto: UpdateCheckListDto
   ) {
-    return this.checkListService.update(+id, updateCheckListDto);
+    const updatedCheckList = await this.checkListService.update(+id, updateCheckListDto);
+    return {
+      statusCode: HttpStatus.OK,
+      message: MESSAGES.CHECKLIST.UPDATE,
+      data: updatedCheckList,
+    };
+  }
+
+  @Patch(':id/move')
+  @ApiOperation({ summary: '체크리스트 순서 이동' })
+  async move(
+    @Param('id') id: string,
+    @Body() moveCheckListDto: MoveCheckListDto
+  ) {
+    const movedCheckList = await this.checkListService.moveItemWithInCard(+id, moveCheckListDto);
+    return {
+      statusCode: HttpStatus.OK,
+      message: MESSAGES.CHECKLIST.MOVE_WITHIN,
+      data: movedCheckList,
+    };
+  }
+
+  @Patch(':id/move-to-card')
+  @ApiOperation({ summary: '다른 카드로 체크리스트 이동' })
+  async moveToCard(
+    @Param('id') id: string,
+    @Body() moveCheckListDto: MoveCheckListDto
+  ) {
+    const movedCheckList = await this.checkListService.moveListToAnotherCard(+id, moveCheckListDto);
+    return {
+      statusCode: HttpStatus.OK,
+      message: MESSAGES.CHECKLIST.MOVE_TO_ANOTHER,
+      data: movedCheckList,
+    };
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.checkListService.remove(+id);
+  @ApiOperation({ summary: '체크리스트 삭제' })
+  async remove(@Param('id') id: string) {
+    const deletedCheckList = await this.checkListService.remove(+id);
+    return {
+      statusCode: HttpStatus.OK,
+      message: MESSAGES.CHECKLIST.DELETE,
+      data: deletedCheckList,
+    };
   }
 }
