@@ -8,6 +8,7 @@ import {
   Delete,
   ParseIntPipe,
   HttpStatus,
+  // UseGuards,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
@@ -18,6 +19,7 @@ import { UserInfo } from 'src/utils/test-user.decorator';
 import { User } from 'src/user/entities/user.entity';
 
 @ApiTags('댓글 API')
+// @UseGuards(가드이름)
 @Controller('cards/:cardId/comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
@@ -29,11 +31,11 @@ export class CommentController {
   })
   @Post()
   async create(
-    @UserInfo() user: User,
+    @UserInfo() user: User, // @Request() req: any 로 바꿔야됨?
     @Param('cardId', ParseIntPipe) cardId: number,
     @Body() createCommentDto: CreateCommentDto
   ) {
-    const userId = user.id; // 사용자 ID
+    const userId = user.id; // 사용자 ID user.id. ======> req.user.id
     const createdComment = await this.commentService.create(
       createCommentDto,
       userId,
