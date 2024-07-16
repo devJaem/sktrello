@@ -14,6 +14,8 @@ import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { COMMENT_MESSAGE } from 'src/constants/comment.message.constant';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { UserInfo } from 'src/utils/test-user.decorator';
+import { User } from 'src/user/entities/user.entity';
 
 @ApiTags('댓글 API')
 @Controller('cards/:cardId/comments')
@@ -27,10 +29,11 @@ export class CommentController {
   })
   @Post()
   async create(
+    @UserInfo() user: User,
     @Param('cardId', ParseIntPipe) cardId: number,
     @Body() createCommentDto: CreateCommentDto
   ) {
-    const userId = 1; // 사용자 ID 하드코딩
+    const userId = user.id; // 사용자 ID
     const createdComment = await this.commentService.create(
       createCommentDto,
       userId,
@@ -65,11 +68,12 @@ export class CommentController {
   })
   @Patch(':id')
   async update(
+    @UserInfo() user: User,
     @Param('cardId', ParseIntPipe) cardId: number,
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCommentDto: UpdateCommentDto
   ) {
-    const userId = 1; // 사용자 ID 하드 코딩
+    const userId = user.id; // 사용자 ID
     const updateComment = await this.commentService.update(
       id,
       updateCommentDto,
@@ -89,10 +93,11 @@ export class CommentController {
   })
   @Delete(':id')
   async remove(
+    @UserInfo() user: User,
     @Param('cardId', ParseIntPipe) cardId: number,
     @Param('id') id: number
   ) {
-    const userId = 1; // 사용자 ID 하드 코딩
+    const userId = user.id; // 사용자 ID
     const deleteComment = await this.commentService.remove(id, userId);
     return {
       status: HttpStatus.OK,
