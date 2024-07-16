@@ -89,7 +89,6 @@ export class ListService {
   }
 
   /** 리스트 조회 API **/
-  // 해당 list에 있는 card 정보 가져오기 - title, duedate, color, card_order(lexorank)
   async findAllLists(userId: number, boardId: number) {
     // 인증된 사용자 여부 확인
     if (!userId) {
@@ -98,7 +97,7 @@ export class ListService {
       );
     }
 
-    const lists = await this.listRepository.findOne({
+    const lists = await this.listRepository.find({
       where: { boardId },
       order: { listOrder: 'ASC' },
     });
