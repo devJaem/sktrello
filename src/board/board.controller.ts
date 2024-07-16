@@ -20,7 +20,7 @@ import { LogIn } from 'src/auth/decorator/login.decorator';
 import { AuthGuard } from '@nestjs/passport';
 
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { BoardUserRolesGuard } from 'src/auth/guard/jwt-auth.guard';
+import { BoardUserRolesGuard } from 'src/auth/guard/board-user-roles.guard';
 import { BoardUserRole } from './types/board-user.type';
 import { BoardUserRoles } from 'src/auth/decorator/board-user-roles.decorator';
 import { User } from 'src/user/entities/user.entity';
