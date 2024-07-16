@@ -9,6 +9,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { User } from 'src/user/entities/user.entity';
 import { List } from './entities/list.entity';
 import { ListService } from './list.service';
 import { LIST_MESSAGES } from 'src/constants/list-message.constant';
@@ -17,7 +18,7 @@ import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
 import { MoveListDto } from './dto/move-list.dto';
 
-import { User } from 'src/utils/user.decorator'; // 임시 user 데코레이터 생성
+import { LogIn } from 'src/auth/decorator/login.decorator';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -52,7 +53,7 @@ export class ListController {
   })
   @Post('/:boardId/lists')
   async createList(
-    @User() user,
+    @LogIn() user: User,
     @Param('boardId') boardId: number,
     @Body() createListDto: CreateListDto,
     @Body() moveListDto: MoveListDto
@@ -86,7 +87,7 @@ export class ListController {
     type: [List],
   })
   @Get('/:boardId/lists')
-  async findAllLists(@User() user, @Param('boardId') boardId: number) {
+  async findAllLists(@LogIn() user: User, @Param('boardId') boardId: number) {
     const findAllLists = await this.listService.findAllLists(user.id, boardId);
 
     return {
@@ -116,7 +117,7 @@ export class ListController {
     type: List,
   })
   @Get('/:boardId/lists/:listId')
-  async findListById(@User() user, @Param('listId') listId: number) {
+  async findListById(@LogIn() user: User, @Param('listId') listId: number) {
     const findListById = await this.listService.findListById(user.id, listId);
 
     return {
@@ -148,7 +149,7 @@ export class ListController {
   })
   @Patch('/:boardId/lists/:listId')
   async updateList(
-    @User() user,
+    @LogIn() user: User,
     @Param('listId') listId: number,
     @Body() updateListDto: UpdateListDto
   ) {
@@ -187,7 +188,7 @@ export class ListController {
   })
   @Patch('/:boardId/lists/:listId/move')
   async moveList(
-    @User() user,
+    @LogIn() user: User,
     @Param('listId') listId: number,
     @Body() moveListDto: MoveListDto
   ) {
@@ -223,7 +224,7 @@ export class ListController {
     description: LIST_MESSAGES.LIST.DELETE.SUCCESS,
   })
   @Delete('/:boardId/lists/:listId')
-  async removeList(@User() user, @Param('listId') listId: number) {
+  async removeList(@LogIn() user: User, @Param('listId') listId: number) {
     const removeList = await this.listService.removeList(user.id, listId);
 
     return {
