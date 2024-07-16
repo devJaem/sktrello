@@ -51,12 +51,14 @@ export class ListController {
   async createList(
     @User() user,
     @Param('boardId') boardId: number,
-    @Body() createListDto: CreateListDto
+    @Body() createListDto: CreateListDto,
+    @Body() moveListDto: MoveListDto
   ) {
     const createList = await this.listService.createList(
       user.id,
       boardId,
-      createListDto
+      createListDto,
+      moveListDto
     );
 
     return {

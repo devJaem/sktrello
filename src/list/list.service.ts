@@ -32,7 +32,8 @@ export class ListService {
   async createList(
     userId: number,
     boardId: number,
-    createListDto: CreateListDto
+    createListDto: CreateListDto,
+    moveListDto: MoveListDto
   ) {
     // 인증된 사용자 여부 확인
     if (!userId) {
@@ -42,6 +43,7 @@ export class ListService {
     }
 
     const { title } = createListDto;
+    const { toPrevId, toNextId } = moveListDto;
 
     // 초대된 member인지 확인
     const inviteMember = await this.boardUserRepository.findOne({
@@ -65,12 +67,22 @@ export class ListService {
       );
     }
 
-    const createList = await this.listRepository.save({
+    // List 생성 시 새로운 리스트가 어느 위치에 삽입될지 결정
+    // 이전/이후 listId 기반으로 새로운 newRank 값 생성
+    const newRank = midRank(
+      toPrevId ? String(toPrevId) : null,
+      toNextId ? String(toNextId) : null
+    );
+
+    const createList = await this.listRepository.create({
       board,
       title,
+      listOrder: newRank,
     });
 
-    return createList;
+    const newList = await this.listRepository.save(createList);
+
+    return newList;
   }
 
   /** 리스트 조회 API **/
