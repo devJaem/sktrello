@@ -7,8 +7,9 @@ import {
   Param,
   Patch,
   Post,
-  // UseGuards,
+  UseGuards,
 } from '@nestjs/common';
+import { User } from 'src/user/entities/user.entity';
 import { List } from './entities/list.entity';
 import { ListService } from './list.service';
 import { LIST_MESSAGES } from 'src/constants/list-message.constant';
@@ -16,17 +17,21 @@ import { LIST_MESSAGES } from 'src/constants/list-message.constant';
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
 import { MoveListDto } from './dto/move-list.dto';
-// import { AuthGuard } from '@nestjs/passport';
-import { User } from 'src/utils/user.decorator'; // 임시 user 데코레이터 생성
+
+import { LogIn } from 'src/auth/decorator/login.decorator';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
-@ApiTags('리스트 API')
+@UseGuards(AuthGuard('jwt'))
+@ApiTags('3. 리스트 API')
+@ApiBearerAuth()
 @Controller('/boards')
 export class ListController {
   constructor(private readonly listService: ListService) {}
@@ -46,10 +51,9 @@ export class ListController {
     description: LIST_MESSAGES.LIST.CREATE.SUCCESS,
     type: List,
   })
-  // @UseGuards(AuthGuard('jwt')) // JWT 인증을 통해 인증된 사용자만 접근 가능하도록 함
   @Post('/:boardId/lists')
   async createList(
-    @User() user,
+    @LogIn() user: User,
     @Param('boardId') boardId: number,
     @Body() createListDto: CreateListDto,
     @Body() moveListDto: MoveListDto
@@ -82,9 +86,8 @@ export class ListController {
     description: LIST_MESSAGES.LIST.READ_LIST.SUCCESS,
     type: [List],
   })
-  // @UseGuards(AuthGuard('jwt'))
   @Get('/:boardId/lists')
-  async findAllLists(@User() user, @Param('boardId') boardId: number) {
+  async findAllLists(@LogIn() user: User, @Param('boardId') boardId: number) {
     const findAllLists = await this.listService.findAllLists(user.id, boardId);
 
     return {
@@ -113,9 +116,8 @@ export class ListController {
     description: LIST_MESSAGES.LIST.READ_DETAIL.SUCCESS,
     type: List,
   })
-  // @UseGuards(AuthGuard('jwt'))
   @Get('/:boardId/lists/:listId')
-  async findListById(@User() user, @Param('listId') listId: number) {
+  async findListById(@LogIn() user: User, @Param('listId') listId: number) {
     const findListById = await this.listService.findListById(user.id, listId);
 
     return {
@@ -145,10 +147,9 @@ export class ListController {
     description: LIST_MESSAGES.LIST.UPDATE.SUCCESS_NAME,
     type: List,
   })
-  // @UseGuards(AuthGuard('jwt'))
   @Patch('/:boardId/lists/:listId')
   async updateList(
-    @User() user,
+    @LogIn() user: User,
     @Param('listId') listId: number,
     @Body() updateListDto: UpdateListDto
   ) {
@@ -185,10 +186,9 @@ export class ListController {
     description: LIST_MESSAGES.LIST.UPDATE.SUCCESS_ORDER,
     type: List,
   })
-  // @UseGuards(AuthGuard('jwt'))
   @Patch('/:boardId/lists/:listId/move')
   async moveList(
-    @User() user,
+    @LogIn() user: User,
     @Param('listId') listId: number,
     @Body() moveListDto: MoveListDto
   ) {
@@ -223,9 +223,8 @@ export class ListController {
     status: HttpStatus.OK,
     description: LIST_MESSAGES.LIST.DELETE.SUCCESS,
   })
-  // @UseGuards(AuthGuard('jwt'))
   @Delete('/:boardId/lists/:listId')
-  async removeList(@User() user, @Param('listId') listId: number) {
+  async removeList(@LogIn() user: User, @Param('listId') listId: number) {
     const removeList = await this.listService.removeList(user.id, listId);
 
     return {

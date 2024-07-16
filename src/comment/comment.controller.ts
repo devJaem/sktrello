@@ -8,18 +8,21 @@ import {
   Delete,
   ParseIntPipe,
   HttpStatus,
+  UseGuards,
   // UseGuards,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { COMMENT_MESSAGE } from 'src/constants/comment.message.constant';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserInfo } from 'src/utils/test-user.decorator';
 import { User } from 'src/user/entities/user.entity';
+import { AuthGuard } from '@nestjs/passport';
 
-@ApiTags('댓글 API')
-// @UseGuards(가드이름)
+@UseGuards(AuthGuard('jwt'))
+@ApiTags('7. 댓글 API')
+@ApiBearerAuth()
 @Controller('cards/:cardId/comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}

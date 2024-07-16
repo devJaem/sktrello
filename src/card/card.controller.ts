@@ -17,6 +17,7 @@ import { MoveCardDto } from './dto/move-card.dto';
 import { LogIn } from 'src/auth/decorator/login.decorator';
 import { CARD_MESSAGES } from 'src/constants/card-message.constant';
 import {
+  ApiBearerAuth,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -28,7 +29,8 @@ import { User } from 'src/user/entities/user.entity';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('cards')
-@ApiTags('카드 API')
+@ApiTags('4. 카드 API')
+@ApiBearerAuth()
 export class CardController {
   constructor(private readonly cardService: CardService) {}
 
@@ -89,7 +91,6 @@ export class CardController {
   }
 
   // 카드내용 수정 api
-
   @Patch(':cardId')
   @ApiOperation({ summary: '카드 내용 수정' })
   @ApiBody({ type: UpdateCardDto })

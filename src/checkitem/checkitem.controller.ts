@@ -7,12 +7,14 @@ import {
   Param,
   Delete,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { CheckItemService } from './checkItem.service';
 import { CreateCheckItemDto } from './dto/create-checkItem.dto';
 import { UpdateCheckItemDto } from './dto/update-checkItem.dto';
 import { MoveCheckItemDto } from './dto/move-checkItem.dto';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -21,8 +23,11 @@ import {
 } from '@nestjs/swagger';
 import { CHECK_MESSAGES } from '../constants/check-message.constant';
 import { CheckItem } from './entities/checkItem.entity';
+import { AuthGuard } from '@nestjs/passport';
 
-@ApiTags('체크리스트-아이템 API')
+@UseGuards(AuthGuard('jwt'))
+@ApiTags('6. 체크리스트-아이템 API')
+@ApiBearerAuth()
 @Controller('/checklists')
 export class CheckItemController {
   constructor(private readonly checkItemService: CheckItemService) {}

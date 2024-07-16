@@ -1,4 +1,5 @@
 import { IsNumber, IsOptional } from 'class-validator';
+import { CHECK_MESSAGES } from 'src/constants/check-message.constant';
 
 export class MoveCheckItemDto {
   @IsNumber()
