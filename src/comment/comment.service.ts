@@ -68,6 +68,7 @@ export class CommentService {
     await this.commentRepository.softDelete({ id });
     const deletedComment = await this.commentRepository.findOne({
       where: { id },
+      withDeleted: true,
       select: ['deletedAt'],
     });
     return { deletedAt: deletedComment.deletedAt };
