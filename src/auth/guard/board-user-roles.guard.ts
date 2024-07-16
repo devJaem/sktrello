@@ -4,13 +4,22 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport'; // 가드
 import { Reflector } from '@nestjs/core';
 
+import { InjectRepository } from '@nestjs/typeorm';
+import { BoardUser } from 'src/board/entities/board-user.entity';
+import { Repository } from 'typeorm';
+
 @Injectable()
 export class BoardUserRolesGuard
   extends AuthGuard('jwt')
   implements CanActivate
 {
   // extends AuthGuard('jwt'): 로그인이 기본적으로 된 상황에서 가겠다는 뜻
-  constructor(private reflector: Reflector) {
+  constructor(
+    private reflector: Reflector,
+
+    @InjectRepository(BoardUser)
+    private readonly boardUserRepository: Repository<BoardUser>
+  ) {
     super(); // 부모class 거 가져오기
   }
 
@@ -39,12 +48,23 @@ export class BoardUserRolesGuard
     // 예시> boardUserRole 제한이 있는(예를 들어 admin만 할 수 있는) API를 실행하려는 경우
 
     // 3. 그렇다면 사용자가 권한 지정된 boardUserRole이 맞는지 확인해야함
-    // 3-1. 사용자 정보 가져오기
-    const { user } = context.switchToHttp().getRequest(); // ??
+    // 3-1. request 정보 가져오기
+    const request = context.switchToHttp().getRequest();
+    const user = request.user;
+    const userId = user.id;
+    const boardId = request.params.boardId;
 
-    // 3-2. some: 여기에 해당하는 게 맞니? => 맞으면 true, 아니면 false 반환
+    // 3-2. BoardUserRole 가져오기
+    const userBoardUserRole = await this.boardUserRepository.findOne({
+      where: {
+        userId,
+        boardId,
+      },
+    });
+
+    // 3-3. some: 여기에 해당하는 게 맞니? => 맞으면 true, 아니면 false 반환
     return requiredBoardUserRoles.some(
-      (boardUserRole) => user.boardUserRole === boardUserRole
+      (boardUserRole) => userBoardUserRole.boardUserRole === boardUserRole
     );
   }
 }
