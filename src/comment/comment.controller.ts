@@ -9,16 +9,15 @@ import {
   ParseIntPipe,
   HttpStatus,
   UseGuards,
-  // UseGuards,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { COMMENT_MESSAGE } from 'src/constants/comment.message.constant';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UserInfo } from 'src/utils/test-user.decorator';
-import { User } from 'src/user/entities/user.entity';
 import { AuthGuard } from '@nestjs/passport';
+import { User } from 'src/user/entities/user.entity';
+import { LogIn } from 'src/auth/decorator/login.decorator';
 
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('7. 댓글 API')
@@ -34,11 +33,11 @@ export class CommentController {
   })
   @Post()
   async create(
-    @UserInfo() user: User, // @Request() req: any 로 바꿔야됨?
+    @LogIn() user: User,
     @Param('cardId', ParseIntPipe) cardId: number,
     @Body() createCommentDto: CreateCommentDto
   ) {
-    const userId = user.id; // 사용자 ID user.id. ======> req.user.id
+    const userId = user.id;
     const createdComment = await this.commentService.create(
       createCommentDto,
       userId,
@@ -73,7 +72,7 @@ export class CommentController {
   })
   @Patch(':id')
   async update(
-    @UserInfo() user: User,
+    @LogIn() user: User,
     @Param('cardId', ParseIntPipe) cardId: number,
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCommentDto: UpdateCommentDto
@@ -98,7 +97,7 @@ export class CommentController {
   })
   @Delete(':id')
   async remove(
-    @UserInfo() user: User,
+    @LogIn() user: User,
     @Param('cardId', ParseIntPipe) cardId: number,
     @Param('id') id: number
   ) {
