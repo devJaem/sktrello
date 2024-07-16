@@ -6,6 +6,7 @@ import {
 import { List } from './entities/list.entity';
 import { Board } from 'src/board/entities/board.entity';
 import { BoardUser } from 'src/board/entities/board-user.entity';
+import { Card } from 'src/card/entities/card.entity';
 import { LIST_MESSAGES } from 'src/constants/list-message.constant';
 import { BOARD_MESSAGES } from 'src/constants/board-message.constant';
 
@@ -14,10 +15,6 @@ import { UpdateListDto } from './dto/update-list.dto';
 import { MoveListDto } from './dto/move-list.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { List } from './entities/list.entity';
-import { Board } from 'src/board/entities/board.entity';
-import { BoardUser } from 'src/board/entities/board-user.entity';
-import { Card } from 'src/card/entities/card.entity';
 import { midRank } from 'src/utils/lexorank';
 
 @Injectable()
