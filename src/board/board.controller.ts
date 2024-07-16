@@ -19,14 +19,15 @@ import { InviteBoardMemberDto } from './dto/invite-board-member.dto';
 import { LogIn } from 'src/auth/decorator/login.decorator';
 import { AuthGuard } from '@nestjs/passport';
 
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { BoardUserRolesGuard } from 'src/auth/guard/jwt-auth.guard';
 import { BoardUserRole } from './types/board-user.type';
 import { BoardUserRoles } from 'src/auth/decorator/board-user-roles.decorator';
 import { User } from 'src/user/entities/user.entity';
 
 @UseGuards(AuthGuard('jwt'))
-@ApiTags('보드 API')
+@ApiTags('2. 보드 API')
+@ApiBearerAuth()
 @Controller('boards')
 export class BoardController {
   constructor(private readonly boardService: BoardService) {}
@@ -37,7 +38,10 @@ export class BoardController {
     description: BOARD_MESSAGES.BOARD.CREATE.SUCCESS,
   })
   @Post('')
-  async createBoard(@LogIn() user, @Body() createBoardDto: CreateBoardDto) {
+  async createBoard(
+    @LogIn() user: User,
+    @Body() createBoardDto: CreateBoardDto
+  ) {
     const createdBoard = await this.boardService.createBoard(
       user,
       createBoardDto
@@ -56,7 +60,7 @@ export class BoardController {
     description: BOARD_MESSAGES.BOARD.READ_LIST.SUCCESS,
   })
   @Get('')
-  async findAllBoard(@LogIn() user) {
+  async findAllBoard(@LogIn() user: User) {
     const foundAllBoard = await this.boardService.findAllBoard(user);
     const result = {
       status: HttpStatus.OK,
@@ -74,7 +78,7 @@ export class BoardController {
     description: BOARD_MESSAGES.BOARD.READ_DETAIL.SUCCESS,
   })
   @Get(':boardId')
-  async findOneBoard(@LogIn() user, @Param('boardId') boardId: number) {
+  async findOneBoard(@LogIn() user: User, @Param('boardId') boardId: number) {
     const foundOneBoard = await this.boardService.findOneBoard(user, boardId);
     const result = {
       status: HttpStatus.OK,
@@ -91,7 +95,7 @@ export class BoardController {
   })
   @Patch(':boardId')
   async updateBoard(
-    @LogIn() user,
+    @LogIn() user: User,
     @Param('boardId') boardId: number,
     @Body() updateBoardDto: UpdateBoardDto
   ) {
@@ -137,7 +141,7 @@ export class BoardController {
   })
   @Post(':boardId/invitation')
   async inviteBoardMember(
-    @LogIn() user,
+    @LogIn() user: User,
     @Param('boardId') boardId: number,
     @Body() inviteBoardMemberDto: InviteBoardMemberDto
   ) {
@@ -163,7 +167,7 @@ export class BoardController {
   //   description: BOARD_MESSAGES.BOARD.ACCEPT_INVITATION.SUCCESS,
   // })
   // @Patch(':boardId/accept-invitation')
-  // async acceptInvitation(@LogIn() user, @Param('boardId') boardId: number) {
+  // async acceptInvitation(@LogIn() user: User, @Param('boardId') boardId: number) {
   //   const acceptedInvitation = await this.boardService.acceptInvitation(
   //     user,
   //     boardId
@@ -183,7 +187,7 @@ export class BoardController {
   // })
   // @Delete(':boardId/decline-invitation')
   // async declineInvitation(
-  //   @LogIn() user,
+  //   @LogIn() user: User,
   //   @Param('boardId') boardId: number
   // ) {
   //   const declinedInvitation = await this.boardService.declineInvitation(

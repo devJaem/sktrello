@@ -17,7 +17,7 @@ import { SignUpDto } from 'src/user/dto/sign-up.dto';
 import { SignInDto } from 'src/user/dto/sign-in.dto';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('1. 유저 API')
+@ApiTags('1. 사용자 API')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -55,6 +55,10 @@ export class UserController {
   /** 회원 정보 조회 API **/
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: USER_MESSAGES.USER.USERINFO.READ.SUCCESS,
+  })
   @Get('me')
   async findUserInfo(@LogIn() user: User) {
     const data = await this.userService.findUserInfo(user);
