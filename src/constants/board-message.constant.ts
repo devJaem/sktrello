@@ -48,13 +48,19 @@ export const BOARD_MESSAGES = {
       },
     },
     // Board 멤버 초대(Invite)
-    INVITE: {
+    INVITATION: {
       SUCCESS: '보드 멤버 초대에 성공했습니다.',
       FAILURE: {
         UNAUTHORIZED: '호스트만 초대할 수 있습니다.',
         NOTFOUND: '존재하지 않는 사용자입니다.',
         CONFLICT: '이미 초대한 사용자입니다.',
       },
+    },
+    ACCEPT_INVITATION: {
+      SUCCESS: '보드 초대를 수락했습니다.',
+    },
+    DECLINE_INVITATION: {
+      SUCCESS: '보드 초대를 거절했습니다.',
     },
   },
 };

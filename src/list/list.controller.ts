@@ -9,31 +9,56 @@ import {
   Post,
   // UseGuards,
 } from '@nestjs/common';
+import { List } from './entities/list.entity';
 import { ListService } from './list.service';
-
 import { LIST_MESSAGES } from 'src/constants/list-message.constant';
+
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
 import { MoveListDto } from './dto/move-list.dto';
 // import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/utils/user.decorator'; // 임시 user 데코레이터 생성
+import {
+  ApiBody,
+  ApiOperation,
+  ApiParam,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
-@Controller('list')
+@ApiTags('리스트 API')
+@Controller('/boards')
 export class ListController {
   constructor(private readonly listService: ListService) {}
 
-  /**
-   * List 생성
-   * @param user
-   * @param createListDto
-   * @returns
-   */
+  @ApiOperation({
+    summary: 'List 생성 API',
+    description: 'List를 생성합니다.',
+  })
+  @ApiBody({ type: CreateListDto })
+  @ApiParam({
+    name: 'boardId',
+    description: 'ID of board',
+    type: 'number',
+  })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: LIST_MESSAGES.LIST.CREATE.SUCCESS,
+    type: List,
+  })
   // @UseGuards(AuthGuard('jwt')) // JWT 인증을 통해 인증된 사용자만 접근 가능하도록 함
-  @Post()
-  async createList(@User() user, @Body() createListDto: CreateListDto) {
+  @Post('/:boardId/lists')
+  async createList(
+    @User() user,
+    @Param('boardId') boardId: number,
+    @Body() createListDto: CreateListDto,
+    @Body() moveListDto: MoveListDto
+  ) {
     const createList = await this.listService.createList(
       user.id,
-      createListDto
+      boardId,
+      createListDto,
+      moveListDto
     );
 
     return {
@@ -43,15 +68,24 @@ export class ListController {
     };
   }
 
-  /**
-   * List 조회
-   * @param user
-   * @returns
-   */
+  @ApiOperation({
+    summary: 'List 목록 조회 API',
+    description: 'List의 목록을 조회합니다.',
+  })
+  @ApiParam({
+    name: 'boardId',
+    description: 'ID of board',
+    type: 'number',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: LIST_MESSAGES.LIST.READ_LIST.SUCCESS,
+    type: [List],
+  })
   // @UseGuards(AuthGuard('jwt'))
-  @Get()
-  async findAllLists(@User() user) {
-    const findAllLists = await this.listService.findAllLists(user.id);
+  @Get('/:boardId/lists')
+  async findAllLists(@User() user, @Param('boardId') boardId: number) {
+    const findAllLists = await this.listService.findAllLists(user.id, boardId);
 
     return {
       statusCode: HttpStatus.OK,
@@ -60,14 +94,27 @@ export class ListController {
     };
   }
 
-  /**
-   * List 상세 조회
-   * @param user
-   * @param listId
-   * @returns
-   */
+  @ApiOperation({
+    summary: 'List 상세 조회 API',
+    description: 'List를 상세 조회합니다.',
+  })
+  @ApiParam({
+    name: 'boardId',
+    description: 'ID of board',
+    type: 'number',
+  })
+  @ApiParam({
+    name: 'listId',
+    description: 'ID of the list',
+    type: 'number',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: LIST_MESSAGES.LIST.READ_DETAIL.SUCCESS,
+    type: List,
+  })
   // @UseGuards(AuthGuard('jwt'))
-  @Get()
+  @Get('/:boardId/lists/:listId')
   async findListById(@User() user, @Param('listId') listId: number) {
     const findListById = await this.listService.findListById(user.id, listId);
 
@@ -78,15 +125,28 @@ export class ListController {
     };
   }
 
-  /**
-   * List 이름 수정
-   * @param user
-   * @param listId
-   * @param updateListDto
-   * @returns
-   */
+  @ApiOperation({
+    summary: 'List 이름 수정 API',
+    description: 'List의 이름을 수정합니다.',
+  })
+  @ApiParam({
+    name: 'boardId',
+    description: 'ID of board',
+    type: 'number',
+  })
+  @ApiParam({
+    name: 'listId',
+    description: 'ID of the list',
+    type: 'number',
+  })
+  @ApiBody({ type: UpdateListDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: LIST_MESSAGES.LIST.UPDATE.SUCCESS_NAME,
+    type: List,
+  })
   // @UseGuards(AuthGuard('jwt'))
-  @Patch(':listId')
+  @Patch('/:boardId/lists/:listId')
   async updateList(
     @User() user,
     @Param('listId') listId: number,
@@ -105,15 +165,28 @@ export class ListController {
     };
   }
 
-  /**
-   * List 순서 이동
-   * @param user
-   * @param listId
-   * @param moveListDto
-   * @returns
-   */
+  @ApiOperation({
+    summary: 'List 순서 이동 API',
+    description: 'List를 이동합니다.',
+  })
+  @ApiParam({
+    name: 'boardId',
+    description: 'ID of board',
+    type: 'number',
+  })
+  @ApiParam({
+    name: 'listId',
+    description: 'ID of the list',
+    type: 'number',
+  })
+  @ApiBody({ type: MoveListDto })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: LIST_MESSAGES.LIST.UPDATE.SUCCESS_ORDER,
+    type: List,
+  })
   // @UseGuards(AuthGuard('jwt'))
-  @Patch(':listId/move')
+  @Patch('/:boardId/lists/:listId/move')
   async moveList(
     @User() user,
     @Param('listId') listId: number,
@@ -132,14 +205,26 @@ export class ListController {
     };
   }
 
-  /**
-   * List 삭제
-   * @param user
-   * @param listId
-   * @returns
-   */
+  @ApiOperation({
+    summary: 'List 삭제 API',
+    description: 'List를 삭제합니다.',
+  })
+  @ApiParam({
+    name: 'boardId',
+    description: 'ID of board',
+    type: 'number',
+  })
+  @ApiParam({
+    name: 'listId',
+    description: 'ID of the list',
+    type: 'number',
+  })
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: LIST_MESSAGES.LIST.DELETE.SUCCESS,
+  })
   // @UseGuards(AuthGuard('jwt'))
-  @Delete(':listId')
+  @Delete('/:boardId/lists/:listId')
   async removeList(@User() user, @Param('listId') listId: number) {
     const removeList = await this.listService.removeList(user.id, listId);
 

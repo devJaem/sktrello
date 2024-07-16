@@ -12,14 +12,13 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api', { exclude: ['/health-check'] });
 
-  
   const config = new DocumentBuilder()
-  .setTitle('SKTRELLO TS')
-  .setDescription('Document for SKTRELLO TS')
-  .setVersion('1.0')
-  .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' })
-  .build();
-  
+    .setTitle('SKTRELLO TS')
+    .setDescription('Document for SKTRELLO TS')
+    .setVersion('1.0')
+    .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' })
+    .build();
+
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api-docs', app, document, {
     swaggerOptions: {

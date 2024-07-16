@@ -3,8 +3,11 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { BOARD_MESSAGES } from 'src/constants/board-message.constant';
+import { List } from './entities/list.entity';
+import { Board } from 'src/board/entities/board.entity';
+import { BoardUser } from 'src/board/entities/board-user.entity';
 import { LIST_MESSAGES } from 'src/constants/list-message.constant';
+import { BOARD_MESSAGES } from 'src/constants/board-message.constant';
 
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
@@ -32,7 +35,12 @@ export class ListService {
   ) {}
 
   /** 리스트 생성 API **/
-  async createList(userId: number, createListDto: CreateListDto) {
+  async createList(
+    userId: number,
+    boardId: number,
+    createListDto: CreateListDto,
+    moveListDto: MoveListDto
+  ) {
     // 인증된 사용자 여부 확인
     if (!userId) {
       throw new UnauthorizedException(
@@ -40,7 +48,8 @@ export class ListService {
       );
     }
 
-    const { boardId, title } = createListDto;
+    const { title } = createListDto;
+    const { toPrevId, toNextId } = moveListDto;
 
     // 초대된 member인지 확인
     const inviteMember = await this.boardUserRepository.findOne({
@@ -64,16 +73,27 @@ export class ListService {
       );
     }
 
-    const createList = await this.listRepository.save({
+    // List 생성 시 새로운 리스트가 어느 위치에 삽입될지 결정
+    // 이전/이후 listId 기반으로 새로운 newRank 값 생성
+    const newRank = midRank(
+      toPrevId ? String(toPrevId) : null,
+      toNextId ? String(toNextId) : null
+    );
+
+    const createList = await this.listRepository.create({
       board,
       title,
+      listOrder: newRank,
     });
 
-    return createList;
+    const newList = await this.listRepository.save(createList);
+
+    return newList;
   }
 
   /** 리스트 조회 API **/
-  async findAllLists(userId: number) {
+  // 해당 list에 있는 card 정보 가져오기 - title, duedate, color, card_order(lexorank)
+  async findAllLists(userId: number, boardId: number) {
     // 인증된 사용자 여부 확인
     if (!userId) {
       throw new UnauthorizedException(
@@ -81,7 +101,8 @@ export class ListService {
       );
     }
 
-    const lists = await this.listRepository.find({
+    const lists = await this.listRepository.findOne({
+      where: { boardId },
       order: { listOrder: 'ASC' },
     });
 
