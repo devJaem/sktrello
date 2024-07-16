@@ -8,7 +8,10 @@ export class SignUpDto {
 
   @IsString()
   @IsNotEmpty({ message: USER_MESSAGES.USER.SIGNUP.PASSWORD.EMPTY })
-  @IsStrongPassword({ minLength: 8, minSymbols: 1 }, {})
+  @IsStrongPassword(
+    { minLength: 8, minSymbols: 1 },
+    { message: USER_MESSAGES.USER.SIGNUP.PASSWORD.WEAKPASSWORD }
+  )
   password: string;
 
   @IsString()
