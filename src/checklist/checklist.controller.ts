@@ -7,12 +7,14 @@ import {
   Param,
   Delete,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { CheckListService } from './checkList.service';
 import { CreateCheckListDto } from './dto/create-checkList.dto';
 import { UpdateCheckListDto } from './dto/update-checkList.dto';
 import { MoveCheckListDto } from './dto/move-checkList.dto';
 import {
+  ApiBearerAuth,
   ApiBody,
   ApiOperation,
   ApiParam,
@@ -21,9 +23,12 @@ import {
 } from '@nestjs/swagger';
 import { CHECK_MESSAGES } from '../constants/check-message.constant';
 import { CheckList } from './entities/checkList.entity';
+import { AuthGuard } from '@nestjs/passport';
 
+@UseGuards(AuthGuard('jwt'))
+@ApiTags('5. 체크리스트 API')
+@ApiBearerAuth()
 @Controller('/checklists')
-@ApiTags('체크리스트 API')
 export class CheckListController {
   constructor(private readonly checkListService: CheckListService) {}
 

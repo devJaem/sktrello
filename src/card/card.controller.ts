@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { CardService } from './card.service';
 import { CreateCardDto } from './dto/create-card.dto';
@@ -16,11 +17,18 @@ import { MoveCardDto } from './dto/move-card.dto';
 import { UserInfo } from 'src/utils/test-user.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { CARD_MESSAGES } from 'src/constants/card-message.constant';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { AuthGuard } from '@nestjs/passport';
 
-// @UseGuards(AuthGuard('jwt'))
+@UseGuards(AuthGuard('jwt'))
 @Controller('cards')
-@ApiTags('카드 API')
+@ApiTags('4. 카드 API')
+@ApiBearerAuth()
 export class CardController {
   constructor(private readonly cardService: CardService) {}
 
@@ -80,7 +88,6 @@ export class CardController {
   }
 
   // 카드내용 수정 api
-
   @Patch(':cardId')
   @ApiOperation({ summary: '카드 내용 수정' })
   @ApiResponse({

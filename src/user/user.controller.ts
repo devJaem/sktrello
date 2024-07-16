@@ -15,7 +15,9 @@ import { UserService } from './user.service';
 import { LogIn } from 'src/auth/decorator/login.decorator';
 import { SignUpDto } from 'src/user/dto/sign-up.dto';
 import { SignInDto } from 'src/user/dto/sign-in.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('1. 사용자 API')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
@@ -44,6 +46,7 @@ export class UserController {
 
   /** 회원 정보 조회 API **/
   @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
   @Get('me')
   async findUserInfo(@LogIn() user: User) {
     const data = await this.userService.findUserInfo(user);
