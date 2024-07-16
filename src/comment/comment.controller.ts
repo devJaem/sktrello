@@ -13,18 +13,27 @@ import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { COMMENT_MESSAGE } from 'src/constants/comment.message.constant';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { UserInfo } from 'src/utils/test-user.decorator';
+import { User } from 'src/user/entities/user.entity';
 
+@ApiTags('댓글 API')
 @Controller('cards/:cardId/comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
-  // 댓글 생성
+  /** 댓글 생성 API**/
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: COMMENT_MESSAGE.COMMENT.CREATE.SUCCESS,
+  })
   @Post()
   async create(
+    @UserInfo() user: User,
     @Param('cardId', ParseIntPipe) cardId: number,
     @Body() createCommentDto: CreateCommentDto
   ) {
-    const userId = 1; // 사용자 ID 하드코딩
+    const userId = user.id; // 사용자 ID
     const createdComment = await this.commentService.create(
       createCommentDto,
       userId,
@@ -37,7 +46,11 @@ export class CommentController {
     };
   }
 
-  // 댓글 조회
+  /** 댓글 조회 API**/
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: COMMENT_MESSAGE.COMMENT.READ_ALL.SUCCESS,
+  })
   @Get()
   async findAll(@Param('cardId', ParseIntPipe) cardId: number) {
     const readAllComment = await this.commentService.findAll(cardId);
@@ -48,29 +61,19 @@ export class CommentController {
     };
   }
 
-  // 댓글 상세 조회
-  @Get(':id')
-  async findOne(
-    @Param('cardId', ParseIntPipe) cardId: number,
-    @Param('id', ParseIntPipe) id: number
-  ) {
-    const userId = 1; // 사용자 ID 하드 코딩
-    const readDetailComment = await this.commentService.findOne(id, userId);
-    return {
-      status: HttpStatus.OK,
-      message: COMMENT_MESSAGE.COMMENT.READ_DETAIL.SUCCESS,
-      data: readDetailComment,
-    };
-  }
-
-  // 댓글 수정
+  /** 댓글 수정 API**/
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: COMMENT_MESSAGE.COMMENT.UPDATE.SUCCESS,
+  })
   @Patch(':id')
   async update(
+    @UserInfo() user: User,
     @Param('cardId', ParseIntPipe) cardId: number,
     @Param('id', ParseIntPipe) id: number,
     @Body() updateCommentDto: UpdateCommentDto
   ) {
-    const userId = 1; // 사용자 ID 하드 코딩
+    const userId = user.id; // 사용자 ID
     const updateComment = await this.commentService.update(
       id,
       updateCommentDto,
@@ -83,13 +86,18 @@ export class CommentController {
     };
   }
 
-  // 댓글 삭제
+  /** 댓글 삭제 API**/
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: COMMENT_MESSAGE.COMMENT.DELETE.SUCCESS,
+  })
   @Delete(':id')
   async remove(
+    @UserInfo() user: User,
     @Param('cardId', ParseIntPipe) cardId: number,
     @Param('id') id: number
   ) {
-    const userId = 1; // 사용자 ID 하드 코딩
+    const userId = user.id; // 사용자 ID
     const deleteComment = await this.commentService.remove(id, userId);
     return {
       status: HttpStatus.OK,
