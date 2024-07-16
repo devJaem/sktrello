@@ -17,7 +17,6 @@ import { SignUpDto } from 'src/user/dto/sign-up.dto';
 import { SignInDto } from 'src/user/dto/sign-in.dto';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 
-
 @ApiTags('1. 사용자 API')
 @Controller('users')
 export class UserController {
@@ -57,8 +56,8 @@ export class UserController {
   @UseGuards(AuthGuard('jwt'))
   @ApiBearerAuth()
   @ApiResponse({
-     status : HttpStatus.OK,
-     description : USER_MESSAGES.USER.USERINFO.READ.SUCCESS,
+    status: HttpStatus.OK,
+    description: USER_MESSAGES.USER.USERINFO.READ.SUCCESS,
   })
   @Get('me')
   async findUserInfo(@LogIn() user: User) {
