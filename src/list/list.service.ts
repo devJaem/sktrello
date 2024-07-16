@@ -14,6 +14,7 @@ import { Repository } from 'typeorm';
 import { List } from './entities/list.entity';
 import { Board } from 'src/board/entities/board.entity';
 import { BoardUser } from 'src/board/entities/board-user.entity';
+import { Card } from 'src/card/entities/card.entity';
 import { midRank } from 'src/utils/lexorank';
 
 @Injectable()
@@ -25,7 +26,9 @@ export class ListService {
     @InjectRepository(Board)
     private readonly boardRepository: Repository<Board>,
     @InjectRepository(BoardUser)
-    private readonly boardUserRepository: Repository<BoardUser>
+    private readonly boardUserRepository: Repository<BoardUser>,
+    @InjectRepository(Card)
+    private readonly cardRepository: Repository<Card>
   ) {}
 
   /** 리스트 생성 API **/
@@ -70,7 +73,6 @@ export class ListService {
   }
 
   /** 리스트 조회 API **/
-  // 해당 list에 있는 card 정보 가져오기 - title, duedate, color, card_order(lexorank)
   async findAllLists(userId: number) {
     // 인증된 사용자 여부 확인
     if (!userId) {
@@ -87,7 +89,6 @@ export class ListService {
   }
 
   /** 리스트 상세 조회 API **/
-  // 해당 list에 있는 card 정보 가져오기 - title, duedate, color, card_order(lexorank)
   async findListById(userId: number, listId: number) {
     // 인증된 사용자 여부 확인
     if (!userId) {
@@ -104,7 +105,14 @@ export class ListService {
       throw new NotFoundException(LIST_MESSAGES.LIST.READ_LIST.FAILURE);
     }
 
-    return list;
+    // 해당 list의 card 정보(title) 불러오기
+    const cards = await this.cardRepository
+      .createQueryBuilder('card')
+      .select(['card.id', 'card.title'])
+      .where('card.listId = :listId', { listId })
+      .getMany();
+
+    return { ...list, cards };
   }
 
   /** 리스트 이름 수정 API **/
