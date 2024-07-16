@@ -12,14 +12,6 @@ async function bootstrap() {
 
   app.setGlobalPrefix('api', { exclude: ['/health-check'] });
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      transform: true,
-      whitelist: true,
-      forbidNonWhitelisted: true,
-    })
-  );
-
   const config = new DocumentBuilder()
     .setTitle('SKTRELLO TS')
     .setDescription('Document for SKTRELLO TS')
@@ -28,13 +20,21 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document, {
+  SwaggerModule.setup('api-docs', app, document, {
     swaggerOptions: {
       persistAuthorization: true, // 새로고침 시에도 JWT 유지하기
       tagsSorter: 'alpha', // API 그룹 정렬을 알파벳 순으로
       operationsSorter: 'alpha', // API 그룹 내 정렬을 알파벳 순으로
     },
   });
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+      whitelist: true,
+      forbidNonWhitelisted: true,
+    })
+  );
 
   await app.listen(port);
 }

@@ -1,3 +1,7 @@
+import { BoardUser } from 'src/board/entities/board-user.entity';
+import { IsNotEmpty, IsStrongPassword } from 'class-validator';
+import { CardUser } from 'src/card/entities/card-user.entity';
+import { Comment } from 'src/comment/entities/comment.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -7,18 +11,23 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
+import { USER_MESSAGES } from 'src/constants/user-message.constant';
 
 @Entity('users')
 export class User {
   @PrimaryGeneratedColumn({ unsigned: true })
   id: number;
 
+  @IsNotEmpty({ message: USER_MESSAGES.USER.SIGNUP.EMAIL.EMPTY })
   @Column()
   email: string;
 
+  @IsNotEmpty({ message: USER_MESSAGES.USER.SIGNUP.NICKNAME.EMPTY })
   @Column()
   nickname: string;
 
+  @IsNotEmpty({ message: USER_MESSAGES.USER.SIGNUP.PASSWORD.EMPTY })
+  @IsStrongPassword({ minLength: 8, minSymbols: 1 }, {})
   @Column()
   password: string;
 
@@ -29,17 +38,17 @@ export class User {
   updatedAt: Date;
 
   @DeleteDateColumn()
-  deletedAt: Date | null;
+  deletedAt?: Date | null;
 
-  // boardUser와의 관계
-  // @OneToMany(() => BoardUser, (boardUser) => boardUser.user_id, { onDelete : 'CASCADE'})
-  // boardUsers : boardUser[]
+  // Relation - [users] 1 : N [board_users]
+  @OneToMany(() => BoardUser, (boardUser) => boardUser.user)
+  boardUsers: BoardUser[];
 
-  // cardUser와의 관계
-  // @OneToMany(() => CardUser, (cardUser) => cardUser.user_id, {onDelete : 'CASCADE'})
-  // cardUsers : cardUser[]
+  // Relation - [users] 1 : N [card_users]
+  @OneToMany(() => CardUser, (cardUser) => cardUser.user)
+  cardUsers: CardUser[];
 
-  // comment와의 관계
-  // @OneToMany(() => Comment, (comment) => comment.user_id, {onDelete : 'CASCADE'})
-  // comment : comment[]
+  // Relation - [users] 1 : N [comments]
+  @OneToMany(() => Comment, (comment) => comment.user)
+  comments: Comment[];
 }
