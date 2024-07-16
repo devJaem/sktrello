@@ -36,19 +36,14 @@ export class CardService {
     private readonly checkListRepository: Repository<CheckList>
   ) {}
 
-  async createCard(
-    userId: number,
-    listId: number,
-    createCardDto: CreateCardDto
-  ) {
+  async createCard(userId: number, createCardDto: CreateCardDto) {
     if (!userId) {
       throw new UnauthorizedException(
         CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
     }
 
-    const { title, description, color, duedate, duedate_status } =
-      createCardDto;
+    const { title, listId } = createCardDto;
     const board = await this.listRepository.findOne({
       where: { id: listId },
     });
@@ -164,6 +159,7 @@ export class CardService {
     );
   }
 
+  /** 카드 이동 API **/
   async moveCard(userId: number, cardId: number, moveCardDto: MoveCardDto) {
     // userId 확인
     if (!userId) {
@@ -172,10 +168,12 @@ export class CardService {
       );
     }
 
-    const { listId, cardOrder } = moveCardDto;
+    const { listId } = moveCardDto;
 
-    const card = await this.cardRepository.findOne({ where: { id: cardId } });
-    if (!card) {
+    const isExistingcard = await this.cardRepository.findOne({
+      where: { id: cardId },
+    });
+    if (!isExistingcard) {
       throw new NotFoundException(CARD_MESSAGES.CARD.UPDATE.FAILURE);
     }
 
@@ -186,6 +184,11 @@ export class CardService {
     if (!targetList) {
       throw new NotFoundException(CARD_MESSAGES.CARD.READ_CARDS.FAILURE);
     }
+    // cardId로 cardOrder 가져오기
+    const card = await this.cardRepository.findOne({
+      where: { id: cardId },
+    });
+    const cardOrder = card.cardOrder;
 
     // 이동하려는 카드의 순서보다 작은 (즉, 앞에 있는) 카드를 찾아 그중 가장 큰 순서를 가진 카드를 넣는다.
     const prevCard = await this.cardRepository.findOne({

@@ -39,11 +39,6 @@ export class CreateCardDto {
   color: string;
 
   @IsNotEmpty()
-  @IsString()
-  @ApiProperty({ description: '카드 순서', example: 'XXXXXXY' })
-  cardOrder: string;
-
-  @IsNotEmpty()
   @IsNumber()
   @ApiProperty({ description: '리스트 아이디', example: 1 })
   listId: number;

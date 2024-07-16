@@ -14,16 +14,17 @@ import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { MoveCardDto } from './dto/move-card.dto';
 
-import { UserInfo } from 'src/utils/test-user.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { CARD_MESSAGES } from 'src/constants/card-message.constant';
 import {
   ApiBearerAuth,
+  ApiBody,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
+import { LogIn } from 'src/auth/decorator/login.decorator';
 
 @UseGuards(AuthGuard('jwt'))
 @Controller('cards')
@@ -32,20 +33,16 @@ import { AuthGuard } from '@nestjs/passport';
 export class CardController {
   constructor(private readonly cardService: CardService) {}
 
-  @Post(':listId')
+  @Post('')
   @ApiOperation({ summary: '카드 생성' })
+  @ApiBody({ type: CreateCardDto })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: CARD_MESSAGES.CARD.CREATE.SUCCESS,
   })
-  async createCard(
-    @UserInfo() user: User,
-    @Param('listId') listId: number,
-    @Body() createCardDto: CreateCardDto
-  ) {
+  async createCard(@LogIn() user: User, @Body() createCardDto: CreateCardDto) {
     const createCard = await this.cardService.createCard(
       user.id,
-      listId,
       createCardDto
     );
 
@@ -62,7 +59,7 @@ export class CardController {
     status: HttpStatus.OK,
     description: CARD_MESSAGES.CARD.READ_CARDS.SUCCESS,
   })
-  async findAllCards(@UserInfo() user: User, @Param('listId') listId: number) {
+  async findAllCards(@LogIn() user: User, @Param('listId') listId: number) {
     const findAllCards = await this.cardService.findAllCards(user.id, listId);
     return {
       statusCode: HttpStatus.OK,
@@ -77,7 +74,7 @@ export class CardController {
     status: HttpStatus.OK,
     description: CARD_MESSAGES.CARD.READ_CARD.SUCCESS,
   })
-  async findCard(@UserInfo() user: User, @Param('cardId') cardId: number) {
+  async findCard(@LogIn() user: User, @Param('cardId') cardId: number) {
     const findCard = await this.cardService.findCard(user.id, cardId);
 
     return {
@@ -90,12 +87,13 @@ export class CardController {
   // 카드내용 수정 api
   @Patch(':cardId')
   @ApiOperation({ summary: '카드 내용 수정' })
+  @ApiBody({ type: UpdateCardDto })
   @ApiResponse({
     status: HttpStatus.OK,
     description: CARD_MESSAGES.CARD.UPDATE.SUCCESS,
   })
   async updateContent(
-    @UserInfo() user: User,
+    @LogIn() user: User,
     @Param('cardId') cardId: number,
     @Body() updateCardDto: UpdateCardDto
   ) {
@@ -114,12 +112,13 @@ export class CardController {
   // 카드이동 api
   @Patch(':cardId/move')
   @ApiOperation({ summary: '카드 순서 이동' })
+  @ApiBody({ type: MoveCardDto })
   @ApiResponse({
     status: HttpStatus.OK,
-    description: CARD_MESSAGES.CARD.READ_CARD.SUCCESS,
+    description: CARD_MESSAGES.CARD.UPDATE.SUCCESS,
   })
   moveCard(
-    @UserInfo() user: User,
+    @LogIn() user: User,
     @Param('cardId') cardId: number,
     @Body() moveCardDto: MoveCardDto
   ) {
@@ -132,7 +131,7 @@ export class CardController {
     status: HttpStatus.OK,
     description: CARD_MESSAGES.CARD.DELETE.SUCCESS,
   })
-  async deleteCard(@UserInfo() user: User, @Param('cardId') cardId: number) {
+  async deleteCard(@LogIn() user: User, @Param('cardId') cardId: number) {
     const deleteCard = await this.cardService.deleteCard(user.id, cardId);
 
     return {

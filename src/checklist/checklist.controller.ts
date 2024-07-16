@@ -197,17 +197,13 @@ export class CheckListController {
     summary: '체크리스트 삭제 API',
     description: '체크리스트를 삭제합니다.',
   })
-  @ApiParam({
-    name: 'checkListId',
-    description: 'ID of the checklist',
-    type: 'number',
-  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: CHECK_MESSAGES.CHECKLIST.DELETE,
   })
   @Delete(':checkListId')
-  async remove(@Param('id') id: string) {
+  async remove(@Param('checkListId') id: string) {
+    console.log(+id);
     const deletedCheckList = await this.checkListService.remove(+id);
     return {
       statusCode: HttpStatus.OK,
