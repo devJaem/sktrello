@@ -5,11 +5,11 @@ import { LIST_MESSAGES } from 'src/constants/list-message.constant';
 
 export class CreateListDto extends PickType(List, ['boardId', 'title']) {
   @IsInt()
-  @ApiProperty({ example: '1' })
+  @ApiProperty({ example: 1, description: 'Board ID' })
   boardId: number;
 
   @IsString()
   @IsNotEmpty({ message: LIST_MESSAGES.LIST.COMMON.TITLE.NO_TITLE })
-  @ApiProperty({ example: 'To do' })
+  @ApiProperty({ example: 'To do', description: 'List 이름' })
   title: string;
 }

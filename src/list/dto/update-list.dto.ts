@@ -6,6 +6,6 @@ import { LIST_MESSAGES } from 'src/constants/list-message.constant';
 export class UpdateListDto extends PartialType(CreateListDto) {
   @IsString()
   @IsNotEmpty({ message: LIST_MESSAGES.LIST.COMMON.TITLE.CHANGE_TITLE })
-  @ApiProperty({ example: 'To do' })
+  @ApiProperty({ example: 'To do', description: 'List 이름' })
   title: string;
 }
