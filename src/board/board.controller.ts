@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { BoardService } from './board.service';
 
@@ -14,9 +15,17 @@ import { BOARD_MESSAGES } from 'src/constants/board-message.constant';
 import { CreateBoardDto } from './dto/create-board.dto';
 import { UpdateBoardDto } from './dto/update-board.dto';
 import { InviteBoardMemberDto } from './dto/invite-board-member.dto';
-import { TestLogIn } from 'src/utils/test-user.decorator';
-import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
+import { LogIn } from 'src/auth/decorator/login.decorator';
+import { AuthGuard } from '@nestjs/passport';
+
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
+import { BoardUserRolesGuard } from 'src/auth/guard/jwt-auth.guard';
+import { BoardUserRole } from './types/board-user.type';
+import { BoardUserRoles } from 'src/auth/decorator/board-user-roles.decorator';
+import { User } from 'src/user/entities/user.entity';
+
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('보드 API')
 @Controller('boards')
 export class BoardController {
@@ -28,7 +37,7 @@ export class BoardController {
     description: BOARD_MESSAGES.BOARD.CREATE.SUCCESS,
   })
   @Post('')
-  async createBoard(@TestLogIn() user, @Body() createBoardDto: CreateBoardDto) {
+  async createBoard(@LogIn() user, @Body() createBoardDto: CreateBoardDto) {
     const createdBoard = await this.boardService.createBoard(
       user,
       createBoardDto
@@ -42,8 +51,12 @@ export class BoardController {
   }
 
   /** Board 목록 조회(R-L) **/
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: BOARD_MESSAGES.BOARD.READ_LIST.SUCCESS,
+  })
   @Get('')
-  async findAllBoard(@TestLogIn() user) {
+  async findAllBoard(@LogIn() user) {
     const foundAllBoard = await this.boardService.findAllBoard(user);
     const result = {
       status: HttpStatus.OK,
@@ -56,8 +69,12 @@ export class BoardController {
   }
 
   /** Board 상세 조회(R-D) **/
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: BOARD_MESSAGES.BOARD.READ_DETAIL.SUCCESS,
+  })
   @Get(':boardId')
-  async findOneBoard(@TestLogIn() user, @Param('boardId') boardId: number) {
+  async findOneBoard(@LogIn() user, @Param('boardId') boardId: number) {
     const foundOneBoard = await this.boardService.findOneBoard(user, boardId);
     const result = {
       status: HttpStatus.OK,
@@ -68,9 +85,13 @@ export class BoardController {
   }
 
   /** Board 수정(U) API **/
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: BOARD_MESSAGES.BOARD.UPDATE.SUCCESS,
+  })
   @Patch(':boardId')
   async updateBoard(
-    @TestLogIn() user,
+    @LogIn() user,
     @Param('boardId') boardId: number,
     @Body() updateBoardDto: UpdateBoardDto
   ) {
@@ -88,8 +109,18 @@ export class BoardController {
   }
 
   /** Board 삭제(D) API **/
+  // @UseGuards(BoardUserRolesGuard)
+  // @BoardUserRoles(BoardUserRole.host)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: BOARD_MESSAGES.BOARD.DELETE.SUCCESS,
+  })
   @Delete(':boardId')
-  async softDeleteBoard(@TestLogIn() user, @Param('boardId') boardId: number) {
+  async softDeleteBoard(
+    @LogIn() user: User,
+    @Param('boardId') boardId: number
+  ) {
+    console.log('=======================================================');
     const deletedBoard = await this.boardService.softDeleteBoard(user, boardId);
     const result = {
       status: HttpStatus.OK,
@@ -100,9 +131,13 @@ export class BoardController {
   }
 
   /** Board 멤버 초대(Invite) API **/
-  @Post(':boardId/invite')
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: BOARD_MESSAGES.BOARD.INVITATION.SUCCESS,
+  })
+  @Post(':boardId/invitation')
   async inviteBoardMember(
-    @TestLogIn() user,
+    @LogIn() user,
     @Param('boardId') boardId: number,
     @Body() inviteBoardMemberDto: InviteBoardMemberDto
   ) {
@@ -113,7 +148,7 @@ export class BoardController {
     );
     const result = {
       status: HttpStatus.CREATED,
-      message: BOARD_MESSAGES.BOARD.INVITE.SUCCESS,
+      message: BOARD_MESSAGES.BOARD.INVITATION.SUCCESS,
       data: {
         nickname: invitedMember.nickname,
         email: invitedMember.email,
@@ -121,4 +156,46 @@ export class BoardController {
     };
     return result;
   }
+
+  // /** Board 초대 수락(U) API **/
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: BOARD_MESSAGES.BOARD.ACCEPT_INVITATION.SUCCESS,
+  // })
+  // @Patch(':boardId/accept-invitation')
+  // async acceptInvitation(@LogIn() user, @Param('boardId') boardId: number) {
+  //   const acceptedInvitation = await this.boardService.acceptInvitation(
+  //     user,
+  //     boardId
+  //   );
+  //   const result = {
+  //     status: HttpStatus.OK,
+  //     message: BOARD_MESSAGES.BOARD.ACCEPT_INVITATION.SUCCESS,
+  //     data: acceptedInvitation,
+  //   };
+  //   return result;
+  // }
+
+  // /** Board 초대 거절(D) API **/
+  // @ApiResponse({
+  //   status: HttpStatus.OK,
+  //   description: BOARD_MESSAGES.BOARD.DECLINE_INVITATION.SUCCESS,
+  // })
+  // @Delete(':boardId/decline-invitation')
+  // async declineInvitation(
+  //   @LogIn() user,
+  //   @Param('boardId') boardId: number
+  // ) {
+  //   const declinedInvitation = await this.boardService.declineInvitation(
+  //     user,
+  //     boardId
+  //   );
+  //   const result = {
+  //     status: HttpStatus.OK,
+  //     message: BOARD_MESSAGES.BOARD.DECLINE_INVITATION.SUCCESS,
+  //     data: declinedInvitation,
+  //   };
+  //   return result;
+  // }
+  //
 }
