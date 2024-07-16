@@ -27,7 +27,7 @@ import {
 } from '@nestjs/swagger';
 
 @ApiTags('리스트 API')
-@Controller('list')
+@Controller('/boards')
 export class ListController {
   constructor(private readonly listService: ListService) {}
 
@@ -36,16 +36,26 @@ export class ListController {
     description: 'List를 생성합니다.',
   })
   @ApiBody({ type: CreateListDto })
+  @ApiParam({
+    name: 'boardId',
+    description: 'ID of board',
+    type: 'number',
+  })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: LIST_MESSAGES.LIST.CREATE.SUCCESS,
     type: List,
   })
   // @UseGuards(AuthGuard('jwt')) // JWT 인증을 통해 인증된 사용자만 접근 가능하도록 함
-  @Post()
-  async createList(@User() user, @Body() createListDto: CreateListDto) {
+  @Post('/:boardId/lists')
+  async createList(
+    @User() user,
+    @Param('boardId') boardId: number,
+    @Body() createListDto: CreateListDto
+  ) {
     const createList = await this.listService.createList(
       user.id,
+      boardId,
       createListDto
     );
 
@@ -60,15 +70,20 @@ export class ListController {
     summary: 'List 목록 조회 API',
     description: 'List의 목록을 조회합니다.',
   })
+  @ApiParam({
+    name: 'boardId',
+    description: 'ID of board',
+    type: 'number',
+  })
   @ApiResponse({
     status: HttpStatus.OK,
     description: LIST_MESSAGES.LIST.READ_LIST.SUCCESS,
     type: [List],
   })
   // @UseGuards(AuthGuard('jwt'))
-  @Get()
-  async findAllLists(@User() user) {
-    const findAllLists = await this.listService.findAllLists(user.id);
+  @Get('/:boardId/lists')
+  async findAllLists(@User() user, @Param('boardId') boardId: number) {
+    const findAllLists = await this.listService.findAllLists(user.id, boardId);
 
     return {
       statusCode: HttpStatus.OK,
@@ -82,6 +97,11 @@ export class ListController {
     description: 'List를 상세 조회합니다.',
   })
   @ApiParam({
+    name: 'boardId',
+    description: 'ID of board',
+    type: 'number',
+  })
+  @ApiParam({
     name: 'listId',
     description: 'ID of the list',
     type: 'number',
@@ -92,7 +112,7 @@ export class ListController {
     type: List,
   })
   // @UseGuards(AuthGuard('jwt'))
-  @Get(':listId')
+  @Get('/:boardId/lists/:listId')
   async findListById(@User() user, @Param('listId') listId: number) {
     const findListById = await this.listService.findListById(user.id, listId);
 
@@ -108,6 +128,11 @@ export class ListController {
     description: 'List의 이름을 수정합니다.',
   })
   @ApiParam({
+    name: 'boardId',
+    description: 'ID of board',
+    type: 'number',
+  })
+  @ApiParam({
     name: 'listId',
     description: 'ID of the list',
     type: 'number',
@@ -119,7 +144,7 @@ export class ListController {
     type: List,
   })
   // @UseGuards(AuthGuard('jwt'))
-  @Patch(':listId')
+  @Patch('/:boardId/lists/:listId')
   async updateList(
     @User() user,
     @Param('listId') listId: number,
@@ -143,6 +168,11 @@ export class ListController {
     description: 'List를 이동합니다.',
   })
   @ApiParam({
+    name: 'boardId',
+    description: 'ID of board',
+    type: 'number',
+  })
+  @ApiParam({
     name: 'listId',
     description: 'ID of the list',
     type: 'number',
@@ -154,7 +184,7 @@ export class ListController {
     type: List,
   })
   // @UseGuards(AuthGuard('jwt'))
-  @Patch(':listId/move')
+  @Patch('/:boardId/lists/:listId/move')
   async moveList(
     @User() user,
     @Param('listId') listId: number,
@@ -178,6 +208,11 @@ export class ListController {
     description: 'List를 삭제합니다.',
   })
   @ApiParam({
+    name: 'boardId',
+    description: 'ID of board',
+    type: 'number',
+  })
+  @ApiParam({
     name: 'listId',
     description: 'ID of the list',
     type: 'number',
@@ -187,7 +222,7 @@ export class ListController {
     description: LIST_MESSAGES.LIST.DELETE.SUCCESS,
   })
   // @UseGuards(AuthGuard('jwt'))
-  @Delete(':listId')
+  @Delete('/:boardId/lists/:listId')
   async removeList(@User() user, @Param('listId') listId: number) {
     const removeList = await this.listService.removeList(user.id, listId);
 

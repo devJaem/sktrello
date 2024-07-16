@@ -3,17 +3,17 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { BOARD_MESSAGES } from 'src/constants/board-message.constant';
+import { List } from './entities/list.entity';
+import { Board } from 'src/board/entities/board.entity';
+import { BoardUser } from 'src/board/entities/board-user.entity';
 import { LIST_MESSAGES } from 'src/constants/list-message.constant';
+import { BOARD_MESSAGES } from 'src/constants/board-message.constant';
 
 import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
 import { MoveListDto } from './dto/move-list.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { List } from './entities/list.entity';
-import { Board } from 'src/board/entities/board.entity';
-import { BoardUser } from 'src/board/entities/board-user.entity';
 import { midRank } from 'src/utils/lexorank';
 
 @Injectable()
@@ -29,7 +29,11 @@ export class ListService {
   ) {}
 
   /** 리스트 생성 API **/
-  async createList(userId: number, createListDto: CreateListDto) {
+  async createList(
+    userId: number,
+    boardId: number,
+    createListDto: CreateListDto
+  ) {
     // 인증된 사용자 여부 확인
     if (!userId) {
       throw new UnauthorizedException(
@@ -37,7 +41,7 @@ export class ListService {
       );
     }
 
-    const { boardId, title } = createListDto;
+    const { title } = createListDto;
 
     // 초대된 member인지 확인
     const inviteMember = await this.boardUserRepository.findOne({
@@ -71,7 +75,7 @@ export class ListService {
 
   /** 리스트 조회 API **/
   // 해당 list에 있는 card 정보 가져오기 - title, duedate, color, card_order(lexorank)
-  async findAllLists(userId: number) {
+  async findAllLists(userId: number, boardId: number) {
     // 인증된 사용자 여부 확인
     if (!userId) {
       throw new UnauthorizedException(
@@ -79,7 +83,8 @@ export class ListService {
       );
     }
 
-    const lists = await this.listRepository.find({
+    const lists = await this.listRepository.findOne({
+      where: { boardId },
       order: { listOrder: 'ASC' },
     });
 
