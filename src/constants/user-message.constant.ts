@@ -16,6 +16,7 @@ export const USER_MESSAGES = {
       },
     },
     SIGNIN: {
+      SUCCESS: '로그인에 성공했습니다.',
       EMAIL: {
         EMPTY: '이메일을 입력해주세요.',
       },
@@ -26,6 +27,14 @@ export const USER_MESSAGES = {
       },
       USER: {
         NOTFOUND: '등록되지 않은 회원입니다. 회원가입을 먼저 진행해주세요.',
+      },
+    },
+    USERINFO: {
+      READ: {
+        SUCCESS: '회원 정보 조회에 성공했습니다.',
+      },
+      UPDATE: {
+        SUCCESS: '회원 정보 수정에 성공했습니다.',
       },
     },
   },

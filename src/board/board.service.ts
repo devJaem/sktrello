@@ -57,7 +57,7 @@ export class BoardService {
       await queryRunner.manager.save(BoardUser, {
         boardId: board.id,
         userId: userId,
-        host: true,
+        boardUserRole: BoardUserRole.host,
         isAccepted: true,
       });
 
@@ -243,6 +243,7 @@ export class BoardService {
         userId,
       },
     });
+
     // 2-2. isHost에서 boardUserRole이 host가 아니라면 에러처리
     if (isHost.boardUserRole !== 'HOST') {
       throw new UnauthorizedException(
@@ -282,7 +283,7 @@ export class BoardService {
     // 1-2. isHost에서 boardUserRole이 host가 아니라면 에러처리
     if (isHost.boardUserRole !== 'HOST') {
       throw new UnauthorizedException(
-        BOARD_MESSAGES.BOARD.INVITE.FAILURE.UNAUTHORIZED
+        BOARD_MESSAGES.BOARD.INVITATION.FAILURE.UNAUTHORIZED
       );
     }
 
@@ -295,7 +296,9 @@ export class BoardService {
     });
     // 2-2. 초대 대상 사용자가 존재하지 않는다면 에러처리
     if (!isExistingEmail) {
-      throw new NotFoundException(BOARD_MESSAGES.BOARD.INVITE.FAILURE.NOTFOUND);
+      throw new NotFoundException(
+        BOARD_MESSAGES.BOARD.INVITATION.FAILURE.NOTFOUND
+      );
     }
 
     // 3. 멤버 확인 : 이미 해당 보드에 초대된 사용자인가?
@@ -307,7 +310,9 @@ export class BoardService {
     });
     // 3-2. 이미 초대한 사용자라면 에러처리
     if (isInvited) {
-      throw new ConflictException(BOARD_MESSAGES.BOARD.INVITE.FAILURE.CONFLICT);
+      throw new ConflictException(
+        BOARD_MESSAGES.BOARD.INVITATION.FAILURE.CONFLICT
+      );
     }
 
     // 4. 초대하기
@@ -322,6 +327,25 @@ export class BoardService {
       email: isExistingEmail.email,
     };
   }
+
+  // /** Board 초대 수락(U) API **/
+  // async acceptInvitation(user, boardId: number) {
+  //   // 0. 로그인한 사용자 id 가져오기
+  //   const userId: number = user.id;
+
+  //   // 1. 초대된 상태인지 확인
+  //   const isInvited = await this.boardUserRepository.findOne({
+  //     // where: { userId,  }
+  //   });
+  // }
+
+  // /** Board 초대 거절(D) API **/
+  // async declineInvitation(user, boardId: number) {
+  //   // 0. 로그인한 사용자 id 가져오기
+  //   const userId: number = user.id;
+
+  //   // 1. 초대된 상태인지 확인
+  // }
 
   /** boardId로 board 찾기 **/
   async findBoardByBoardId(boardId: number) {
