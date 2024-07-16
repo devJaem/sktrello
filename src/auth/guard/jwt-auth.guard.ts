@@ -1,4 +1,5 @@
 import { BoardUserRole } from 'src/board/types/board-user.type';
+
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport'; // 가드
 import { Reflector } from '@nestjs/core';
@@ -20,7 +21,6 @@ export class BoardUserRolesGuard
     const authenticated = await super.canActivate(context);
     // 1-1. 인증이 되지 않은 상태라면 false
     if (!authenticated) {
-      console.log('XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
       return false;
     }
 

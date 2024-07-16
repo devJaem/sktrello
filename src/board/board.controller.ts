@@ -109,8 +109,8 @@ export class BoardController {
   }
 
   /** Board 삭제(D) API **/
-  // @UseGuards(BoardUserRolesGuard)
-  // @BoardUserRoles(BoardUserRole.host)
+  @UseGuards(BoardUserRolesGuard)
+  @BoardUserRoles(BoardUserRole.host)
   @ApiResponse({
     status: HttpStatus.OK,
     description: BOARD_MESSAGES.BOARD.DELETE.SUCCESS,
