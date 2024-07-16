@@ -35,8 +35,7 @@ export class ListService {
   async createList(
     userId: number,
     boardId: number,
-    createListDto: CreateListDto,
-    moveListDto: MoveListDto
+    createListDto: CreateListDto
   ) {
     // 인증된 사용자 여부 확인
     if (!userId) {
@@ -45,8 +44,7 @@ export class ListService {
       );
     }
 
-    const { title } = createListDto;
-    const { toPrevId, toNextId } = moveListDto;
+    const { title, toPrevId, toNextId } = createListDto;
 
     // 초대된 member인지 확인
     const inviteMember = await this.boardUserRepository.findOne({
@@ -59,6 +57,7 @@ export class ListService {
       );
     }
 
+    console.log(boardId, typeof boardId);
     // 해당 id의 Board 있는지 확인
     const board = await this.boardRepository.findOne({
       where: { id: boardId },
@@ -70,10 +69,19 @@ export class ListService {
       );
     }
 
+    const lastList = await this.listRepository.findOne({
+      where: {
+        boardId,
+      },
+      order: {
+        listOrder: 'DESC',
+      },
+    });
+
     // List 생성 시 새로운 리스트가 어느 위치에 삽입될지 결정
     // 이전/이후 listId 기반으로 새로운 newRank 값 생성
     const newRank = midRank(
-      toPrevId ? String(toPrevId) : null,
+      toPrevId ? String(toPrevId) : lastList.listOrder,
       toNextId ? String(toNextId) : null
     );
 
@@ -154,12 +162,14 @@ export class ListService {
 
     const { title } = updateListDto;
 
-    const updateList = await this.listRepository.update(
-      { id: listId },
-      { title }
-    );
+    await this.listRepository.update({ id: listId }, { title });
 
-    return updateList;
+    const data = {
+      before: list.title,
+      after: updateListDto.title,
+    };
+
+    return data;
   }
 
   /** 리스트 순서 이동 API **/
@@ -218,10 +228,15 @@ export class ListService {
       throw new NotFoundException(LIST_MESSAGES.LIST.READ_DETAIL.FAILURE);
     }
 
-    const removeList = await this.listRepository.softDelete({
+    await this.listRepository.softDelete({
       id: listId,
     });
 
-    return removeList;
+    const data = {
+      id: list.id,
+      title: list.title,
+    };
+
+    return data;
   }
 }

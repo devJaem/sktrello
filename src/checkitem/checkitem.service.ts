@@ -35,6 +35,7 @@ export class CheckItemService {
       throw new NotFoundException(CHECK_MESSAGES.CHECKLIST.NOT_FOUND);
     }
 
+    // Rank 기준 정해주고 (마지막)
     const lastCheckItem = await this.checkItemRepository.findOne({
       where: { checkListId },
       order: { checkItemOrder: 'DESC' },
@@ -62,7 +63,7 @@ export class CheckItemService {
   async findAll(checkListId: number) {
     const checkItems = await this.checkItemRepository
       .createQueryBuilder('check_item')
-      .where('check_item.check_list_id = :checklistId', { checkListId })
+      .where('check_item.check_list_id = :checkListId', { checkListId })
       .getMany();
 
     return checkItems;
