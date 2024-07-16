@@ -1,12 +1,12 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsNotEmpty, IsNumber, IsString } from "class-validator";
-
+import { CHECK_MESSAGES } from "src/constants/check-message.constant";
 export class CreateCheckItemDto {
 
-  @IsString()
-  @IsNotEmpty({ message: '컨텐츠를 입력해주세요.' })
+  @IsString({ message: CHECK_MESSAGES.CHECKITEM.IS_STRING})
+  @IsNotEmpty({ message: CHECK_MESSAGES.CHECKITEM.CONTENT_NOT_EMPTY })
   @ApiProperty({
-    description: '체크리스트 어아탬 내용',
+    description: '체크리스트 아이탬 내용',
     example: 'checkItemContent',
   })
   content: string;

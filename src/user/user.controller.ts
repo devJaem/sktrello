@@ -15,12 +15,18 @@ import { UserService } from './user.service';
 import { LogIn } from 'src/auth/decorator/login.decorator';
 import { SignUpDto } from 'src/user/dto/sign-up.dto';
 import { SignInDto } from 'src/user/dto/sign-in.dto';
+import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('1. 사용자 API')
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   /** 회원 가입 API **/
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: USER_MESSAGES.USER.SIGNUP.SUCCESS,
+  })
   @Post('/sign-up')
   async signUp(@Body() signUpDto: SignUpDto) {
     const data = await this.userService.signUp(signUpDto);
@@ -32,6 +38,10 @@ export class UserController {
   }
 
   /** 로그인 API **/
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: USER_MESSAGES.USER.SIGNIN.SUCCESS,
+  })
   @Post('/sign-in')
   async signIn(@Body() signInDto: SignInDto) {
     const data = await this.userService.signIn(signInDto);
@@ -44,6 +54,11 @@ export class UserController {
 
   /** 회원 정보 조회 API **/
   @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: USER_MESSAGES.USER.USERINFO.READ.SUCCESS,
+  })
   @Get('me')
   async findUserInfo(@LogIn() user: User) {
     const data = await this.userService.findUserInfo(user);
