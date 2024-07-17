@@ -10,6 +10,6 @@ export class SignInDto {
 
   @IsString()
   @IsNotEmpty({ message: USER_MESSAGES.USER.SIGNIN.PASSWORD.EMPTY })
-  @ApiProperty({ example: 'example!@' })
+  @ApiProperty({ example: 'Example1!' })
   password: string;
 }
