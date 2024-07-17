@@ -1,4 +1,4 @@
-import { CheckList } from 'src/checkList/entities/checkList.entity';
+import { CheckList } from 'src/checklist/entities/checklist.entity';
 import {
   Column,
   CreateDateColumn,

@@ -1,5 +1,5 @@
 import { Card } from 'src/card/entities/card.entity';
-import { CheckItem } from 'src/checkItem/entities/checkItem.entity';
+import { CheckItem } from 'src/checkitem/entities/checkitem.entity';
 import {
   Column,
   CreateDateColumn,

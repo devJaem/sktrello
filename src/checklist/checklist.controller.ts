@@ -9,9 +9,9 @@ import {
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
-import { CheckListService } from './checkList.service';
+import { CheckListService } from './checklist.service';
 import { CreateCheckListDto } from './dto/create-checklist.dto';
-import { UpdateCheckListDto } from './dto/update-checkList.dto';
+import { UpdateCheckListDto } from './dto/update-checklist.dto';
 import { MoveCheckListDto } from './dto/move-checklist.dto';
 import {
   ApiBearerAuth,
@@ -22,7 +22,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CHECK_MESSAGES } from '../constants/check-message.constant';
-import { CheckList } from './entities/checkList.entity';
+import { CheckList } from './entities/checklist.entity';
 import { CardService } from 'src/card/card.service';
 import { BoardUserRolesGuard } from 'src/auth/guard/board-user-roles.guard';
 import { BoardUserRoles } from 'src/auth/decorator/board-user-roles.decorator';

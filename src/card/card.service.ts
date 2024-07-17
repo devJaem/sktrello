@@ -15,7 +15,7 @@ import { CARD_MESSAGES } from 'src/constants/card-message.constant';
 import { List } from 'src/list/entities/list.entity';
 import { CardUser } from './entities/card-user.entity';
 import { midRank } from 'src/utils/lexorank';
-import { CheckListService } from 'src/checkList/checkList.service';
+import { CheckListService } from 'src/checklist/checklist.service';
 import { CommentService } from 'src/comment/comment.service';
 
 @Injectable()

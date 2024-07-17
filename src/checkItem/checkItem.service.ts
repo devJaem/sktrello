@@ -1,14 +1,14 @@
 import _ from 'lodash';
-import { CreateCheckItemDto } from './dto/create-checkItem.dto';
-import { UpdateCheckItemDto } from './dto/update-checkItem.dto';
+import { CreateCheckItemDto } from './dto/create-checkitem.dto';
+import { UpdateCheckItemDto } from './dto/update-checkitem.dto';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CheckItem } from './entities/checkItem.entity';
+import { CheckItem } from './entities/checkitem.entity';
 import { Repository } from 'typeorm';
 import { LexoRank } from 'lexorank';
-import { MoveCheckItemDto } from './dto/move-checkItem.dto';
+import { MoveCheckItemDto } from './dto/move-checkitem.dto';
 import { CHECK_MESSAGES } from '../constants/check-message.constant';
-import { CheckList } from 'src/checkList/entities/checkList.entity';
+import { CheckList } from 'src/checklist/entities/checklist.entity';
 
 @Injectable()
 export class CheckItemService {

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { CheckItemService } from './checkItem.service';
-import { CheckItemController } from './checkItem.controller';
-import { CheckItem } from './entities/checkItem.entity';
+import { CheckItemService } from './checkitem.service';
+import { CheckItemController } from './checkitem.controller';
+import { CheckItem } from './entities/checkitem.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CheckListModule } from 'src/checkList/checkList.module';
+import { CheckListModule } from 'src/checklist/checklist.module';
 import { BoardModule } from 'src/board/board.module';
-import { CheckList } from 'src/checkList/entities/checkList.entity';
+import { CheckList } from 'src/checklist/entities/checklist.entity';
 import { BoardUser } from 'src/board/entities/board-user.entity';
 
 @Module({

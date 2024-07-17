@@ -1,13 +1,13 @@
 import _ from 'lodash';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateCheckListDto } from './dto/create-checkList.dto';
-import { UpdateCheckListDto } from './dto/update-checkList.dto';
+import { CreateCheckListDto } from './dto/create-checklist.dto';
+import { UpdateCheckListDto } from './dto/update-checklist.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { CheckList } from './entities/checkList.entity';
+import { CheckList } from './entities/checklist.entity';
 import { Repository } from 'typeorm';
 import { LexoRank } from 'lexorank';
 import { CHECK_MESSAGES } from 'src/constants/check-message.constant';
-import { MoveCheckListDto } from './dto/move-checkList.dto';
+import { MoveCheckListDto } from './dto/move-checklist.dto';
 import { Card } from 'src/card/entities/card.entity';
 
 @Injectable()
