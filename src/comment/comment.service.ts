@@ -34,12 +34,15 @@ export class CommentService {
       where: { cardId },
       relations: ['user'],
     });
+
     return comments.map((comment) => ({
       id: comment.id,
       nickname: comment.user.nickname,
       content: comment.content,
-      createdAt: elapsedTime(comment.createdAt.getTime()), // 경과 시간 표현
-      updatedAt: elapsedTime(comment.updatedAt.getTime()), // 경과 시간 표현
+      updatedAt: comment.updatedAt,
+      elapsedTime:
+        elapsedTime(comment.createdAt.getTime()) +
+        (comment.createdAt === comment.updatedAt ? '' : ' (수정됨)'),
     }));
   }
 
