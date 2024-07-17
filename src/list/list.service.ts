@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { List } from './entities/list.entity';
 import { Board } from 'src/board/entities/board.entity';
 import { BoardUser } from 'src/board/entities/board-user.entity';
@@ -34,42 +30,20 @@ export class ListService {
   ) {}
 
   /** 리스트 생성 API **/
-  async createList(
-    userId: number,
-    boardId: number,
-    createListDto: CreateListDto
-  ) {
-    // 인증된 사용자 여부 확인
-    if (!userId) {
-      throw new UnauthorizedException(
-        LIST_MESSAGES.LIST.COMMON.USER.UNAUTHORIZED
-      );
-    }
-
+  async createList(boardId: number, createListDto: CreateListDto) {
     const { title } = createListDto;
-
-    // 초대된 member인지 확인
-    const inviteMember = await this.boardUserRepository.findOne({
-      where: { userId, boardId },
-    });
-
-    if (!inviteMember) {
-      throw new UnauthorizedException(
-        BOARD_MESSAGES.BOARD.READ_DETAIL.FAILURE.UNAUTHORIZED
-      );
-    }
 
     // 해당 id의 Board 있는지 확인
     const board = await this.boardRepository.findOne({
       where: { id: boardId },
     });
-
     if (!board) {
       throw new NotFoundException(
         BOARD_MESSAGES.BOARD.READ_DETAIL.FAILURE.NOTFOUND
       );
     }
 
+    // 리스트가 생성될 위치 지정
     const lastList = await this.listRepository.findOne({
       where: { boardId },
       order: { listOrder: 'DESC' },
@@ -79,108 +53,89 @@ export class ListService {
     // 이전/이후 listId 기반으로 새로운 newRank 값 생성
     const newRank = midRank(lastList ? lastList.listOrder : null, null);
 
+    // 리스트 생성!!!
     const createList = await this.listRepository.create({
       board,
       title,
       listOrder: newRank,
     });
-
     const newList = await this.listRepository.save(createList);
 
     return newList;
   }
 
   /** 리스트 조회 API **/
-  async findAllLists(userId: number, boardId: number) {
-    // 인증된 사용자 여부 확인
-    if (!userId) {
-      throw new UnauthorizedException(
-        LIST_MESSAGES.LIST.COMMON.USER.UNAUTHORIZED
-      );
-    }
-
-    const lists = await this.listRepository.find({
+  async findAllLists(boardId: number) {
+    // 해당 보드에 존재하는 모든 list 조회
+    const data = await this.listRepository.find({
       where: { boardId },
       order: { listOrder: 'ASC' },
-      // relations: ['cards'],
     });
+    // listId 뽑아오기
+    const listIds = data.map((e: List) => e.id);
 
-    // lists.forEach((list) => {
-    //   list.cards = list.cards.map((card) => ({
-    //     id: card.id,
-    //     title: card.title,
-    //     cardOrder: card.cardOrder,
-    //   }));
-    // });
+    // 리스트 상세조회 API를 개별실행
+    const lists = await Promise.all(
+      listIds.map(async (v: number) => {
+        const list = await this.findListById(v);
+        return list;
+      })
+    );
 
+    // 반환
     return lists;
   }
 
   /** 리스트 상세 조회 API **/
-  async findListById(userId: number, listId: number) {
-    // 인증된 사용자 여부 확인
-    if (!userId) {
-      throw new UnauthorizedException(
-        LIST_MESSAGES.LIST.COMMON.USER.UNAUTHORIZED
-      );
-    }
-
+  async findListById(listId: number) {
+    // 선택된 리스트 가져와!
     const list = await this.listRepository.findOne({
       where: { id: listId },
     });
-
     if (!list) {
       throw new NotFoundException(LIST_MESSAGES.LIST.READ_LIST.FAILURE);
     }
 
+    // 그 리스트에 달린 카드(제목+정렬순서) 가져와!
     const cards = await this.cardService.findCardTitle(listId);
-
-    return { ...list, cards };
+    return {
+      listInfo: list,
+      cards: cards,
+    };
   }
 
   /** 리스트 이름 수정 API **/
-  async updateList(
-    userId: number,
-    listId: number,
-    updateListDto: UpdateListDto
-  ) {
-    // 인증된 사용자 여부 확인
-    if (!userId) {
-      throw new UnauthorizedException(
-        LIST_MESSAGES.LIST.COMMON.USER.UNAUTHORIZED
-      );
-    }
-
+  async updateList(listId: number, updateListDto: UpdateListDto) {
     // 해당하는 listId 가져오기
-    const list = await this.findListById(userId, listId);
-
+    const list = await this.listRepository.findOne({
+      where: {
+        id: listId,
+      },
+    });
     if (!list) {
       throw new NotFoundException(LIST_MESSAGES.LIST.READ_DETAIL.FAILURE);
     }
-
     const { title } = updateListDto;
 
+    // 수정
     await this.listRepository.update({ id: listId }, { title });
 
+    // 반환
     const updateList = {
       before: list.title,
       after: updateListDto.title,
     };
-
     return updateList;
   }
 
   /** 리스트 순서 이동 API **/
-  async moveList(userId: number, listId: number, moveListDto: MoveListDto) {
-    // 인증된 사용자 여부 확인
-    if (!userId) {
-      throw new UnauthorizedException(
-        LIST_MESSAGES.LIST.COMMON.USER.UNAUTHORIZED
-      );
-    }
-
+  async moveList(listId: number, moveListDto: MoveListDto) {
     // 해당하는 listId 가져오기
-    const list = await this.findListById(userId, listId);
+    const list = await this.listRepository.findOne({
+      where: {
+        id: listId,
+      },
+    });
 
     if (!list) {
       throw new NotFoundException(LIST_MESSAGES.LIST.READ_DETAIL.FAILURE);
@@ -204,23 +159,19 @@ export class ListService {
 
     // 이동할 list의 lexorank 값을 새로운 newRank 값으로 변경
     list.listOrder = newRank;
-
     const moveList = await this.listRepository.save(list);
 
     return moveList;
   }
 
   /** 리스트 삭제 API **/
-  async removeList(userId: number, listId: number) {
-    // 인증된 사용자 여부 확인
-    if (!userId) {
-      throw new UnauthorizedException(
-        LIST_MESSAGES.LIST.COMMON.USER.UNAUTHORIZED
-      );
-    }
-
+  async removeList(listId: number) {
     // 해당하는 listId 가져오기
-    const list = await this.findListById(userId, listId);
+    const list = await this.listRepository.findOne({
+      where: {
+        id: listId,
+      },
+    });
 
     if (!list) {
       throw new NotFoundException(LIST_MESSAGES.LIST.READ_DETAIL.FAILURE);
