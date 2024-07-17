@@ -9,7 +9,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { User } from 'src/user/entities/user.entity';
+
 import { List } from './entities/list.entity';
 import { ListService } from './list.service';
 import { LIST_MESSAGES } from 'src/constants/list-message.constant';
@@ -18,7 +18,6 @@ import { CreateListDto } from './dto/create-list.dto';
 import { UpdateListDto } from './dto/update-list.dto';
 import { MoveListDto } from './dto/move-list.dto';
 
-import { LogIn } from 'src/auth/decorator/login.decorator';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -27,9 +26,13 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 
-@UseGuards(AuthGuard('jwt'))
+import { BoardUserRoles } from 'src/auth/decorator/board-user-roles.decorator';
+import { BoardUserRolesGuard } from 'src/auth/guard/board-user-roles.guard';
+import { BoardUserRole } from 'src/board/types/board-user.type';
+
+@UseGuards(BoardUserRolesGuard)
+@BoardUserRoles(BoardUserRole.host, BoardUserRole.admin, BoardUserRole.member)
 @ApiTags('3. 리스트 API')
 @ApiBearerAuth()
 @Controller('/boards')
@@ -53,12 +56,10 @@ export class ListController {
   })
   @Post('/:boardId/lists')
   async createList(
-    @LogIn() user: User,
     @Param('boardId') boardId: number,
     @Body() createListDto: CreateListDto
   ) {
     const createList = await this.listService.createList(
-      user.id,
       boardId,
       createListDto
     );
@@ -85,9 +86,9 @@ export class ListController {
     type: [List],
   })
   @Get('/:boardId/lists')
-  async findAllLists(@LogIn() user: User, @Param('boardId') boardId: number) {
-    const findAllLists = await this.listService.findAllLists(user.id, boardId);
-
+  async findAllLists(@Param('boardId') boardId: number) {
+    const findAllLists = await this.listService.findAllLists(boardId);
+    console.log(findAllLists);
     return {
       statusCode: HttpStatus.OK,
       message: LIST_MESSAGES.LIST.READ_LIST.SUCCESS,
@@ -115,8 +116,8 @@ export class ListController {
     type: List,
   })
   @Get('/:boardId/lists/:listId')
-  async findListById(@LogIn() user: User, @Param('listId') listId: number) {
-    const findListById = await this.listService.findListById(user.id, listId);
+  async findListById(@Param('listId') listId: number) {
+    const findListById = await this.listService.findListById(listId);
 
     return {
       statusCode: HttpStatus.OK,
@@ -147,15 +148,10 @@ export class ListController {
   })
   @Patch('/:boardId/lists/:listId')
   async updateList(
-    @LogIn() user: User,
     @Param('listId') listId: number,
     @Body() updateListDto: UpdateListDto
   ) {
-    const updateList = await this.listService.updateList(
-      user.id,
-      listId,
-      updateListDto
-    );
+    const updateList = await this.listService.updateList(listId, updateListDto);
 
     return {
       statusCode: HttpStatus.OK,
@@ -186,15 +182,10 @@ export class ListController {
   })
   @Patch('/:boardId/lists/:listId/move')
   async moveList(
-    @LogIn() user: User,
     @Param('listId') listId: number,
     @Body() moveListDto: MoveListDto
   ) {
-    const moveList = await this.listService.moveList(
-      user.id,
-      listId,
-      moveListDto
-    );
+    const moveList = await this.listService.moveList(listId, moveListDto);
 
     return {
       statusCode: HttpStatus.OK,
@@ -222,8 +213,8 @@ export class ListController {
     description: LIST_MESSAGES.LIST.DELETE.SUCCESS,
   })
   @Delete('/:boardId/lists/:listId')
-  async removeList(@LogIn() user: User, @Param('listId') listId: number) {
-    const removeList = await this.listService.removeList(user.id, listId);
+  async removeList(@Param('listId') listId: number) {
+    const removeList = await this.listService.removeList(listId);
 
     return {
       statusCode: HttpStatus.OK,
