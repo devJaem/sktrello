@@ -32,7 +32,7 @@ import { BoardUserRole } from 'src/board/types/board-user.type';
 @UseGuards(BoardUserRolesGuard)
 @BoardUserRoles(BoardUserRole.admin, BoardUserRole.host, BoardUserRole.guest)
 @ApiBearerAuth()
-@Controller('/boards/:boardId/checklist')
+@Controller('/boards/:boardId/checklists')
 export class CheckListController {
   constructor(
     private readonly checkListService: CheckListService,
