@@ -186,9 +186,6 @@ export class BoardService {
     boardId: number,
     updateBoardDto: UpdateBoardDto
   ) {
-    // 0. 로그인한 사용자 id 가져오기
-    const userId: number = user.id;
-
     // 1. 수정 대상 확인
     // 1-1. 해당 board가 있는지
     const isExistingBoard: Board = await this.boardRepository.findOne({
@@ -201,25 +198,10 @@ export class BoardService {
       throw new NotFoundException(BOARD_MESSAGES.BOARD.DELETE.FAILURE.NOTFOUND);
     }
 
-    // 2. 권한 확인 : 사용자가 수정 대상 board의 host인가?
-    // 2-1. boardUser 정보를 가져오기
-    const isHost: BoardUser = await this.boardUserRepository.findOne({
-      where: {
-        boardId,
-        userId,
-      },
-    });
-    // 2-2. isHost에서 boardUserRole이 host가 아니라면 에러처리
-    if (isHost.boardUserRole !== 'HOST') {
-      throw new UnauthorizedException(
-        BOARD_MESSAGES.BOARD.DELETE.FAILURE.UNAUTHORIZED
-      );
-    }
-
-    // 3. board 수정하기
+    // 2. board 수정하기
     await this.boardRepository.update({ id: boardId }, updateBoardDto);
 
-    // 4. 수정된 내용을 controller에 전달
+    // 3. 수정된 내용을 controller에 전달
     return {
       before: {
         title: isExistingBoard.title,
@@ -238,9 +220,6 @@ export class BoardService {
 
   /** Board 삭제(D) API **/
   async softDeleteBoard(user: User, boardId: number) {
-    // 0. 로그인한 사용자 id 가져오기
-    const userId: number = user.id;
-
     // 1. 삭제 대상 확인
     // 1-1. 해당 board가 있는지
     const isExistingBoard: Board = await this.boardRepository.findOne({
@@ -253,28 +232,12 @@ export class BoardService {
       throw new NotFoundException(BOARD_MESSAGES.BOARD.DELETE.FAILURE.NOTFOUND);
     }
 
-    // 2. 권한 확인 : 사용자가 삭제 대상 board의 host인가?
-    // 2-1. boardUser 정보를 가져오기
-    const isHost: BoardUser = await this.boardUserRepository.findOne({
-      where: {
-        boardId,
-        userId,
-      },
-    });
-
-    // 2-2. isHost에서 boardUserRole이 host가 아니라면 에러처리
-    if (isHost.boardUserRole !== 'HOST') {
-      throw new UnauthorizedException(
-        BOARD_MESSAGES.BOARD.DELETE.FAILURE.UNAUTHORIZED
-      );
-    }
-
-    // 3. board 소프트 삭제하기
+    // 2. board 소프트 삭제하기
     await this.boardRepository.softDelete({
       id: boardId,
     });
 
-    // 4. 삭제된 board의 id와 title을 controller에 전달
+    // 3. 삭제된 board의 id와 title을 controller에 전달
     return {
       id: isExistingBoard.id,
       title: isExistingBoard.title,
@@ -287,60 +250,42 @@ export class BoardService {
     boardId: number,
     inviteBoardMemberDto: InviteBoardMemberDto
   ) {
-    // 0. 로그인한 사용자 id 가져오기
-    const userId: number = user.id;
-
-    // 1. 권한 확인 : 사용자가 해당 board의 host인가?
-    // 1-1. boardUser 정보를 가져오기
-    const isHost: BoardUser = await this.boardUserRepository.findOne({
-      where: {
-        boardId,
-        userId,
-      },
-    });
-    // 1-2. isHost에서 boardUserRole이 host가 아니라면 에러처리
-    if (isHost.boardUserRole !== BoardUserRole.host) {
-      throw new UnauthorizedException(
-        BOARD_MESSAGES.BOARD.INVITATION.FAILURE.UNAUTHORIZED
-      );
-    }
-
-    // 2. 초대 대상 확인 : 초대 대상 사용자가 존재하는가?
-    // 2-1. email로 사용자 정보 조회
+    // 1. 초대 대상 확인 : 초대 대상 사용자가 존재하는가?
+    // 1-1. email로 사용자 정보 조회
     const isExistingEmail: User = await this.userRepository.findOne({
       where: {
         email: inviteBoardMemberDto.email,
       },
     });
-    // 2-2. 초대 대상 사용자가 존재하지 않는다면 에러처리
+    // 1-2. 초대 대상 사용자가 존재하지 않는다면 에러처리
     if (!isExistingEmail) {
       throw new NotFoundException(
         BOARD_MESSAGES.BOARD.INVITATION.FAILURE.NOTFOUND
       );
     }
 
-    // 3. 멤버 확인 : 이미 해당 보드에 초대된 사용자인가?
-    // 3-1. userId로 boardUser 조회
+    // 2. 멤버 확인 : 이미 해당 보드에 초대된 사용자인가?
+    // 2-1. userId로 boardUser 조회
     const isInvited: BoardUser = await this.boardUserRepository.findOne({
       where: {
         userId: isExistingEmail.id,
         boardId: boardId,
       },
     });
-    // 3-2. 이미 초대한 사용자라면 에러처리
+    // 2-2. 이미 초대한 사용자라면 에러처리
     if (isInvited) {
       throw new ConflictException(
         BOARD_MESSAGES.BOARD.INVITATION.FAILURE.CONFLICT
       );
     }
 
-    // 4. 초대하기
+    // 3. 초대하기
     await this.boardUserRepository.save({
       boardId,
       userId: isExistingEmail.id,
     });
 
-    // 5. 초대 대상자의 nickname과 email을 controller에 전달
+    // 4. 초대 대상자의 nickname과 email을 controller에 전달
     return {
       nickname: isExistingEmail.nickname,
       email: isExistingEmail.email,
@@ -428,25 +373,10 @@ export class BoardService {
     boardId: number,
     boardAuthDto: BoardAuthDto
   ) {
-    // 0. 로그인한 사용자 id 가져오기, dto 내용 가져오기
+    // 1. 로그인한 사용자 id 가져오기, dto 내용 가져오기
     const userId: number = user.id; // 로그인 중인 사람 아이디
     const memberId: number = boardAuthDto.userId; // 권한 변경 대상자 아이디
     const wantedRole: BoardUserRole = boardAuthDto.boardUserRole;
-
-    // 1. 권한 확인 : 사용자가 해당 board의 host인가?
-    // 1-1. boardUser 정보를 가져오기
-    const isHost: BoardUser = await this.boardUserRepository.findOne({
-      where: {
-        boardId,
-        userId,
-      },
-    });
-    // 1-2. isHost에서 boardUserRole이 host가 아니라면 에러처리
-    if (isHost.boardUserRole !== BoardUserRole.host) {
-      throw new UnauthorizedException(
-        BOARD_MESSAGES.BOARD.INVITATION.FAILURE.UNAUTHORIZED
-      );
-    }
 
     // 2. 변경 대상 확인 : 대상자가 해당 board의 참여자인가?
     // 2-1. boardUser 정보 가져오기
@@ -519,6 +449,7 @@ export class BoardService {
         id: boardId,
       },
     });
+
     return board;
   }
 }
