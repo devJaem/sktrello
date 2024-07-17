@@ -84,7 +84,7 @@ export class UserController {
     @LogIn() user: User,
     @Body() userUpdateDto: UserUpdateDto
   ) {
-    const data = await this.userService.updateUserInfo(user);
+    const data = await this.userService.updateUserInfo(user, userUpdateDto);
     return {
       status: HttpStatus.OK,
       message: USER_MESSAGES.USER.USERINFO.UPDATE.SUCCESS,
@@ -104,7 +104,10 @@ export class UserController {
     @LogIn() user: User,
     @Body() userPasswordUpdateDto: UserPasswordUpdateDto
   ) {
-    const data = await this.userService.updateUserPassword(user);
+    const data = await this.userService.updateUserPassword(
+      user,
+      userPasswordUpdateDto
+    );
     return {
       status: HttpStatus.OK,
       message: USER_MESSAGES.USER.USERINFO.UPDATE.SUCCESS,

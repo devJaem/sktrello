@@ -13,12 +13,6 @@ export class UserPasswordUpdateDto {
   @IsNotEmpty({
     message: USER_MESSAGES.USER.USERINFO.UPDATE.FAILURE.PASSWORD.EMPTYNOW,
   })
-  @IsStrongPassword(
-    { minLength: 8, minSymbols: 1 },
-    {
-      message: USER_MESSAGES.USER.USERINFO.UPDATE.FAILURE.PASSWORD.WEAKPASSWORD,
-    }
-  )
   @ApiProperty({ example: 'Example1@' })
   password: string;
 
@@ -26,6 +20,12 @@ export class UserPasswordUpdateDto {
   @IsNotEmpty({
     message: USER_MESSAGES.USER.USERINFO.UPDATE.FAILURE.PASSWORD.EMPTYNOW,
   })
+  @IsStrongPassword(
+    { minLength: 8, minSymbols: 1 },
+    {
+      message: USER_MESSAGES.USER.USERINFO.UPDATE.FAILURE.PASSWORD.WEAKPASSWORD,
+    }
+  )
   @ApiProperty({ example: 'Modify!@' })
-  passwordConfirm: string;
+  modifyPassword: string;
 }
