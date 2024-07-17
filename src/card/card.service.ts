@@ -5,14 +5,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThan, MoreThan, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Card } from './entities/card.entity';
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { MoveCardDto } from './dto/move-card.dto';
 import { LexoRank } from 'lexorank';
 import { CARD_MESSAGES } from 'src/constants/card-message.constant';
-import { BoardUser } from 'src/board/entities/board-user.entity';
 import { List } from 'src/list/entities/list.entity';
 import { CardUser } from './entities/card-user.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
@@ -24,8 +23,6 @@ export class CardService {
   constructor(
     @InjectRepository(Card)
     private readonly cardRepository: Repository<Card>,
-    @InjectRepository(BoardUser)
-    private readonly boardUserRepository: Repository<BoardUser>,
     @InjectRepository(List)
     private readonly listRepository: Repository<List>,
     @InjectRepository(CardUser)
@@ -37,26 +34,7 @@ export class CardService {
   ) {}
 
   async createCard(userId: number, createCardDto: CreateCardDto) {
-    if (!userId) {
-      throw new UnauthorizedException(
-        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
-      );
-    }
-
     const { title, listId } = createCardDto;
-    const board = await this.listRepository.findOne({
-      where: { id: listId },
-    });
-    const boardId = board.boardId;
-    const isInvite = await this.boardUserRepository.findOne({
-      where: { userId, boardId },
-    });
-
-    if (!isInvite) {
-      throw new UnauthorizedException(
-        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
-      );
-    }
 
     const list = await this.listRepository.findOne({
       where: { id: listId },
@@ -89,15 +67,20 @@ export class CardService {
       cardOrder: lastRank.toString(),
     });
 
-    return await this.cardRepository.save(newCard);
+    const savedCard = await this.cardRepository.save(newCard);
+
+    // 카드유저 생성
+    const newCardUser = this.cardUserRepository.create({
+      userId,
+      cardId: savedCard.id,
+    });
+
+    await this.cardUserRepository.save(newCardUser);
+
+    return newCard;
   }
 
-  async findAllCards(userId: number, listId: number) {
-    if (!userId) {
-      throw new UnauthorizedException(
-        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
-      );
-    }
+  async findAllCards(listId: number) {
     if (!listId) {
       throw new NotFoundException(CARD_MESSAGES.CARD.READ_CARDS.FAILURE);
     }
@@ -106,12 +89,7 @@ export class CardService {
     });
   }
 
-  async findCard(userId: number, cardId: number) {
-    if (!userId) {
-      throw new UnauthorizedException(
-        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
-      );
-    }
+  async findCard(cardId: number) {
     const card = await this.cardRepository.findOne({
       where: { id: cardId },
     });
@@ -132,7 +110,12 @@ export class CardService {
     cardId: number,
     updateCardDto: UpdateCardDto
   ) {
-    if (!userId) {
+    const authorId = await this.cardUserRepository.findOne({
+      where: {
+        cardId,
+      },
+    });
+    if (authorId.userId !== userId) {
       throw new UnauthorizedException(
         CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
@@ -162,7 +145,12 @@ export class CardService {
   /** 카드 이동 API **/
   async moveCard(userId: number, cardId: number, moveCardDto: MoveCardDto) {
     // userId 확인
-    if (!userId) {
+    const authorId = await this.cardUserRepository.findOne({
+      where: {
+        cardId,
+      },
+    });
+    if (authorId.userId !== userId) {
       throw new UnauthorizedException(
         CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
@@ -212,7 +200,12 @@ export class CardService {
   }
 
   async deleteCard(userId: number, cardId: number) {
-    if (!userId) {
+    const authorId = await this.cardUserRepository.findOne({
+      where: {
+        cardId,
+      },
+    });
+    if (authorId.userId !== userId) {
       throw new UnauthorizedException(
         CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
