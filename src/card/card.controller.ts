@@ -62,8 +62,8 @@ export class CardController {
     status: HttpStatus.OK,
     description: CARD_MESSAGES.CARD.READ_CARDS.SUCCESS,
   })
-  async findAllCards(@LogIn() user: User, @Param('listId') listId: number) {
-    const findAllCards = await this.cardService.findAllCards(user.id, listId);
+  async findAllCards(@Param('listId') listId: number) {
+    const findAllCards = await this.cardService.findAllCards(listId);
     return {
       statusCode: HttpStatus.OK,
       message: CARD_MESSAGES.CARD.READ_CARDS.SUCCESS,
@@ -77,8 +77,8 @@ export class CardController {
     status: HttpStatus.OK,
     description: CARD_MESSAGES.CARD.READ_CARD.SUCCESS,
   })
-  async findCard(@LogIn() user: User, @Param('cardId') cardId: number) {
-    const findCard = await this.cardService.findCard(user.id, cardId);
+  async findCard(@Param('cardId') cardId: number) {
+    const findCard = await this.cardService.findCard(cardId);
 
     return {
       statusCode: HttpStatus.OK,
