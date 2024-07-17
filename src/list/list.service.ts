@@ -102,7 +102,16 @@ export class ListService {
     const lists = await this.listRepository.find({
       where: { boardId },
       order: { listOrder: 'ASC' },
+      // relations: ['cards'],
     });
+
+    // lists.forEach((list) => {
+    //   list.cards = list.cards.map((card) => ({
+    //     id: card.id,
+    //     title: card.title,
+    //     cardOrder: card.cardOrder,
+    //   }));
+    // });
 
     return lists;
   }
