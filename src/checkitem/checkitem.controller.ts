@@ -23,7 +23,6 @@ import {
 } from '@nestjs/swagger';
 import { CHECK_MESSAGES } from '../constants/check-message.constant';
 import { CheckItem } from './entities/checkItem.entity';
-import { AuthGuard } from '@nestjs/passport';
 import { BoardUserRolesGuard } from 'src/auth/guard/board-user-roles.guard';
 import { BoardUserRoles } from 'src/auth/decorator/board-user-roles.decorator';
 import { BoardUserRole } from 'src/board/types/board-user.type';
@@ -33,7 +32,7 @@ import { CheckListService } from 'src/checkList/checkList.service';
 @UseGuards(BoardUserRolesGuard)
 @BoardUserRoles(BoardUserRole.admin, BoardUserRole.host, BoardUserRole.guest)
 @ApiBearerAuth()
-@Controller('/boards/:boardId/checkItems')
+@Controller('/boards/:boardId/checkitems')
 export class CheckItemController {
   constructor(
     private readonly checkItemService: CheckItemService,

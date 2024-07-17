@@ -23,19 +23,27 @@ import {
 } from '@nestjs/swagger';
 import { CHECK_MESSAGES } from '../constants/check-message.constant';
 import { CheckList } from './entities/checkList.entity';
-import { AuthGuard } from '@nestjs/passport';
+import { CardService } from 'src/card/card.service';
+import { BoardUserRolesGuard } from 'src/auth/guard/board-user-roles.guard';
+import { BoardUserRoles } from 'src/auth/decorator/board-user-roles.decorator';
+import { BoardUserRole } from 'src/board/types/board-user.type';
 
-@UseGuards(AuthGuard('jwt'))
 @ApiTags('5. 체크리스트 API')
+@UseGuards(BoardUserRolesGuard)
+@BoardUserRoles(BoardUserRole.admin, BoardUserRole.host, BoardUserRole.guest)
 @ApiBearerAuth()
-@Controller('/checklists')
+@Controller('/boards/:boardId/checklists')
 export class CheckListController {
-  constructor(private readonly checkListService: CheckListService) {}
+  constructor(
+    private readonly checkListService: CheckListService,
+    private readonly cardService: CardService
+  ) {}
 
   @ApiOperation({
     summary: '체크리스트 생성',
     description: '체크리스트를 생성합니다.',
   })
+  @ApiParam({ name: 'boardId', description: 'ID of the board', type: 'number' })
   @ApiBody({ type: CreateCheckListDto })
   @ApiResponse({
     status: HttpStatus.CREATED,
@@ -44,6 +52,7 @@ export class CheckListController {
   })
   @Post()
   async create(@Body() createCheckListDto: CreateCheckListDto) {
+    await this.cardService.findCard(createCheckListDto.cardId);
     const newCheckList = await this.checkListService.create(createCheckListDto);
     return {
       statusCode: HttpStatus.CREATED,
@@ -56,18 +65,14 @@ export class CheckListController {
     summary: '카드 내 체크리스트 모두 조회 API',
     description: '카드 ID를 통해 특정 카드의 체크리스트를 모두 조회 합니다.',
   })
-  @ApiParam({
-    name: 'cardId',
-    description: 'ID of the card',
-    type: 'number',
-  })
+  @ApiParam({ name: 'boardId', description: 'ID of the board', type: 'number' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: '카드 내 모든 체크리스트 조회 성공',
     type: [CheckList],
   })
   @Get(':cardId')
-  async findAll(@Param('cardId') cardId: string) {
+  async findAll(@Param('cardId') cardId: number) {
     const checklists = await this.checkListService.findAll(+cardId);
     return {
       statusCode: HttpStatus.OK,
@@ -80,11 +85,7 @@ export class CheckListController {
     summary: '특정 체크리스트 조회 API',
     description: '체크리스트 ID를 통해 특정 체크리스트를 조회합니다.',
   })
-  @ApiParam({
-    name: 'checkListId',
-    description: 'ID of the checklist',
-    type: 'number',
-  })
+  @ApiParam({ name: 'boardId', description: 'ID of the board', type: 'number' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: '특정 체크리스트 조회 성공',
@@ -104,11 +105,7 @@ export class CheckListController {
     summary: '체크리스트 수정 API',
     description: '체크리스트를 수정합니다.',
   })
-  @ApiParam({
-    name: 'checkListId',
-    description: 'ID of the checklist',
-    type: 'number',
-  })
+  @ApiParam({ name: 'boardId', description: 'ID of the board', type: 'number' })
   @ApiBody({ type: UpdateCheckListDto })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -135,11 +132,7 @@ export class CheckListController {
     summary: '체크리스트 위치 이동 API',
     description: '체크리스트를 이동합니다.',
   })
-  @ApiParam({
-    name: 'checkListId',
-    description: 'ID of the checklist',
-    type: 'number',
-  })
+  @ApiParam({ name: 'boardId', description: 'ID of the board', type: 'number' })
   @ApiBody({ type: MoveCheckListDto })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -166,11 +159,7 @@ export class CheckListController {
     summary: '체크리스트 다른 카드로 이동 API',
     description: '체크리스트를 다른 카드로 이동합니다.',
   })
-  @ApiParam({
-    name: 'checkListId',
-    description: 'ID of the checklist',
-    type: 'number',
-  })
+  @ApiParam({ name: 'boardId', description: 'ID of the board', type: 'number' })
   @ApiBody({ type: MoveCheckListDto })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -201,6 +190,7 @@ export class CheckListController {
     status: HttpStatus.OK,
     description: CHECK_MESSAGES.CHECKLIST.DELETE,
   })
+  @ApiParam({ name: 'boardId', description: 'ID of the board', type: 'number' })
   @Delete(':checkListId')
   async remove(@Param('checkListId') id: string) {
     console.log(+id);
