@@ -23,35 +23,33 @@ import {
 } from '@nestjs/swagger';
 import { CHECK_MESSAGES } from '../constants/check-message.constant';
 import { CheckItem } from './entities/checkItem.entity';
-import { AuthGuard } from '@nestjs/passport';
+import { BoardUserRolesGuard } from 'src/auth/guard/board-user-roles.guard';
+import { BoardUserRoles } from 'src/auth/decorator/board-user-roles.decorator';
+import { BoardUserRole } from 'src/board/types/board-user.type';
+import { CheckListService } from 'src/checkList/checkList.service';
 
-@UseGuards(AuthGuard('jwt'))
 @ApiTags('6. 체크리스트-아이템 API')
+@UseGuards(BoardUserRolesGuard)
+@BoardUserRoles(BoardUserRole.admin, BoardUserRole.host, BoardUserRole.guest)
 @ApiBearerAuth()
-@Controller('/checklists')
+@Controller('/boards/:boardId/checkitems')
 export class CheckItemController {
-  constructor(private readonly checkItemService: CheckItemService) {}
+  constructor(
+    private readonly checkItemService: CheckItemService,
+    private readonly checkListService: CheckListService
+  ) {}
 
   @ApiOperation({
     summary: '체크아이템 생성 API',
     description: '체크아이템을 생성합니다.',
   })
   @ApiBody({ type: CreateCheckItemDto })
-  @ApiParam({
-    name: 'checklistId',
-    description: 'ID of the checklist',
-    type: 'number',
-  })
+  @ApiParam({ name: 'boardId', description: 'ID of the board', type: 'number' })
   @ApiResponse({ type: CheckItem, status: HttpStatus.CREATED })
-  @Post(':checklistId/items')
-  async create(
-    @Param('checklistId') checklistId: number,
-    @Body() createCheckItemDto: CreateCheckItemDto
-  ) {
-    const newCheckItem = await this.checkItemService.create(
-      createCheckItemDto,
-      checklistId
-    );
+  @Post()
+  async create(@Body() createCheckItemDto: CreateCheckItemDto) {
+    await this.checkListService.findOne(createCheckItemDto.checkListId);
+    const newCheckItem = await this.checkItemService.create(createCheckItemDto);
     return {
       statusCode: HttpStatus.CREATED,
       message: CHECK_MESSAGES.CHECKITEM.CREATE,
@@ -63,13 +61,9 @@ export class CheckItemController {
     summary: '체크아이템 모두 조회 API',
     description: '특정 체크리스트 ID를 통해 체크아이템을 조회합니다.',
   })
-  @ApiParam({
-    name: 'checklistId',
-    description: 'ID of the checklist',
-    type: 'number',
-  })
+  @ApiParam({ name: 'boardId', description: 'ID of the board', type: 'number' })
   @ApiResponse({ type: [CheckItem], status: HttpStatus.OK })
-  @Get(':checklistId/items')
+  @Get(':checkListId')
   async findAll(@Param('checklistId') checklistId: number) {
     const checkItems = await this.checkItemService.findAll(checklistId);
     return {
@@ -83,20 +77,11 @@ export class CheckItemController {
     summary: '체크아이템 조회 API',
     description: '체크아이템 ID를 통해 특정 체크아이템을 조회합니다.',
   })
-  @ApiParam({
-    name: 'checklistId',
-    description: 'ID of the checklist',
-    type: 'number',
-  })
-  @ApiParam({
-    name: 'itemId',
-    description: 'ID of the check item',
-    type: 'number',
-  })
+  @ApiParam({ name: 'boardId', description: 'ID of the board', type: 'number' })
   @ApiResponse({ type: CheckItem, status: HttpStatus.OK })
-  @Get(':checklistId/items/:itemId')
-  async findOne(@Param('itemId') itemId: number) {
-    const checkItem = await this.checkItemService.findOne(itemId);
+  @Get(':checkItemId')
+  async findOne(@Param('checkItemId') id: number) {
+    const checkItem = await this.checkItemService.findOne(+id);
     return {
       statusCode: HttpStatus.OK,
       message: CHECK_MESSAGES.CHECKITEM.FOUND,
@@ -108,25 +93,16 @@ export class CheckItemController {
     summary: '체크아이템 수정 API',
     description: '체크아이템을 수정합니다.',
   })
-  @ApiParam({
-    name: 'checklistId',
-    description: 'ID of the checklist',
-    type: 'number',
-  })
-  @ApiParam({
-    name: 'itemId',
-    description: 'ID of the check item',
-    type: 'number',
-  })
+  @ApiParam({ name: 'boardId', description: 'ID of the board', type: 'number' })
   @ApiBody({ type: UpdateCheckItemDto })
   @ApiResponse({ type: CheckItem, status: HttpStatus.OK })
-  @Patch(':checklistId/items/:itemId')
+  @Patch(':checkItemId')
   async update(
-    @Param('itemId') itemId: number,
+    @Param('checkItemId') id: number,
     @Body() updateCheckItemDto: UpdateCheckItemDto
   ) {
     const updatedCheckItem = await this.checkItemService.update(
-      itemId,
+      +id,
       updateCheckItemDto
     );
     return {
@@ -140,20 +116,11 @@ export class CheckItemController {
     summary: '체크아이템 삭제 API',
     description: '체크아이템을 삭제합니다.',
   })
-  @ApiParam({
-    name: 'checklistId',
-    description: 'ID of the checklist',
-    type: 'number',
-  })
-  @ApiParam({
-    name: 'itemId',
-    description: 'ID of the check item',
-    type: 'number',
-  })
+  @ApiParam({ name: 'boardId', description: 'ID of the board', type: 'number' })
   @ApiResponse({ status: HttpStatus.OK })
-  @Delete(':checklistId/items/:itemId')
-  async remove(@Param('itemId') itemId: number) {
-    const deletedCheckItem = await this.checkItemService.remove(itemId);
+  @Delete(':checkItemId')
+  async remove(@Param('checkItemId') id: number) {
+    const deletedCheckItem = await this.checkItemService.remove(+id);
     return {
       statusCode: HttpStatus.OK,
       message: CHECK_MESSAGES.CHECKITEM.DELETE,
@@ -165,16 +132,7 @@ export class CheckItemController {
     summary: '체크리스트 내의 아이템 이동 API',
     description: '체크리스트 내에서 아이템을 이동합니다.',
   })
-  @ApiParam({
-    name: 'checklistId',
-    description: 'ID of the checklist',
-    type: 'number',
-  })
-  @ApiParam({
-    name: 'itemId',
-    description: 'ID of the check item',
-    type: 'number',
-  })
+  @ApiParam({ name: 'boardId', description: 'ID of the board', type: 'number' })
   @ApiBody({ type: MoveCheckItemDto })
   @ApiResponse({ type: CheckItem, status: HttpStatus.OK })
   @Patch(':checklistId/items/:itemId/move')
@@ -197,16 +155,7 @@ export class CheckItemController {
     summary: '다른 체크리스트로 아이템 이동 API',
     description: '다른 체크리스트로 아이템을 이동합니다.',
   })
-  @ApiParam({
-    name: 'checklistId',
-    description: 'ID of the checklist',
-    type: 'number',
-  })
-  @ApiParam({
-    name: 'itemId',
-    description: 'ID of the check item',
-    type: 'number',
-  })
+  @ApiParam({ name: 'boardId', description: 'ID of the board', type: 'number' })
   @ApiBody({ type: MoveCheckItemDto })
   @ApiResponse({ type: CheckItem, status: HttpStatus.OK })
   @Patch(':checklistId/items/:itemId/move-to-checklist')

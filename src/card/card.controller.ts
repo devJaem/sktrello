@@ -20,26 +20,32 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiOperation,
+  ApiParam,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { LogIn } from 'src/auth/decorator/login.decorator';
+import { BoardUserRoles } from 'src/auth/decorator/board-user-roles.decorator';
+import { BoardUserRolesGuard } from 'src/auth/guard/board-user-roles.guard';
+import { BoardUserRole } from 'src/board/types/board-user.type';
 
-@UseGuards(AuthGuard('jwt'))
-@Controller('cards')
 @ApiTags('4. 카드 API')
+@UseGuards(BoardUserRolesGuard)
+@BoardUserRoles(BoardUserRole.member, BoardUserRole.host, BoardUserRole.admin)
 @ApiBearerAuth()
+@Controller('/boards/:boardId')
 export class CardController {
   constructor(private readonly cardService: CardService) {}
 
-  @Post('')
+  // 카드생성 api
   @ApiOperation({ summary: '카드 생성' })
   @ApiBody({ type: CreateCardDto })
+  @ApiParam({ name: 'boardId', description: '보드의 ID', type: 'number' })
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: CARD_MESSAGES.CARD.CREATE.SUCCESS,
   })
+  @Post('/cards')
   async createCard(@LogIn() user: User, @Body() createCardDto: CreateCardDto) {
     const createCard = await this.cardService.createCard(
       user.id,
@@ -53,14 +59,16 @@ export class CardController {
     };
   }
 
-  @Get('list/:listId')
+  // 카드전체조회 api
   @ApiOperation({ summary: '카드 전체 조회' })
+  @ApiParam({ name: 'boardId', description: '보드의 ID', type: 'number' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: CARD_MESSAGES.CARD.READ_CARDS.SUCCESS,
   })
-  async findAllCards(@LogIn() user: User, @Param('listId') listId: number) {
-    const findAllCards = await this.cardService.findAllCards(user.id, listId);
+  @Get('/list/:listId/cards')
+  async findAllCards(@Param('listId') listId: number) {
+    const findAllCards = await this.cardService.findAllCards(listId);
     return {
       statusCode: HttpStatus.OK,
       message: CARD_MESSAGES.CARD.READ_CARDS.SUCCESS,
@@ -68,14 +76,16 @@ export class CardController {
     };
   }
 
-  @Get(':cardId')
+  // 카드상세조회 api
   @ApiOperation({ summary: '카드 상세 조회' })
+  @ApiParam({ name: 'boardId', description: '보드의 ID', type: 'number' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: CARD_MESSAGES.CARD.READ_CARD.SUCCESS,
   })
-  async findCard(@LogIn() user: User, @Param('cardId') cardId: number) {
-    const findCard = await this.cardService.findCard(user.id, cardId);
+  @Get('/cards/:cardId')
+  async findCard(@Param('cardId') cardId: number) {
+    const findCard = await this.cardService.findCard(cardId);
 
     return {
       statusCode: HttpStatus.OK,
@@ -85,13 +95,14 @@ export class CardController {
   }
 
   // 카드내용 수정 api
-  @Patch(':cardId')
   @ApiOperation({ summary: '카드 내용 수정' })
+  @ApiParam({ name: 'boardId', description: '보드의 ID', type: 'number' })
   @ApiBody({ type: UpdateCardDto })
   @ApiResponse({
     status: HttpStatus.OK,
     description: CARD_MESSAGES.CARD.UPDATE.SUCCESS,
   })
+  @Patch('/cards/:cardId')
   async updateContent(
     @LogIn() user: User,
     @Param('cardId') cardId: number,
@@ -110,13 +121,14 @@ export class CardController {
   }
 
   // 카드이동 api
-  @Patch(':cardId/move')
   @ApiOperation({ summary: '카드 순서 이동' })
+  @ApiParam({ name: 'boardId', description: '보드의 ID', type: 'number' })
   @ApiBody({ type: MoveCardDto })
   @ApiResponse({
     status: HttpStatus.OK,
     description: CARD_MESSAGES.CARD.UPDATE.SUCCESS,
   })
+  @Patch('/cards/:cardId/move')
   moveCard(
     @LogIn() user: User,
     @Param('cardId') cardId: number,
@@ -125,12 +137,14 @@ export class CardController {
     return this.cardService.moveCard(user.id, cardId, moveCardDto);
   }
 
-  @Delete(':cardId')
+  // 카드 삭제 api
   @ApiOperation({ summary: '카드 삭제' })
+  @ApiParam({ name: 'boardId', description: '보드의 ID', type: 'number' })
   @ApiResponse({
     status: HttpStatus.OK,
     description: CARD_MESSAGES.CARD.DELETE.SUCCESS,
   })
+  @Delete('/cards/:cardId')
   async deleteCard(@LogIn() user: User, @Param('cardId') cardId: number) {
     const deleteCard = await this.cardService.deleteCard(user.id, cardId);
 

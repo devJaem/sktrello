@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CardController } from './card.controller';
 import { Card } from './entities/card.entity';
@@ -8,6 +8,9 @@ import { Comment } from 'src/comment/entities/comment.entity';
 import { CheckList } from 'src/checkList/entities/checkList.entity';
 import { CardUser } from './entities/card-user.entity';
 import { BoardUser } from 'src/board/entities/board-user.entity';
+import { BoardModule } from 'src/board/board.module';
+import { CheckListService } from 'src/checkList/checkList.service';
+import { CommentService } from 'src/comment/comment.service';
 
 @Module({
   imports: [
@@ -19,8 +22,9 @@ import { BoardUser } from 'src/board/entities/board-user.entity';
       CardUser,
       BoardUser,
     ]),
+    forwardRef(() => BoardModule),
   ],
-  providers: [CardService],
+  providers: [CardService, CheckListService, CommentService],
   controllers: [CardController],
   exports: [CardService],
 })

@@ -9,21 +9,23 @@ import {
   ParseIntPipe,
   HttpStatus,
   UseGuards,
-  // UseGuards,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UpdateCommentDto } from './dto/update-comment.dto';
 import { COMMENT_MESSAGE } from 'src/constants/comment.message.constant';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { UserInfo } from 'src/utils/test-user.decorator';
 import { User } from 'src/user/entities/user.entity';
-import { AuthGuard } from '@nestjs/passport';
+import { LogIn } from 'src/auth/decorator/login.decorator';
+import { BoardUserRolesGuard } from 'src/auth/guard/board-user-roles.guard';
+import { BoardUserRoles } from 'src/auth/decorator/board-user-roles.decorator';
+import { BoardUserRole } from 'src/board/types/board-user.type';
 
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(BoardUserRolesGuard)
+@BoardUserRoles(BoardUserRole.host, BoardUserRole.admin, BoardUserRole.member)
 @ApiTags('7. 댓글 API')
 @ApiBearerAuth()
-@Controller('cards/:cardId/comments')
+@Controller('boards/:boardId/cards/:cardId/comments')
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
@@ -34,11 +36,12 @@ export class CommentController {
   })
   @Post()
   async create(
-    @UserInfo() user: User, // @Request() req: any 로 바꿔야됨?
+    @LogIn() user: User,
+    @Param('boardId') boardId: string,
     @Param('cardId', ParseIntPipe) cardId: number,
     @Body() createCommentDto: CreateCommentDto
   ) {
-    const userId = user.id; // 사용자 ID user.id. ======> req.user.id
+    const userId = user.id;
     const createdComment = await this.commentService.create(
       createCommentDto,
       userId,
@@ -57,7 +60,10 @@ export class CommentController {
     description: COMMENT_MESSAGE.COMMENT.READ_ALL.SUCCESS,
   })
   @Get()
-  async findAll(@Param('cardId', ParseIntPipe) cardId: number) {
+  async findAll(
+    @Param('boardId') boardId: string,
+    @Param('cardId', ParseIntPipe) cardId: number
+  ) {
     const readAllComment = await this.commentService.findAll(cardId);
     return {
       status: HttpStatus.OK,
@@ -71,11 +77,11 @@ export class CommentController {
     status: HttpStatus.OK,
     description: COMMENT_MESSAGE.COMMENT.UPDATE.SUCCESS,
   })
-  @Patch(':id')
+  @Patch(':commentId')
   async update(
-    @UserInfo() user: User,
-    @Param('cardId', ParseIntPipe) cardId: number,
-    @Param('id', ParseIntPipe) id: number,
+    @LogIn() user: User,
+    @Param('boardId') boardId: string,
+    @Param('commentId', ParseIntPipe) id: number,
     @Body() updateCommentDto: UpdateCommentDto
   ) {
     const userId = user.id; // 사용자 ID
@@ -96,11 +102,11 @@ export class CommentController {
     status: HttpStatus.OK,
     description: COMMENT_MESSAGE.COMMENT.DELETE.SUCCESS,
   })
-  @Delete(':id')
+  @Delete(':commentId')
   async remove(
-    @UserInfo() user: User,
-    @Param('cardId', ParseIntPipe) cardId: number,
-    @Param('id') id: number
+    @LogIn() user: User,
+    @Param('boardId') boardId: string,
+    @Param('commentId') id: number
   ) {
     const userId = user.id; // 사용자 ID
     const deleteComment = await this.commentService.remove(id, userId);

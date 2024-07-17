@@ -5,58 +5,34 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThan, MoreThan, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Card } from './entities/card.entity';
 import { CreateCardDto } from './dto/create-card.dto';
 import { UpdateCardDto } from './dto/update-card.dto';
 import { MoveCardDto } from './dto/move-card.dto';
 import { LexoRank } from 'lexorank';
 import { CARD_MESSAGES } from 'src/constants/card-message.constant';
-import { BoardUser } from 'src/board/entities/board-user.entity';
 import { List } from 'src/list/entities/list.entity';
 import { CardUser } from './entities/card-user.entity';
-import { Comment } from 'src/comment/entities/comment.entity';
-import { CheckList } from 'src/checkList/entities/checkList.entity';
 import { midRank } from 'src/utils/lexorank';
+import { CheckListService } from 'src/checkList/checkList.service';
+import { CommentService } from 'src/comment/comment.service';
 
 @Injectable()
 export class CardService {
   constructor(
     @InjectRepository(Card)
     private readonly cardRepository: Repository<Card>,
-    @InjectRepository(BoardUser)
-    private readonly boardUserRepository: Repository<BoardUser>,
     @InjectRepository(List)
     private readonly listRepository: Repository<List>,
     @InjectRepository(CardUser)
     private readonly cardUserRepository: Repository<CardUser>,
-    @InjectRepository(Comment)
-    private readonly commentRepository: Repository<Comment>,
-    @InjectRepository(CheckList)
-    private readonly checkListRepository: Repository<CheckList>
+    private readonly commentService: CommentService,
+    private readonly checkListService: CheckListService
   ) {}
 
   async createCard(userId: number, createCardDto: CreateCardDto) {
-    if (!userId) {
-      throw new UnauthorizedException(
-        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
-      );
-    }
-
     const { title, listId } = createCardDto;
-    const board = await this.listRepository.findOne({
-      where: { id: listId },
-    });
-    const boardId = board.boardId;
-    const isInvite = await this.boardUserRepository.findOne({
-      where: { userId, boardId },
-    });
-
-    if (!isInvite) {
-      throw new UnauthorizedException(
-        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
-      );
-    }
 
     const list = await this.listRepository.findOne({
       where: { id: listId },
@@ -89,42 +65,54 @@ export class CardService {
       cardOrder: lastRank.toString(),
     });
 
-    return await this.cardRepository.save(newCard);
+    const savedCard = await this.cardRepository.save(newCard);
+
+    // 카드유저 생성
+    const newCardUser = this.cardUserRepository.create({
+      userId,
+      cardId: savedCard.id,
+    });
+
+    await this.cardUserRepository.save(newCardUser);
+
+    return newCard;
   }
 
-  async findAllCards(userId: number, listId: number) {
-    if (!userId) {
-      throw new UnauthorizedException(
-        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
-      );
-    }
+  async findAllCards(listId: number) {
     if (!listId) {
       throw new NotFoundException(CARD_MESSAGES.CARD.READ_CARDS.FAILURE);
     }
     return await this.cardRepository.find({
+      where: { listId },
       order: { cardOrder: 'ASC' },
     });
   }
 
-  async findCard(userId: number, cardId: number) {
-    if (!userId) {
-      throw new UnauthorizedException(
-        CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
-      );
+  async findCardTitle(listId: number) {
+    if (!listId) {
+      throw new NotFoundException(CARD_MESSAGES.CARD.READ_CARDS.FAILURE);
     }
+    return await this.cardRepository.find({
+      where: { listId },
+      order: { cardOrder: 'ASC' },
+      select: ['id', 'title', 'cardOrder'],
+    });
+  }
+
+  async findCard(cardId: number) {
     const card = await this.cardRepository.findOne({
       where: { id: cardId },
     });
     if (!card) {
       throw new NotFoundException(CARD_MESSAGES.CARD.READ_CARD.FAILURE);
     }
-    const cardComment = await this.commentRepository.find({
-      where: { cardId },
-    });
-    const cardChecklist = await this.checkListRepository.find({
-      where: { cardId },
-    });
-    return { card, cardComment, cardChecklist };
+    const cardComment = await this.commentService.findAll(+cardId);
+    const cardChecklists = await this.checkListService.findAll(+cardId);
+    const checkListIds = cardChecklists.map((checklist) => checklist.id);
+    const checkLists = await Promise.all(
+      checkListIds.map((id) => this.checkListService.findOne(id))
+    );
+    return { card, cardComment, checkLists };
   }
 
   async updateContent(
@@ -132,7 +120,12 @@ export class CardService {
     cardId: number,
     updateCardDto: UpdateCardDto
   ) {
-    if (!userId) {
+    const authorId = await this.cardUserRepository.findOne({
+      where: {
+        cardId,
+      },
+    });
+    if (authorId.userId !== userId) {
       throw new UnauthorizedException(
         CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
@@ -162,18 +155,23 @@ export class CardService {
   /** 카드 이동 API **/
   async moveCard(userId: number, cardId: number, moveCardDto: MoveCardDto) {
     // userId 확인
-    if (!userId) {
+    const authorId = await this.cardUserRepository.findOne({
+      where: {
+        cardId,
+      },
+    });
+    if (authorId.userId !== userId) {
       throw new UnauthorizedException(
         CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );
     }
 
-    const { listId } = moveCardDto;
+    const { listId, toPrevId, toNextId } = moveCardDto;
 
-    const isExistingcard = await this.cardRepository.findOne({
+    const card = await this.cardRepository.findOne({
       where: { id: cardId },
     });
-    if (!isExistingcard) {
+    if (!card) {
       throw new NotFoundException(CARD_MESSAGES.CARD.UPDATE.FAILURE);
     }
 
@@ -184,30 +182,27 @@ export class CardService {
     if (!targetList) {
       throw new NotFoundException(CARD_MESSAGES.CARD.READ_CARDS.FAILURE);
     }
-    // cardId로 cardOrder 가져오기
-    const card = await this.cardRepository.findOne({
-      where: { id: cardId },
-    });
-    const cardOrder = card.cardOrder;
 
-    // 이동하려는 카드의 순서보다 작은 (즉, 앞에 있는) 카드를 찾아 그중 가장 큰 순서를 가진 카드를 넣는다.
-    const prevCard = await this.cardRepository.findOne({
-      where: { listId, cardOrder: LessThan(cardOrder) },
-      order: { cardOrder: 'DESC' },
-    });
+    // prevCard와 nextCard 초기화
+    let prevCard = null;
+    let nextCard = null;
 
-    // 이동하려는 카드의 순서보다 큰 (즉, 뒤에 있는) 카드를 찾아 그중 가장 작은 순서를 가진 카드를 넣는다.
-    const nextCard = await this.cardRepository.findOne({
-      where: { listId, cardOrder: MoreThan(cardOrder) },
-      order: { cardOrder: 'ASC' },
-    });
+    // toPrevId와 toNextId가 존재할 경우 해당 id를 기반으로 카드를 찾기. 그 후 prevCard와 nextCard에 넣기.
+    if (toPrevId) {
+      prevCard = await this.cardRepository.findOne({ where: { id: toPrevId } });
+    }
 
-    // midRank로직 사용하여 update 할 카드 lexorank 생성
+    if (toNextId) {
+      nextCard = await this.cardRepository.findOne({ where: { id: toNextId } });
+    }
+
+    // prevCard와 nextCard사이의 lexorank값을 구하기
     const newCardOrder = midRank(
       prevCard ? prevCard.cardOrder : null,
       nextCard ? nextCard.cardOrder : null
     );
 
+    // 구한 lexorank값이 newCardOrder와 입력된 listId를 card에 수정해서 넣기.
     card.listId = listId;
     card.cardOrder = newCardOrder;
 
@@ -215,7 +210,12 @@ export class CardService {
   }
 
   async deleteCard(userId: number, cardId: number) {
-    if (!userId) {
+    const authorId = await this.cardUserRepository.findOne({
+      where: {
+        cardId,
+      },
+    });
+    if (authorId.userId !== userId) {
       throw new UnauthorizedException(
         CARD_MESSAGES.CARD.COMMON.USER.UNAUTHORIZED
       );

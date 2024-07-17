@@ -6,10 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CheckListModule } from 'src/checkList/checkList.module';
 import { BoardModule } from 'src/board/board.module';
 import { CheckList } from 'src/checkList/entities/checkList.entity';
+import { BoardUser } from 'src/board/entities/board-user.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([CheckItem, CheckList]),
+    TypeOrmModule.forFeature([CheckItem, CheckList, BoardUser]),
     CheckListModule,
     BoardModule,
   ],
