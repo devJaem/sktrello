@@ -15,6 +15,8 @@ import { SignUpDto } from 'src/user/dto/sign-up.dto';
 import { SignInDto } from 'src/user/dto/sign-in.dto';
 
 import { User } from './entities/user.entity';
+import { UserUpdateDto } from './dto/user-update.dto';
+import { UserPasswordUpdateDto } from './dto/user-password-update.dto';
 
 @Injectable()
 export class UserService {
@@ -83,9 +85,8 @@ export class UserService {
 
     // 4. 페이로드
     const payload = { email, sub: user.id };
-    console.log('@@@@@@@@@@@@@', payload);
+
     const accessToken = this.jwtService.sign(payload);
-    console.log('@@@@@@@@@@@@@', accessToken);
 
     // 5. payload로 만든 accessToken 반환
     return accessToken;
@@ -100,5 +101,39 @@ export class UserService {
   /** email로 사용자 찾기(+) **/
   async findByEmail(email: string) {
     return await this.userRepository.findOneBy({ email });
+  }
+
+  async updateUserInfo(user: User, userUpdateDto: UserUpdateDto) {
+    // 1. dto에서 필요한 정보 받아오기
+    const { email, nickname } = userUpdateDto;
+
+    //2. 유저 정보를 변경(이메일)
+    if (email) {
+      const isExistingEmail = await this.userRepository.findOneBy({ email });
+
+      /** 다른 사용자가 같은 이메일을 사용하고 있으면 **/
+      if (isExistingEmail && isExistingEmail.id !== user.id) {
+        throw new ConflictException({
+          message: USER_MESSAGES.USER.USERINFO.UPDATE.FAILURE.EMAIL.CONFLICT,
+        });
+      }
+
+      user.email = email;
+    }
+
+    //3. 유저 정보를 변경(닉네임)
+    if (nickname) {
+      user.nickname = nickname;
+    }
+
+    const updatedUser = await this.userRepository.save(user);
+    return updatedUser;
+  }
+
+  async updateUserPassword(
+    user: User,
+    userPasswordUpdateDto: UserPasswordUpdateDto
+  ) {
+    const { password } = userPasswordUpdateDto;
   }
 }
