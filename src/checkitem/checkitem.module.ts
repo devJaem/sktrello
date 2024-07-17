@@ -13,7 +13,6 @@ import { BoardUser } from 'src/board/entities/board-user.entity';
     TypeOrmModule.forFeature([CheckItem, CheckList, BoardUser]),
     CheckListModule,
     BoardModule,
-    
   ],
   controllers: [CheckItemController],
   providers: [CheckItemService],
