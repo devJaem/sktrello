@@ -74,6 +74,8 @@ export class BoardController {
   }
 
   /** Board 상세 조회(R-D) **/
+  @UseGuards(BoardUserRolesGuard)
+  @BoardUserRoles(BoardUserRole.host, BoardUserRole.admin, BoardUserRole.member)
   @ApiResponse({
     status: HttpStatus.OK,
     description: BOARD_MESSAGES.BOARD.READ_DETAIL.SUCCESS,
@@ -90,6 +92,8 @@ export class BoardController {
   }
 
   /** Board 수정(U) API **/
+  @UseGuards(BoardUserRolesGuard)
+  @BoardUserRoles(BoardUserRole.host)
   @ApiResponse({
     status: HttpStatus.OK,
     description: BOARD_MESSAGES.BOARD.UPDATE.SUCCESS,
@@ -135,6 +139,8 @@ export class BoardController {
   }
 
   /** Board 멤버 초대(Invite) API **/
+  @UseGuards(BoardUserRolesGuard)
+  @BoardUserRoles(BoardUserRole.host)
   @ApiResponse({
     status: HttpStatus.CREATED,
     description: BOARD_MESSAGES.BOARD.INVITATION.SUCCESS,
@@ -206,6 +212,8 @@ export class BoardController {
   }
 
   /** Board 참여자 권한 변경(U) API **/
+  @UseGuards(BoardUserRolesGuard)
+  @BoardUserRoles(BoardUserRole.host)
   @ApiResponse({
     status: HttpStatus.OK,
     description: BOARD_MESSAGES.BOARD.BOARD_AUTH.SUCCESS.CHANGE,

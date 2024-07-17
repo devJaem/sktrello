@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { Comment } from 'src/comment/entities/comment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { COMMENT_MESSAGE } from 'src/constants/comment.message.constant';
+import { elapsedTime } from 'src/utils/elapsedtime';
 
 @Injectable()
 export class CommentService {
@@ -29,7 +30,20 @@ export class CommentService {
 
   // 댓글 조회
   async findAll(cardId: number) {
-    return await this.commentRepository.find({ where: { cardId } });
+    const comments = await this.commentRepository.find({
+      where: { cardId },
+      relations: ['user'],
+    });
+
+    return comments.map((comment) => ({
+      id: comment.id,
+      nickname: comment.user.nickname,
+      content: comment.content,
+      updatedAt: comment.updatedAt,
+      elapsedTime:
+        elapsedTime(comment.createdAt.getTime()) +
+        (comment.createdAt === comment.updatedAt ? '' : ' (수정됨)'),
+    }));
   }
 
   // 댓글 수정

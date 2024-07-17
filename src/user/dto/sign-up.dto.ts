@@ -11,15 +11,15 @@ export class SignUpDto {
   @IsString()
   @IsNotEmpty({ message: USER_MESSAGES.USER.SIGNUP.PASSWORD.EMPTY })
   @IsStrongPassword(
-    { minLength: 8, minSymbols: 1 },
+    {},
     { message: USER_MESSAGES.USER.SIGNUP.PASSWORD.WEAKPASSWORD }
   )
-  @ApiProperty({ example: 'Example1!' })
+  @ApiProperty({ example: 'Example1@' })
   password: string;
 
   @IsString()
   @IsNotEmpty({ message: USER_MESSAGES.USER.SIGNUP.PASSWORD.EMPTY })
-  @ApiProperty({ example: 'Example1!' })
+  @ApiProperty({ example: 'Example1@' })
   passwordConfirm: string;
 
   @IsString()

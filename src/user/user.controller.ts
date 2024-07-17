@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   HttpStatus,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -17,6 +18,8 @@ import { LogIn } from 'src/auth/decorator/login.decorator';
 import { SignUpDto } from 'src/user/dto/sign-up.dto';
 import { SignInDto } from 'src/user/dto/sign-in.dto';
 import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { UserPasswordUpdateDto } from './dto/user-password-update.dto';
+import { UserUpdateDto } from './dto/user-update.dto';
 
 @ApiTags('1. 사용자 API')
 @Controller('users')
@@ -84,6 +87,49 @@ export class UserController {
       status: HttpStatus.OK,
       message: USER_MESSAGES.USER.USERINFO.DELETE.SUCCESS,
       data: data,
+    };
+  }
+
+  /** 회원 정보 수정 API **/
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: USER_MESSAGES.USER.USERINFO.UPDATE.SUCCESS,
+  })
+  @Patch('me')
+  async updateUserInfo(
+    @LogIn() user: User,
+    @Body() userUpdateDto: UserUpdateDto
+  ) {
+    const data = await this.userService.updateUserInfo(user, userUpdateDto);
+    return {
+      status: HttpStatus.OK,
+      message: USER_MESSAGES.USER.USERINFO.UPDATE.SUCCESS,
+      data: data,
+    };
+  }
+
+  /** 회원 비밀번호 수정 API **/
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: USER_MESSAGES.USER.USERINFO.UPDATE.SUCCESS,
+  })
+  @Patch('me/password')
+  async updateUserPassword(
+    @LogIn() user: User,
+    @Body() userPasswordUpdateDto: UserPasswordUpdateDto
+  ) {
+    const data = await this.userService.updateUserPassword(
+      user,
+      userPasswordUpdateDto
+    );
+    return {
+      status: HttpStatus.OK,
+      message: USER_MESSAGES.USER.USERINFO.UPDATE.SUCCESS,
+      data: { success: true },
     };
   }
 }

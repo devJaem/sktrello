@@ -83,7 +83,19 @@ export class CardService {
       throw new NotFoundException(CARD_MESSAGES.CARD.READ_CARDS.FAILURE);
     }
     return await this.cardRepository.find({
+      where: { listId },
       order: { cardOrder: 'ASC' },
+    });
+  }
+
+  async findCardTitle(listId: number) {
+    if (!listId) {
+      throw new NotFoundException(CARD_MESSAGES.CARD.READ_CARDS.FAILURE);
+    }
+    return await this.cardRepository.find({
+      where: { listId },
+      order: { cardOrder: 'ASC' },
+      select: ['id', 'title', 'cardOrder'],
     });
   }
 
