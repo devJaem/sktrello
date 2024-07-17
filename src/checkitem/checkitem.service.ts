@@ -24,8 +24,8 @@ export class CheckItemService {
    * @param createCheckItemDto 체크아이탬 생성 DTO
    * @returns 생성된 결과값
    */
-  async create(createCheckItemDto: CreateCheckItemDto, checkListId: number) {
-    const { content } = createCheckItemDto;
+  async create(createCheckItemDto: CreateCheckItemDto) {
+    const { checkListId, content } = createCheckItemDto;
 
     // 체크리스트가 존재하는지 확인
     const checkList = await this.checkListRepository.findOne({
