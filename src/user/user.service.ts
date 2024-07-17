@@ -98,6 +98,25 @@ export class UserService {
     return userInfo;
   }
 
+  /** 회원 탈퇴 API **/
+  async quit(user: User) {
+    // 0. 필요한 정보
+    const userId = user.id;
+    const nickname = user.nickname;
+
+    // 1. 회원 탈퇴 (소프트 삭제)
+    await this.userRepository.softDelete({
+      id: userId,
+    });
+
+    // 2. 반환
+    const data = {
+      id: userId,
+      nickname: nickname,
+    };
+    return data;
+  }
+
   /** email로 사용자 찾기(+) **/
   async findByEmail(email: string) {
     return await this.userRepository.findOneBy({ email });

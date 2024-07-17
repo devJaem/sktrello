@@ -24,6 +24,6 @@ export class SignUpDto {
 
   @IsString()
   @IsNotEmpty({ message: USER_MESSAGES.USER.SIGNUP.NICKNAME.EMPTY })
-  @ApiProperty({ example: 'John Doe' })
+  @ApiProperty({ example: '9namwook' })
   nickname: string;
 }

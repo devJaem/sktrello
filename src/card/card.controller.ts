@@ -23,10 +23,13 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { AuthGuard } from '@nestjs/passport';
 import { LogIn } from 'src/auth/decorator/login.decorator';
+import { BoardUserRoles } from 'src/auth/decorator/board-user-roles.decorator';
+import { BoardUserRolesGuard } from 'src/auth/guard/board-user-roles.guard';
+import { BoardUserRole } from 'src/board/types/board-user.type';
 
-@UseGuards(AuthGuard('jwt'))
+@UseGuards(BoardUserRolesGuard)
+@BoardUserRoles(BoardUserRole.member, BoardUserRole.host, BoardUserRole.admin)
 @Controller('cards')
 @ApiTags('4. 카드 API')
 @ApiBearerAuth()
@@ -59,8 +62,8 @@ export class CardController {
     status: HttpStatus.OK,
     description: CARD_MESSAGES.CARD.READ_CARDS.SUCCESS,
   })
-  async findAllCards(@LogIn() user: User, @Param('listId') listId: number) {
-    const findAllCards = await this.cardService.findAllCards(user.id, listId);
+  async findAllCards(@Param('listId') listId: number) {
+    const findAllCards = await this.cardService.findAllCards(listId);
     return {
       statusCode: HttpStatus.OK,
       message: CARD_MESSAGES.CARD.READ_CARDS.SUCCESS,
@@ -74,8 +77,8 @@ export class CardController {
     status: HttpStatus.OK,
     description: CARD_MESSAGES.CARD.READ_CARD.SUCCESS,
   })
-  async findCard(@LogIn() user: User, @Param('cardId') cardId: number) {
-    const findCard = await this.cardService.findCard(user.id, cardId);
+  async findCard(@Param('cardId') cardId: number) {
+    const findCard = await this.cardService.findCard(cardId);
 
     return {
       statusCode: HttpStatus.OK,

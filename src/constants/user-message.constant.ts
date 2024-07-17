@@ -56,6 +56,9 @@ export const USER_MESSAGES = {
           },
         },
       },
+      DELETE: {
+        SUCCESS: '회원 탈퇴에 성공했습니다.',
+      },
     },
   },
 };
