@@ -102,11 +102,11 @@ export class CommentController {
     status: HttpStatus.OK,
     description: COMMENT_MESSAGE.COMMENT.DELETE.SUCCESS,
   })
-  @Delete(':id')
+  @Delete(':commentId')
   async remove(
     @LogIn() user: User,
     @Param('boardId') boardId: string,
-    @Param('id') id: number
+    @Param('commentId') id: number
   ) {
     const userId = user.id; // 사용자 ID
     const deleteComment = await this.commentService.remove(id, userId);
