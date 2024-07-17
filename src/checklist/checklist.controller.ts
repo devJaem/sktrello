@@ -10,9 +10,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CheckListService } from './checkList.service';
-import { CreateCheckListDto } from './dto/create-checkList.dto';
+import { CreateCheckListDto } from './dto/create-checklist.dto';
 import { UpdateCheckListDto } from './dto/update-checkList.dto';
-import { MoveCheckListDto } from './dto/move-checkList.dto';
+import { MoveCheckListDto } from './dto/move-checklist.dto';
 import {
   ApiBearerAuth,
   ApiBody,

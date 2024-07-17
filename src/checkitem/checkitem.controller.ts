@@ -11,8 +11,8 @@ import {
 } from '@nestjs/common';
 import { CheckItemService } from './checkItem.service';
 import { CreateCheckItemDto } from './dto/create-checkItem.dto';
-import { UpdateCheckItemDto } from './dto/update-checkItem.dto';
-import { MoveCheckItemDto } from './dto/move-checkItem.dto';
+import { UpdateCheckItemDto } from './dto/update-checkitem.dto';
+import { MoveCheckItemDto } from './dto/move-checkitem.dto';
 import {
   ApiBearerAuth,
   ApiBody,
