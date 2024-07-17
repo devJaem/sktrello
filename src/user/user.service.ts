@@ -83,9 +83,7 @@ export class UserService {
 
     // 4. 페이로드
     const payload = { email, sub: user.id };
-    console.log('@@@@@@@@@@@@@', payload);
     const accessToken = this.jwtService.sign(payload);
-    console.log('@@@@@@@@@@@@@', accessToken);
 
     // 5. payload로 만든 accessToken 반환
     return accessToken;

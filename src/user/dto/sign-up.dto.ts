@@ -14,16 +14,16 @@ export class SignUpDto {
     { minLength: 8, minSymbols: 1 },
     { message: USER_MESSAGES.USER.SIGNUP.PASSWORD.WEAKPASSWORD }
   )
-  @ApiProperty({ example: 'example!@' })
+  @ApiProperty({ example: 'Example1!' })
   password: string;
 
   @IsString()
   @IsNotEmpty({ message: USER_MESSAGES.USER.SIGNUP.PASSWORD.EMPTY })
-  @ApiProperty({ example: 'example!@' })
+  @ApiProperty({ example: 'Example1!' })
   passwordConfirm: string;
 
   @IsString()
   @IsNotEmpty({ message: USER_MESSAGES.USER.SIGNUP.NICKNAME.EMPTY })
-  @ApiProperty({ example: 'John Doe' })
+  @ApiProperty({ example: '9namwook' })
   nickname: string;
 }

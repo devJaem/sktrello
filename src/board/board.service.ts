@@ -18,6 +18,7 @@ import { Board } from './entities/board.entity';
 import { BoardUser } from './entities/board-user.entity';
 import { BoardUserRole } from './types/board-user.type';
 import { User } from 'src/user/entities/user.entity';
+import { BoardAuthDto } from './dto/board-auth.dto';
 
 @Injectable()
 export class BoardService {
@@ -39,7 +40,7 @@ export class BoardService {
   ) {}
 
   /** Board 생성(C) API **/
-  async createBoard(user, createBoardDto: CreateBoardDto) {
+  async createBoard(user: User, createBoardDto: CreateBoardDto) {
     // 0. 로그인한 사용자 id 가져오기
     const userId = user.id;
 
@@ -85,7 +86,7 @@ export class BoardService {
   }
 
   /** Board 목록 조회(R-L) **/
-  async findAllBoard(user) {
+  async findAllBoard(user: User) {
     // 0. 로그인한 사용자 id 가져오기
     const userId = user.id;
 
@@ -125,7 +126,7 @@ export class BoardService {
 
   /** Board 상세 조회(R-D) **/ // 핵심기능!! - 보드 하위의 List 당겨오기!! **********
   // 다른 사람들 파일 합친 내용이 필요함 *************** 수정 필요 ******************
-  async findOneBoard(user, boardId: number) {
+  async findOneBoard(user: User, boardId: number) {
     // 0. 로그인한 사용자 id 가져오기
     const userId: number = user.id;
 
@@ -167,7 +168,11 @@ export class BoardService {
   }
 
   /** Board 수정(U) API **/
-  async updateBoard(user, boardId: number, updateBoardDto: UpdateBoardDto) {
+  async updateBoard(
+    user: User,
+    boardId: number,
+    updateBoardDto: UpdateBoardDto
+  ) {
     // 0. 로그인한 사용자 id 가져오기
     const userId: number = user.id;
 
@@ -219,7 +224,7 @@ export class BoardService {
   }
 
   /** Board 삭제(D) API **/
-  async softDeleteBoard(user, boardId: number) {
+  async softDeleteBoard(user: User, boardId: number) {
     // 0. 로그인한 사용자 id 가져오기
     const userId: number = user.id;
 
@@ -265,7 +270,7 @@ export class BoardService {
 
   /** Board 멤버 초대(Invite) API **/
   async inviteBoardMember(
-    user,
+    user: User,
     boardId: number,
     inviteBoardMemberDto: InviteBoardMemberDto
   ) {
@@ -281,7 +286,7 @@ export class BoardService {
       },
     });
     // 1-2. isHost에서 boardUserRole이 host가 아니라면 에러처리
-    if (isHost.boardUserRole !== 'HOST') {
+    if (isHost.boardUserRole !== BoardUserRole.host) {
       throw new UnauthorizedException(
         BOARD_MESSAGES.BOARD.INVITATION.FAILURE.UNAUTHORIZED
       );
@@ -306,6 +311,7 @@ export class BoardService {
     const isInvited: BoardUser = await this.boardUserRepository.findOne({
       where: {
         userId: isExistingEmail.id,
+        boardId: boardId,
       },
     });
     // 3-2. 이미 초대한 사용자라면 에러처리
@@ -328,24 +334,170 @@ export class BoardService {
     };
   }
 
-  // /** Board 초대 수락(U) API **/
-  // async acceptInvitation(user, boardId: number) {
-  //   // 0. 로그인한 사용자 id 가져오기
-  //   const userId: number = user.id;
+  /** Board 초대 수락(U) API **/
+  async acceptInvitation(user: User, boardId: number) {
+    // 0. 로그인한 사용자 id 가져오기
+    const userId: number = user.id;
 
-  //   // 1. 초대된 상태인지 확인
-  //   const isInvited = await this.boardUserRepository.findOne({
-  //     // where: { userId,  }
-  //   });
-  // }
+    // 1. 초대된 상태인지 확인
+    // 1-1. boardUser 조회
+    const isInvited = await this.boardUserRepository.findOne({
+      where: {
+        userId,
+        boardId,
+      },
+    });
+    // 1-2. 초대된 상태가 아니라면 에러처리
+    if (!isInvited) {
+      throw new NotFoundException(
+        BOARD_MESSAGES.BOARD.ACCEPT_INVITATION.FAILURE.NOT_INVITED
+      );
+    }
 
-  // /** Board 초대 거절(D) API **/
-  // async declineInvitation(user, boardId: number) {
-  //   // 0. 로그인한 사용자 id 가져오기
-  //   const userId: number = user.id;
+    // 2. 초대 수락
+    await this.boardUserRepository.update(
+      {
+        userId,
+        boardId,
+      },
+      {
+        isAccepted: true,
+        boardUserRole: BoardUserRole.member,
+      }
+    );
 
-  //   // 1. 초대된 상태인지 확인
-  // }
+    // 3. 결과를 반환
+    const data = {
+      boardId: boardId,
+      isAccepted: true,
+      before: BoardUserRole.guest,
+      after: BoardUserRole.member,
+    };
+    return data;
+  }
+
+  /** Board 초대 거절(D) API **/
+  async declineInvitation(user: User, boardId: number) {
+    // 0. 로그인한 사용자 id 가져오기
+    const userId: number = user.id;
+
+    // 1. 초대된 상태인지 확인
+    // 1-1. boardUser 조회
+    const isInvited = await this.boardUserRepository.findOne({
+      where: {
+        userId,
+        boardId,
+      },
+    });
+    // 1-2. 초대된 상태가 아니라면 에러처리
+    if (!isInvited) {
+      throw new NotFoundException(
+        BOARD_MESSAGES.BOARD.DECLINE_INVITATION.FAILURE.NOT_INVITED
+      );
+    }
+
+    // 2. 초대 거절
+    await this.boardUserRepository.delete({
+      userId,
+      boardId,
+    });
+
+    // 3. 결과를 반환
+    const data = {
+      boardId: boardId,
+    };
+    return data;
+  }
+
+  /** Board 참여자 권한 변경(U) API **/
+  async changeBoardAuth(
+    user: User,
+    boardId: number,
+    boardAuthDto: BoardAuthDto
+  ) {
+    // 0. 로그인한 사용자 id 가져오기, dto 내용 가져오기
+    const userId: number = user.id; // 로그인 중인 사람 아이디
+    const memberId: number = boardAuthDto.userId; // 권한 변경 대상자 아이디
+    const wantedRole: BoardUserRole = boardAuthDto.boardUserRole;
+
+    // 1. 권한 확인 : 사용자가 해당 board의 host인가?
+    // 1-1. boardUser 정보를 가져오기
+    const isHost: BoardUser = await this.boardUserRepository.findOne({
+      where: {
+        boardId,
+        userId,
+      },
+    });
+    // 1-2. isHost에서 boardUserRole이 host가 아니라면 에러처리
+    if (isHost.boardUserRole !== BoardUserRole.host) {
+      throw new UnauthorizedException(
+        BOARD_MESSAGES.BOARD.INVITATION.FAILURE.UNAUTHORIZED
+      );
+    }
+
+    // 2. 변경 대상 확인 : 대상자가 해당 board의 참여자인가?
+    // 2-1. boardUser 정보 가져오기
+    const isParticipated: BoardUser = await this.boardUserRepository.findOne({
+      where: {
+        boardId,
+        userId: memberId,
+      },
+    });
+    // 2-2. 참여자가 아니라면 에러처리
+    if (!isParticipated) {
+      throw new NotFoundException(
+        BOARD_MESSAGES.BOARD.BOARD_AUTH.FAILURE.NOT_MEMBER
+      );
+    }
+
+    // 3. 권한 변경
+    // 3-1. 만약 지정한 롤이 host인 경우
+    if (wantedRole == BoardUserRole.host) {
+      // 3-1-1. 대상자에게 host 권한을 넘겨줌
+      await this.boardUserRepository.update(
+        {
+          userId: memberId,
+          boardId: boardId,
+        },
+        {
+          boardUserRole: BoardUserRole.host,
+        }
+      );
+      // 3-1-2. 자기 자신은 admin 으로 강등
+      await this.boardUserRepository.update(
+        {
+          userId,
+          boardId,
+        },
+        {
+          boardUserRole: BoardUserRole.admin,
+        }
+      );
+      // 3-1-3. 결과 반환
+      const data = {
+        memberId: memberId,
+        message: BOARD_MESSAGES.BOARD.BOARD_AUTH.SUCCESS.HOST_CHANGE,
+      };
+      return data;
+    }
+    // 3-2. 만약 지정한 롤이 host가 아닌 경우
+    // 3-2-1. 권한 변경 진행
+    await this.boardUserRepository.update(
+      {
+        userId: memberId,
+        boardId: boardId,
+      },
+      {
+        boardUserRole: wantedRole,
+      }
+    );
+    // 3-2-2. 결과 반환
+    const data = {
+      memberId: memberId,
+      message: `${wantedRole}로 변경되었습니다.`,
+    };
+    return data;
+  }
 
   /** boardId로 board 찾기 **/
   async findBoardByBoardId(boardId: number) {

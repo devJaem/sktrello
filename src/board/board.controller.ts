@@ -24,6 +24,7 @@ import { BoardUserRolesGuard } from 'src/auth/guard/board-user-roles.guard';
 import { BoardUserRole } from './types/board-user.type';
 import { BoardUserRoles } from 'src/auth/decorator/board-user-roles.decorator';
 import { User } from 'src/user/entities/user.entity';
+import { BoardAuthDto } from './dto/board-auth.dto';
 
 @UseGuards(AuthGuard('jwt'))
 @ApiTags('2. 보드 API')
@@ -161,45 +162,71 @@ export class BoardController {
     return result;
   }
 
-  // /** Board 초대 수락(U) API **/
-  // @ApiResponse({
-  //   status: HttpStatus.OK,
-  //   description: BOARD_MESSAGES.BOARD.ACCEPT_INVITATION.SUCCESS,
-  // })
-  // @Patch(':boardId/accept-invitation')
-  // async acceptInvitation(@LogIn() user: User, @Param('boardId') boardId: number) {
-  //   const acceptedInvitation = await this.boardService.acceptInvitation(
-  //     user,
-  //     boardId
-  //   );
-  //   const result = {
-  //     status: HttpStatus.OK,
-  //     message: BOARD_MESSAGES.BOARD.ACCEPT_INVITATION.SUCCESS,
-  //     data: acceptedInvitation,
-  //   };
-  //   return result;
-  // }
+  /** Board 초대 수락(U) API **/
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: BOARD_MESSAGES.BOARD.ACCEPT_INVITATION.SUCCESS,
+  })
+  @Patch(':boardId/accept-invitation')
+  async acceptInvitation(
+    @LogIn() user: User,
+    @Param('boardId') boardId: number
+  ) {
+    const acceptedInvitation = await this.boardService.acceptInvitation(
+      user,
+      boardId
+    );
+    const result = {
+      status: HttpStatus.OK,
+      message: BOARD_MESSAGES.BOARD.ACCEPT_INVITATION.SUCCESS,
+      data: acceptedInvitation,
+    };
+    return result;
+  }
 
-  // /** Board 초대 거절(D) API **/
-  // @ApiResponse({
-  //   status: HttpStatus.OK,
-  //   description: BOARD_MESSAGES.BOARD.DECLINE_INVITATION.SUCCESS,
-  // })
-  // @Delete(':boardId/decline-invitation')
-  // async declineInvitation(
-  //   @LogIn() user: User,
-  //   @Param('boardId') boardId: number
-  // ) {
-  //   const declinedInvitation = await this.boardService.declineInvitation(
-  //     user,
-  //     boardId
-  //   );
-  //   const result = {
-  //     status: HttpStatus.OK,
-  //     message: BOARD_MESSAGES.BOARD.DECLINE_INVITATION.SUCCESS,
-  //     data: declinedInvitation,
-  //   };
-  //   return result;
-  // }
-  //
+  /** Board 초대 거절(D) API **/
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: BOARD_MESSAGES.BOARD.DECLINE_INVITATION.SUCCESS,
+  })
+  @Delete(':boardId/decline-invitation')
+  async declineInvitation(
+    @LogIn() user: User,
+    @Param('boardId') boardId: number
+  ) {
+    const declinedInvitation = await this.boardService.declineInvitation(
+      user,
+      boardId
+    );
+    const result = {
+      status: HttpStatus.OK,
+      message: BOARD_MESSAGES.BOARD.DECLINE_INVITATION.SUCCESS,
+      data: declinedInvitation,
+    };
+    return result;
+  }
+
+  /** Board 참여자 권한 변경(U) API **/
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: BOARD_MESSAGES.BOARD.BOARD_AUTH.SUCCESS.CHANGE,
+  })
+  @Patch(':boardId/boardAuth')
+  async changeBoardAuth(
+    @LogIn() user: User,
+    @Param('boardId') boardId: number,
+    @Body() boardAuthDto: BoardAuthDto
+  ) {
+    const changedBoardAuth = await this.boardService.changeBoardAuth(
+      user,
+      boardId,
+      boardAuthDto
+    );
+    const result = {
+      status: HttpStatus.OK,
+      message: BOARD_MESSAGES.BOARD.BOARD_AUTH.SUCCESS.CHANGE,
+      data: changedBoardAuth,
+    };
+    return result;
+  }
 }

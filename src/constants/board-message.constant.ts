@@ -56,11 +56,32 @@ export const BOARD_MESSAGES = {
         CONFLICT: '이미 초대한 사용자입니다.',
       },
     },
+    // 초대 수락(U)
     ACCEPT_INVITATION: {
       SUCCESS: '보드 초대를 수락했습니다.',
+      FAILURE: {
+        NOT_INVITED: '해당 보드에 초대를 받지 못했습니다.',
+      },
     },
+    // 초대 거절(D)
     DECLINE_INVITATION: {
       SUCCESS: '보드 초대를 거절했습니다.',
+      FAILURE: {
+        NOT_INVITED: '해당 보드에 초대를 받지 못했습니다.',
+      },
+    },
+    // 권한 변경(U)
+    BOARD_AUTH: {
+      SUCCESS: {
+        CHANGE: '권한 변경에 성공했습니다.',
+        BYEBYE: '해당 참여자를 추방했습니다.',
+        HOST_CHANGE: '해당 참여자에게 호스트 권한을 넘겨주었습니다.',
+      },
+      FAILURE: {
+        NOT_MEMBER: '해당 보드의 참여자가 아닙니다.',
+        NO_USERID: '참여자 id를 입력해주세요.',
+        NO_ROLE: '변경할 권한을 설정해주세요.',
+      },
     },
   },
 };
