@@ -46,6 +46,7 @@ export const USER_MESSAGES = {
           },
           PASSWORD: {
             EMPTYNOW: '현재 비밀번호를 입력해주세요.',
+            MODIFYEMPTY: '바꿀 비밀번호를 입력해주세요',
             WEAKPASSWORD: '비밀번호 규칙이 맞지 않습니다.',
             NOTMATCHEDNOW: '현재 비밀번호가 정확하지 않습니다.',
             NOTMATCHED: '비밀번호와 비밀번호 확인이 일치하지 않습니다.',

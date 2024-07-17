@@ -79,7 +79,7 @@ export class UserController {
     status: HttpStatus.OK,
     description: USER_MESSAGES.USER.USERINFO.UPDATE.SUCCESS,
   })
-  @Patch('me/info')
+  @Patch('me')
   async updateUserInfo(
     @LogIn() user: User,
     @Body() userUpdateDto: UserUpdateDto

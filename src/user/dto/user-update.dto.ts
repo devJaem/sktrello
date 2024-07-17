@@ -8,13 +8,14 @@ export class UserUpdateDto {
   @IsNotEmpty({
     message: USER_MESSAGES.USER.USERINFO.UPDATE.FAILURE.EMAIL.EMPTY,
   })
-  @ApiProperty({ example: 'example@sample.com' })
+  @ApiProperty({ example: 'modify@sample.com' })
   email: string;
 
   @IsString()
+  @IsOptional()
   @IsNotEmpty({
     message: USER_MESSAGES.USER.USERINFO.UPDATE.FAILURE.NICKNAME.EMPTY,
   })
-  @ApiProperty({ example: 'John Doe' })
+  @ApiProperty({ example: 'Jane Doe' })
   nickname: string;
 }

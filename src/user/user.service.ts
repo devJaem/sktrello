@@ -126,8 +126,11 @@ export class UserService {
       user.nickname = nickname;
     }
 
-    const updatedUser = await this.userRepository.save(user);
-    return updatedUser;
+    const updatedUser = await this.userRepository.update(
+      { id: user.id },
+      userUpdateDto
+    );
+    return userUpdateDto;
   }
 
   async updateUserPassword(
@@ -135,18 +138,21 @@ export class UserService {
     userPasswordUpdateDto: UserPasswordUpdateDto
   ) {
     //1. 필요한 정보를 Dto에서 받아오기
-    const { password, modifyPassword } = userPasswordUpdateDto;
+    const { currentPassword, modifiedPassword } = userPasswordUpdateDto;
 
     //2. 입력된 비밀번호를 해시했을 때 저장된 값과 동일한가?
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    console.log(
-      '비밀번호 일치여부 : ',
-      isPasswordValid,
-      '저장된 비밀번호(해시됨) : ',
-      user.password,
-      '해시된 비밀번호 : ',
-      await hash(password, 10)
+    const isPasswordValid = await bcrypt.compare(
+      currentPassword,
+      user.password
     );
+    // console.log(
+    //   '비밀번호 일치여부 : ',
+    //   isPasswordValid,
+    //   '저장된 비밀번호(해시됨) : ',
+    //   user.password,
+    //   '해시된 비밀번호 : ',
+    //   await hash(password, 10)
+    // );
 
     //저장된 값과 불일치하면...
     if (!isPasswordValid) {
@@ -157,11 +163,15 @@ export class UserService {
     }
 
     //3. 바꿀 비밀번호 해시하기
-    const hashedPassword = await hash(modifyPassword, 10);
+    const hashedPassword = await hash(modifiedPassword, 10);
 
     //4. 변경된 비밀번호 저장
-    user.password = hashedPassword;
-    await this.userRepository.save(user);
+    await this.userRepository.update(
+      { id: user.id },
+      {
+        password: hashedPassword,
+      }
+    );
 
     return { success: true };
   }
