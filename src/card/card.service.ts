@@ -168,12 +168,12 @@ export class CardService {
       );
     }
 
-    const { listId } = moveCardDto;
+    const { listId, toPrevId, toNextId } = moveCardDto;
 
-    const isExistingcard = await this.cardRepository.findOne({
+    const card = await this.cardRepository.findOne({
       where: { id: cardId },
     });
-    if (!isExistingcard) {
+    if (!card) {
       throw new NotFoundException(CARD_MESSAGES.CARD.UPDATE.FAILURE);
     }
 
@@ -184,30 +184,27 @@ export class CardService {
     if (!targetList) {
       throw new NotFoundException(CARD_MESSAGES.CARD.READ_CARDS.FAILURE);
     }
-    // cardId로 cardOrder 가져오기
-    const card = await this.cardRepository.findOne({
-      where: { id: cardId },
-    });
-    const cardOrder = card.cardOrder;
 
-    // 이동하려는 카드의 순서보다 작은 (즉, 앞에 있는) 카드를 찾아 그중 가장 큰 순서를 가진 카드를 넣는다.
-    const prevCard = await this.cardRepository.findOne({
-      where: { listId, cardOrder: LessThan(cardOrder) },
-      order: { cardOrder: 'DESC' },
-    });
+    // prevCard와 nextCard 초기화
+    let prevCard = null;
+    let nextCard = null;
 
-    // 이동하려는 카드의 순서보다 큰 (즉, 뒤에 있는) 카드를 찾아 그중 가장 작은 순서를 가진 카드를 넣는다.
-    const nextCard = await this.cardRepository.findOne({
-      where: { listId, cardOrder: MoreThan(cardOrder) },
-      order: { cardOrder: 'ASC' },
-    });
+    // toPrevId와 toNextId가 존재할 경우 해당 id를 기반으로 카드를 찾기. 그 후 prevCard와 nextCard에 넣기.
+    if (toPrevId) {
+      prevCard = await this.cardRepository.findOne({ where: { id: toPrevId } });
+    }
 
-    // midRank로직 사용하여 update 할 카드 lexorank 생성
+    if (toNextId) {
+      nextCard = await this.cardRepository.findOne({ where: { id: toNextId } });
+    }
+
+    // prevCard와 nextCard사이의 lexorank값을 구하기
     const newCardOrder = midRank(
       prevCard ? prevCard.cardOrder : null,
       nextCard ? nextCard.cardOrder : null
     );
 
+    // 구한 lexorank값이 newCardOrder와 입력된 listId를 card에 수정해서 넣기.
     card.listId = listId;
     card.cardOrder = newCardOrder;
 
