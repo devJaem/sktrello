@@ -7,6 +7,7 @@ import { List } from './entities/list.entity';
 import { Board } from 'src/board/entities/board.entity';
 import { BoardUser } from 'src/board/entities/board-user.entity';
 import { Card } from 'src/card/entities/card.entity';
+import { CardService } from 'src/card/card.service';
 import { LIST_MESSAGES } from 'src/constants/list-message.constant';
 import { BOARD_MESSAGES } from 'src/constants/board-message.constant';
 
@@ -28,7 +29,8 @@ export class ListService {
     @InjectRepository(BoardUser)
     private readonly boardUserRepository: Repository<BoardUser>,
     @InjectRepository(Card)
-    private readonly cardRepository: Repository<Card>
+    private readonly cardRepository: Repository<Card>,
+    private readonly cardService: CardService
   ) {}
 
   /** 리스트 생성 API **/
@@ -100,7 +102,16 @@ export class ListService {
     const lists = await this.listRepository.find({
       where: { boardId },
       order: { listOrder: 'ASC' },
+      // relations: ['cards'],
     });
+
+    // lists.forEach((list) => {
+    //   list.cards = list.cards.map((card) => ({
+    //     id: card.id,
+    //     title: card.title,
+    //     cardOrder: card.cardOrder,
+    //   }));
+    // });
 
     return lists;
   }
@@ -122,12 +133,7 @@ export class ListService {
       throw new NotFoundException(LIST_MESSAGES.LIST.READ_LIST.FAILURE);
     }
 
-    // 해당 list의 card 정보(title) 불러오기
-    const cards = await this.cardRepository
-      .createQueryBuilder('card')
-      .select(['card.id', 'card.title'])
-      .where('card.listId = :listId', { listId })
-      .getMany();
+    const cards = await this.cardService.findCardTitle(listId);
 
     return { ...list, cards };
   }
