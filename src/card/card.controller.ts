@@ -29,7 +29,7 @@ import { BoardUserRolesGuard } from 'src/auth/guard/board-user-roles.guard';
 import { BoardUserRole } from 'src/board/types/board-user.type';
 
 @UseGuards(BoardUserRolesGuard)
-@BoardUserRoles(BoardUserRole.member)
+@BoardUserRoles(BoardUserRole.member, BoardUserRole.host, BoardUserRole.admin)
 @Controller('cards')
 @ApiTags('4. 카드 API')
 @ApiBearerAuth()
