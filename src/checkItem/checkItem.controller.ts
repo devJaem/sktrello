@@ -9,10 +9,10 @@ import {
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
-import { CheckItemService } from './checkItem.service';
-import { CreateCheckItemDto } from './dto/create-checkItem.dto';
-import { UpdateCheckItemDto } from './dto/update-checkItem.dto';
-import { MoveCheckItemDto } from './dto/move-checkItem.dto';
+import { CheckItemService } from './checkitem.service';
+import { CreateCheckItemDto } from './dto/create-checkitem.dto';
+import { UpdateCheckItemDto } from './dto/update-checkitem.dto';
+import { MoveCheckItemDto } from './dto/move-checkitem.dto';
 import {
   ApiBearerAuth,
   ApiBody,
@@ -22,11 +22,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { CHECK_MESSAGES } from '../constants/check-message.constant';
-import { CheckItem } from './entities/checkItem.entity';
+import { CheckItem } from './entities/checkitem.entity';
 import { BoardUserRolesGuard } from 'src/auth/guard/board-user-roles.guard';
 import { BoardUserRoles } from 'src/auth/decorator/board-user-roles.decorator';
 import { BoardUserRole } from 'src/board/types/board-user.type';
-import { CheckListService } from 'src/checkList/checkList.service';
+import { CheckListService } from 'src/checklist/checklist.service';
 
 @ApiTags('6. 체크리스트-아이템 API')
 @UseGuards(BoardUserRolesGuard)

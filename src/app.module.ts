@@ -10,8 +10,8 @@ import { CardModule } from './card/card.module';
 import { CommentModule } from './comment/comment.module';
 import { ListModule } from './list/list.module';
 import { AppController } from './app.controller';
-import { CheckListModule } from './checkList/checkList.module';
-import { CheckItemModule } from './checkItem/checkItem.module';
+import { CheckListModule } from './checklist/checklist.module';
+import { CheckItemModule } from './checkitem/checkitem.module';
 
 @Module({
   imports: [

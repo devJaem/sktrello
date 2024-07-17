@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { CheckListService } from './checkList.service';
-import { CheckListController } from './checkList.controller';
-import { CheckList } from './entities/checkList.entity';
+import { CheckListService } from './checklist.service';
+import { CheckListController } from './checklist.controller';
+import { CheckList } from './entities/checklist.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { BoardModule } from 'src/board/board.module';
 import { CardModule } from 'src/card/card.module';
