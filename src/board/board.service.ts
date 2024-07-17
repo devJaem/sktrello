@@ -91,32 +91,45 @@ export class BoardService {
     const userId = user.id;
 
     // 1. 사용자가 host로 참여하는 board 목록 조회
-    // 1-1. 사용자가 host인 boardId 모두 조회 => boardIds => iAmHost
-    const iAmHost = await this.findBoardIdByUserIdAndBoardUserRole(
-      userId,
-      BoardUserRole.host
-    );
-    // 1-2. 조회된 boardIds(iAmHost)로 board 목록 조회
-    const hostBoards = await this.findBoardByBoardIds(iAmHost);
+    const hostBoards = await this.boardRepository.find({
+      where: {
+        boardUsers: {
+          userId: userId,
+          boardUserRole: BoardUserRole.host,
+        },
+      },
+      order: {
+        updatedAt: 'DESC',
+      },
+    });
 
-    // 2. 사용자가 admin으로 참여하는 board 조회
-    // 2-1. 사용자가 admin인 boardId 모두 조회 => boardIds => iAmAdmin
-    const iAmAdmin = await this.findBoardIdByUserIdAndBoardUserRole(
-      userId,
-      BoardUserRole.admin
-    );
-    // 2-2. 조회된 boardIds(iAmAdmin)로 board 목록 조회
-    const adminBoards = await this.findBoardByBoardIds(iAmAdmin);
+    // 2. 사용자가 admin로 참여하는 board 목록 조회
+    const adminBoards = await this.boardRepository.find({
+      where: {
+        boardUsers: {
+          userId: userId,
+          boardUserRole: BoardUserRole.admin,
+        },
+      },
+      order: {
+        updatedAt: 'DESC',
+      },
+    });
 
-    // 3. 사용자가 member로 참여하는 board 조회
-    // 3-1. 사용자가 member인 boardId 모두 조회 => boardIds => iAmMember
-    const iAmMember = await this.findBoardIdByUserIdAndBoardUserRole(
-      userId,
-      BoardUserRole.member
-    );
-    // 3-2. 조회된 boardIds(iAmMember)로 board 목록 조회
-    const memberBoards = await this.findBoardByBoardIds(iAmMember);
+    // 3. 사용자가 admin로 참여하는 board 목록 조회
+    const memberBoards = await this.boardRepository.find({
+      where: {
+        boardUsers: {
+          userId: userId,
+          boardUserRole: BoardUserRole.member,
+        },
+      },
+      order: {
+        updatedAt: 'DESC',
+      },
+    });
 
+    // 4. 반환
     return {
       asHost: hostBoards,
       asAdmin: adminBoards,
@@ -507,53 +520,5 @@ export class BoardService {
       },
     });
     return board;
-  }
-
-  /** userId와 boardUserRole로 boardId 찾기 : 배열반환 **/
-  async findBoardIdByUserIdAndBoardUserRole(userId, boardUserRole) {
-    // 1. boardId 가져와서 data에 할당
-    const data: BoardUser[] = await this.boardUserRepository.find({
-      select: {
-        id: true,
-      },
-      where: {
-        userId,
-        boardUserRole,
-      },
-    });
-
-    // 2. data에서 boardId를 추출하여 boardIds에 담기
-    const boardIds: number[] = [];
-    data.map((e) => {
-      boardIds.push(e.boardId);
-    });
-
-    // 3. boardIds 반환
-    return boardIds;
-  }
-
-  /** boardIds 배열로 board 조회 : 배열반환 **/
-  async findBoardByBoardIds(boardIds: number[]) {
-    // 1. 필요한 변수 선언
-    const data: Board[] = [];
-    const boardsList = [];
-
-    // 2. boardIds 배열로 board 다 가져오기
-    boardIds.map(async (id: number) => {
-      const board: Board = await this.boardRepository.findOne({
-        where: {
-          id,
-        },
-      });
-      data.push(board);
-    });
-
-    // 3. data에 들어온 board 데이터 가공해서 boardsList에 담기
-    data.map((e) => {
-      boardsList.push({ id: e.id, title: e.title, color: e.color });
-    });
-
-    // 4. boardList를 반환
-    return boardsList;
   }
 }

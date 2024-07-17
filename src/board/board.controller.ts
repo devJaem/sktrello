@@ -125,7 +125,6 @@ export class BoardController {
     @LogIn() user: User,
     @Param('boardId') boardId: number
   ) {
-    console.log('=======================================================');
     const deletedBoard = await this.boardService.softDeleteBoard(user, boardId);
     const result = {
       status: HttpStatus.OK,
