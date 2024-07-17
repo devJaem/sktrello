@@ -14,9 +14,9 @@ import { LexoRank } from 'lexorank';
 import { CARD_MESSAGES } from 'src/constants/card-message.constant';
 import { List } from 'src/list/entities/list.entity';
 import { CardUser } from './entities/card-user.entity';
-import { Comment } from 'src/comment/entities/comment.entity';
-import { CheckList } from 'src/checkList/entities/checkList.entity';
 import { midRank } from 'src/utils/lexorank';
+import { CheckListService } from 'src/checkList/checkList.service';
+import { CommentService } from 'src/comment/comment.service';
 
 @Injectable()
 export class CardService {
@@ -27,10 +27,8 @@ export class CardService {
     private readonly listRepository: Repository<List>,
     @InjectRepository(CardUser)
     private readonly cardUserRepository: Repository<CardUser>,
-    @InjectRepository(Comment)
-    private readonly commentRepository: Repository<Comment>,
-    @InjectRepository(CheckList)
-    private readonly checkListRepository: Repository<CheckList>
+    private readonly commentService: CommentService,
+    private readonly checkListService: CheckListService
   ) {}
 
   async createCard(userId: number, createCardDto: CreateCardDto) {
@@ -108,13 +106,13 @@ export class CardService {
     if (!card) {
       throw new NotFoundException(CARD_MESSAGES.CARD.READ_CARD.FAILURE);
     }
-    const cardComment = await this.commentRepository.find({
-      where: { cardId },
-    });
-    const cardChecklist = await this.checkListRepository.find({
-      where: { cardId },
-    });
-    return { card, cardComment, cardChecklist };
+    const cardComment = await this.commentService.findAll(+cardId);
+    const cardChecklists = await this.checkListService.findAll(+cardId);
+    const checkListIds = cardChecklists.map((checklist) => checklist.id);
+    const checkLists = await Promise.all(
+      checkListIds.map((id) => this.checkListService.findOne(id))
+    );
+    return { card, cardComment, checkLists };
   }
 
   async updateContent(
