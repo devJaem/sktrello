@@ -44,7 +44,7 @@ export class ListService {
       );
     }
 
-    const { title, toPrevId, toNextId } = createListDto;
+    const { title } = createListDto;
 
     // 초대된 member인지 확인
     const inviteMember = await this.boardUserRepository.findOne({
@@ -57,7 +57,6 @@ export class ListService {
       );
     }
 
-    console.log(boardId, typeof boardId);
     // 해당 id의 Board 있는지 확인
     const board = await this.boardRepository.findOne({
       where: { id: boardId },
@@ -70,20 +69,13 @@ export class ListService {
     }
 
     const lastList = await this.listRepository.findOne({
-      where: {
-        boardId,
-      },
-      order: {
-        listOrder: 'DESC',
-      },
+      where: { boardId },
+      order: { listOrder: 'DESC' },
     });
 
     // List 생성 시 새로운 리스트가 어느 위치에 삽입될지 결정
     // 이전/이후 listId 기반으로 새로운 newRank 값 생성
-    const newRank = midRank(
-      toPrevId ? String(toPrevId) : lastList.listOrder,
-      toNextId ? String(toNextId) : null
-    );
+    const newRank = midRank(lastList ? lastList.listOrder : null, null);
 
     const createList = await this.listRepository.create({
       board,
@@ -164,12 +156,12 @@ export class ListService {
 
     await this.listRepository.update({ id: listId }, { title });
 
-    const data = {
+    const updateList = {
       before: list.title,
       after: updateListDto.title,
     };
 
-    return data;
+    return updateList;
   }
 
   /** 리스트 순서 이동 API **/
@@ -232,11 +224,11 @@ export class ListService {
       id: listId,
     });
 
-    const data = {
+    const removeList = {
       id: list.id,
       title: list.title,
     };
 
-    return data;
+    return removeList;
   }
 }

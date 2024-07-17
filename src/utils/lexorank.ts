@@ -5,8 +5,6 @@ export function midRank(
   prevRank: string | null,
   nextRank: string | null
 ): string {
-  console.log({ prevRank, nextRank });
-
   // prevRank와 nextRank 둘 다 없는 경우, 중간 값 반환
   if (!prevRank && !nextRank) {
     return LexoRank.middle().toString();
