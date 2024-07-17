@@ -67,7 +67,7 @@ export class CheckListService {
 
   /**
    * 체크리스트 단일 조회
-   * @param id 체크리스트 ID
+   * @param id 카드 ID
    * @returns 조회된 결과값
    */
   async findOne(id: number) {
