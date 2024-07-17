@@ -36,6 +36,9 @@ export const USER_MESSAGES = {
       UPDATE: {
         SUCCESS: '회원 정보 수정에 성공했습니다.',
       },
+      DELETE: {
+        SUCCESS: '회원 탈퇴에 성공했습니다.',
+      },
     },
   },
 };
