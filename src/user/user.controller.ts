@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Post,
@@ -65,6 +66,23 @@ export class UserController {
     return {
       status: HttpStatus.OK,
       message: USER_MESSAGES.USER.USERINFO.READ.SUCCESS,
+      data: data,
+    };
+  }
+
+  /** 회원 탈퇴 API **/
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: USER_MESSAGES.USER.USERINFO.DELETE.SUCCESS,
+  })
+  @Delete('me')
+  async quit(@LogIn() user: User) {
+    const data = await this.userService.quit(user);
+    return {
+      status: HttpStatus.OK,
+      message: USER_MESSAGES.USER.USERINFO.DELETE.SUCCESS,
       data: data,
     };
   }
