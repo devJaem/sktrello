@@ -179,13 +179,13 @@
 
 ## API 명세서
 
-![Alt text](/docs/API 명세서1.png)
+![Alt text](/docs/API%20명세서1.png)
 
-![Alt text](/docs/API 명세서2.png)
+![Alt text](/docs/API%20명세서2.png)
 
 ## 🗃 ERD
 
-![Alt text](/docs/ERD 최종.png)
+![Alt text](/docs/ERD%20최종.png)
 
 ## 프로젝트 설치 및 실행 방법
 
